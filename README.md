@@ -29,7 +29,7 @@ Discussion
 
 For any concerns with the protocol, open an issue or visit us on [Discord]() to discuss.
 
-For security concerns, please email [security@compound.finance](mailto:security@standardprotocol.org).
+For security concerns, please email [security@standardprotocol.org](mailto:security@standardprotocol.org).
 
 _© Copyright 2020, Digital Native_
 

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getNetwork = void 0;
 var logger_1 = require("@ethersproject/logger");
 var _version_1 = require("./_version");
 var logger = new logger_1.Logger(_version_1.version);
@@ -26,8 +27,30 @@ function ethDefaultProvider(network) {
             catch (error) { }
         }
         if (providers.AlchemyProvider) {
+            // These networks are currently faulty on Alchemy as their
+            // network does not handle the Berlin hardfork, which is
+            // live on these ones.
+            // @TODO: This goes away once AlchemyAPI has upgraded their nodes
+            var skip = ["goerli", "ropsten", "rinkeby"];
             try {
-                providerList.push(new providers.AlchemyProvider(network, options.alchemy));
+                var provider = new providers.AlchemyProvider(network, options.alchemy);
+                if (provider.network && skip.indexOf(provider.network.name) === -1) {
+                    providerList.push(provider);
+                }
+            }
+            catch (error) { }
+        }
+        if (providers.PocketProvider) {
+            // These networks are currently faulty on Alchemy as their
+            // network does not handle the Berlin hardfork, which is
+            // live on these ones.
+            // @TODO: This goes away once Pocket has upgraded their nodes
+            var skip = ["goerli", "ropsten", "rinkeby"];
+            try {
+                var provider = new providers.PocketProvider(network);
+                if (provider.network && skip.indexOf(provider.network.name) === -1) {
+                    providerList.push(provider);
+                }
             }
             catch (error) { }
         }

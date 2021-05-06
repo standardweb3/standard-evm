@@ -2,6 +2,7 @@ import { Networkish } from "@ethersproject/networks";
 import { JsonRpcProvider } from "./json-rpc-provider";
 export declare type ExternalProvider = {
     isMetaMask?: boolean;
+    isStatus?: boolean;
     host?: string;
     path?: string;
     sendAsync?: (request: {
@@ -24,3 +25,4 @@ export declare class Web3Provider extends JsonRpcProvider {
     constructor(provider: ExternalProvider | JsonRpcFetchFunc, network?: Networkish);
     send(method: string, params: Array<any>): Promise<any>;
 }
+//# sourceMappingURL=web3-provider.d.ts.map

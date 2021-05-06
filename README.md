@@ -20,5 +20,3 @@ For any concerns with the protocol, open an issue or visit us on [Discord](https
 For security concerns, please email [contact@standard.tech](mailto:contact@standard.tech).
 
 _© Copyright 2020, Digital Native_
-
-

@@ -422,7 +422,6 @@ let defaultFormatter: Formatter = null;
 
 let nextPollId = 1;
 
-
 export class BaseProvider extends Provider implements EnsProvider {
     _networkPromise: Promise<Network>;
     _network: Network;
@@ -585,12 +584,35 @@ export class BaseProvider extends Provider implements EnsProvider {
     async _getInternalBlockNumber(maxAge: number): Promise<number> {
         await this._ready();
 
-        const internalBlockNumber = this._internalBlockNumber;
+        // Allowing stale data up to maxAge old
+        if (maxAge > 0) {
 
-        if (maxAge > 0 && this._internalBlockNumber) {
-            const result = await internalBlockNumber;
-            if ((getTime() - result.respTime) <= maxAge) {
-                return result.blockNumber;
+            // While there are pending internal block requests...
+            while (this._internalBlockNumber) {
+
+                // ..."remember" which fetch we started with
+                const internalBlockNumber = this._internalBlockNumber;
+
+                try {
+                    // Check the result is not too stale
+                    const result = await internalBlockNumber;
+                    if ((getTime() - result.respTime) <= maxAge) {
+                        return result.blockNumber;
+                    }
+
+                    // Too old; fetch a new value
+                    break;
+
+                } catch(error) {
+
+                    // The fetch rejected; if we are the first to get the
+                    // rejection, drop through so we replace it with a new
+                    // fetch; all others blocked will then get that fetch
+                    // which won't match the one they "remembered" and loop
+                    if (this._internalBlockNumber === internalBlockNumber) {
+                        break;
+                    }
+                }
             }
         }
 
@@ -620,6 +642,14 @@ export class BaseProvider extends Provider implements EnsProvider {
 
         this._internalBlockNumber = checkInternalBlockNumber;
 
+        // Swallow unhandled exceptions; if needed they are handled else where
+        checkInternalBlockNumber.catch((error) => {
+            // Don't null the dead (rejected) fetch, if it has already been updated
+            if (this._internalBlockNumber === checkInternalBlockNumber) {
+                this._internalBlockNumber = null;
+            }
+        });
+
         return (await checkInternalBlockNumber).blockNumber;
     }
 
@@ -629,7 +659,13 @@ export class BaseProvider extends Provider implements EnsProvider {
         // Track all running promises, so we can trigger a post-poll once they are complete
         const runners: Array<Promise<void>> = [];
 
-        const blockNumber = await this._getInternalBlockNumber(100 + this.pollingInterval / 2);
+        let blockNumber: number = null;
+        try {
+            blockNumber = await this._getInternalBlockNumber(100 + this.pollingInterval / 2);
+        } catch (error) {
+            this.emit("error", error);
+            return;
+        }
         this._setFastBlockNumber(blockNumber);
 
         // Emit a poll event after we have the latest (fast) block number
@@ -733,9 +769,9 @@ export class BaseProvider extends Provider implements EnsProvider {
         // Once all events for this loop have been processed, emit "didPoll"
         Promise.all(runners).then(() => {
             this.emit("didPoll", pollId);
-        });
+        }).catch((error) => { this.emit("error", error); });
 
-        return null;
+        return;
     }
 
     // Deprecated; do not use this
@@ -804,7 +840,7 @@ export class BaseProvider extends Provider implements EnsProvider {
     get blockNumber(): number {
         this._getInternalBlockNumber(100 + this.pollingInterval / 2).then((blockNumber) => {
             this._setFastBlockNumber(blockNumber);
-        });
+        }, (error) => { });
 
         return (this._fastBlockNumber != null) ? this._fastBlockNumber: -1;
     }
@@ -815,7 +851,7 @@ export class BaseProvider extends Provider implements EnsProvider {
 
     set polling(value: boolean) {
         if (value && !this._poller) {
-            this._poller = setInterval(this.poll.bind(this), this.pollingInterval);
+            this._poller = setInterval(() => { this.poll(); }, this.pollingInterval);
 
             if (!this._bootstrapPoll) {
                 this._bootstrapPoll = setTimeout(() => {
@@ -853,7 +889,7 @@ export class BaseProvider extends Provider implements EnsProvider {
 
         if (this._poller) {
             clearInterval(this._poller);
-            this._poller = setInterval(() => { this.poll() }, this._pollingInterval);
+            this._poller = setInterval(() => { this.poll(); }, this._pollingInterval);
         }
     }
 
@@ -933,7 +969,16 @@ export class BaseProvider extends Provider implements EnsProvider {
 
     async getGasPrice(): Promise<BigNumber> {
         await this.getNetwork();
-        return BigNumber.from(await this.perform("getGasPrice", { }));
+
+        const result = await this.perform("getGasPrice", { });
+        try {
+            return BigNumber.from(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "getGasPrice",
+                result, error
+            });
+        }
     }
 
     async getBalance(addressOrName: string | Promise<string>, blockTag?: BlockTag | Promise<BlockTag>): Promise<BigNumber> {
@@ -942,7 +987,16 @@ export class BaseProvider extends Provider implements EnsProvider {
             address: this._getAddress(addressOrName),
             blockTag: this._getBlockTag(blockTag)
         });
-        return BigNumber.from(await this.perform("getBalance", params));
+
+        const result = await this.perform("getBalance", params);
+        try {
+            return BigNumber.from(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "getBalance",
+                params, result, error
+            });
+        }
     }
 
     async getTransactionCount(addressOrName: string | Promise<string>, blockTag?: BlockTag | Promise<BlockTag>): Promise<number> {
@@ -951,7 +1005,16 @@ export class BaseProvider extends Provider implements EnsProvider {
             address: this._getAddress(addressOrName),
             blockTag: this._getBlockTag(blockTag)
         });
-        return BigNumber.from(await this.perform("getTransactionCount", params)).toNumber();
+
+        const result = await this.perform("getTransactionCount", params);
+        try {
+            return BigNumber.from(result).toNumber();
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "getTransactionCount",
+                params, result, error
+            });
+        }
     }
 
     async getCode(addressOrName: string | Promise<string>, blockTag?: BlockTag | Promise<BlockTag>): Promise<string> {
@@ -960,7 +1023,16 @@ export class BaseProvider extends Provider implements EnsProvider {
             address: this._getAddress(addressOrName),
             blockTag: this._getBlockTag(blockTag)
         });
-        return hexlify(await this.perform("getCode", params));
+
+        const result = await this.perform("getCode", params);
+        try {
+            return hexlify(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "getCode",
+                params, result, error
+            });
+        }
     }
 
     async getStorageAt(addressOrName: string | Promise<string>, position: BigNumberish | Promise<BigNumberish>, blockTag?: BlockTag | Promise<BlockTag>): Promise<string> {
@@ -970,7 +1042,15 @@ export class BaseProvider extends Provider implements EnsProvider {
             blockTag: this._getBlockTag(blockTag),
             position: Promise.resolve(position).then((p) => hexValue(p))
         });
-        return hexlify(await this.perform("getStorageAt", params));
+        const result = await this.perform("getStorageAt", params);
+        try {
+            return hexlify(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "getStorageAt",
+                params, result, error
+            });
+        }
     }
 
     // This should be called by any subclass wrapping a TransactionResponse
@@ -1042,6 +1122,15 @@ export class BaseProvider extends Provider implements EnsProvider {
             tx[key] = Promise.resolve(values[key]).then((v) => (v ? BigNumber.from(v): null));
         });
 
+        ["type"].forEach((key) => {
+            if (values[key] == null) { return; }
+            tx[key] = Promise.resolve(values[key]).then((v) => ((v != null) ? v: null));
+        });
+
+        if (values.accessList) {
+            tx.accessList = this.formatter.accessList(values.accessList);
+        }
+
         ["data"].forEach((key) => {
             if (values[key] == null) { return; }
             tx[key] = Promise.resolve(values[key]).then((v) => (v ? hexlify(v): null));
@@ -1078,7 +1167,16 @@ export class BaseProvider extends Provider implements EnsProvider {
             transaction: this._getTransactionRequest(transaction),
             blockTag: this._getBlockTag(blockTag)
         });
-        return hexlify(await this.perform("call", params));
+
+        const result = await this.perform("call", params);
+        try {
+            return hexlify(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "call",
+                params, result, error
+            });
+        }
     }
 
     async estimateGas(transaction: Deferrable<TransactionRequest>): Promise<BigNumber> {
@@ -1086,7 +1184,16 @@ export class BaseProvider extends Provider implements EnsProvider {
         const params = await resolveProperties({
             transaction: this._getTransactionRequest(transaction)
         });
-        return BigNumber.from(await this.perform("estimateGas", params));
+
+        const result = await this.perform("estimateGas", params);
+        try {
+            return BigNumber.from(result);
+        } catch (error) {
+            return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                method: "estimateGas",
+                params, result, error
+            });
+        }
     }
 
     async _getAddress(addressOrName: string | Promise<string>): Promise<string> {

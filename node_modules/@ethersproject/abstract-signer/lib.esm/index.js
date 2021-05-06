@@ -13,7 +13,7 @@ import { Logger } from "@ethersproject/logger";
 import { version } from "./_version";
 const logger = new Logger(version);
 const allowedTransactionKeys = [
-    "chainId", "data", "from", "gasLimit", "gasPrice", "nonce", "to", "value"
+    "accessList", "chainId", "data", "from", "gasLimit", "gasPrice", "nonce", "to", "type", "value"
 ];
 const forwardErrors = [
     Logger.errors.INSUFFICIENT_FUNDS,
@@ -112,7 +112,7 @@ export class Signer {
                 Promise.resolve(tx.from),
                 this.getAddress()
             ]).then((result) => {
-                if (result[0] !== result[1]) {
+                if (result[0].toLowerCase() !== result[1].toLowerCase()) {
                     logger.throwArgumentError("from address mismatch", "transaction", transaction);
                 }
                 return result[0];
@@ -128,7 +128,16 @@ export class Signer {
         return __awaiter(this, void 0, void 0, function* () {
             const tx = yield resolveProperties(this.checkTransaction(transaction));
             if (tx.to != null) {
-                tx.to = Promise.resolve(tx.to).then((to) => this.resolveName(to));
+                tx.to = Promise.resolve(tx.to).then((to) => __awaiter(this, void 0, void 0, function* () {
+                    if (to == null) {
+                        return null;
+                    }
+                    const address = yield this.resolveName(to);
+                    if (address == null) {
+                        logger.throwArgumentError("provided ENS name resolves to null", "tx.to", to);
+                    }
+                    return address;
+                }));
             }
             if (tx.gasPrice == null) {
                 tx.gasPrice = this.getGasPrice();

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { hexlify, hexValue, isHexString } from "@ethersproject/bytes";
 import { deepCopy, defineReadOnly } from "@ethersproject/properties";
+import { accessListify } from "@ethersproject/transactions";
 import { fetchJson } from "@ethersproject/web";
 import { showThrottleMessage } from "./formatter";
 import { Logger } from "@ethersproject/logger";
@@ -23,10 +24,19 @@ function getTransactionPostData(transaction) {
         if (transaction[key] == null) {
             continue;
         }
-        let value = hexlify(transaction[key]);
+        let value = transaction[key];
         // Quantity-types require no leading zero, unless 0
-        if ({ gasLimit: true, gasPrice: true, nonce: true, value: true }[key]) {
-            value = hexValue(value);
+        if ({ type: true, gasLimit: true, gasPrice: true, nonce: true, value: true }[key]) {
+            value = hexValue(hexlify(value));
+        }
+        else if (key === "accessList") {
+            const sets = accessListify(value);
+            value = '[' + sets.map((set) => {
+                return `{address:"${set.address}",storageKeys:["${set.storageKeys.join('","')}"]}`;
+            }).join(",") + "]";
+        }
+        else {
+            value = hexlify(value);
         }
         result[key] = value;
     }

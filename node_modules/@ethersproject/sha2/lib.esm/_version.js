@@ -1,2 +1,2 @@
-export const version = "sha2/5.0.6";
+export const version = "sha2/5.1.0";
 //# sourceMappingURL=_version.js.map

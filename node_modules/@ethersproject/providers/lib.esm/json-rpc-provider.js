@@ -14,6 +14,7 @@ import { hexlify, hexValue, isHexString } from "@ethersproject/bytes";
 import { _TypedDataEncoder } from "@ethersproject/hash";
 import { checkProperties, deepCopy, defineReadOnly, getStatic, resolveProperties, shallowCopy } from "@ethersproject/properties";
 import { toUtf8Bytes } from "@ethersproject/strings";
+import { accessListify } from "@ethersproject/transactions";
 import { fetchJson, poll } from "@ethersproject/web";
 import { Logger } from "@ethersproject/logger";
 import { version } from "./_version";
@@ -56,6 +57,12 @@ function checkError(method, error, params) {
     // "replacement transaction underpriced"
     if (message.match(/replacement transaction underpriced/)) {
         logger.throwError("replacement fee too low", Logger.errors.REPLACEMENT_UNDERPRICED, {
+            error, method, transaction
+        });
+    }
+    // "replacement transaction underpriced"
+    if (message.match(/only replay-protected/)) {
+        logger.throwError("legacy pre-eip-155 transactions not supported", Logger.errors.UNSUPPORTED_OPERATION, {
             error, method, transaction
         });
     }
@@ -236,7 +243,8 @@ class UncheckedJsonRpcSigner extends JsonRpcSigner {
     }
 }
 const allowedTransactionKeys = {
-    chainId: true, data: true, gasLimit: true, gasPrice: true, nonce: true, to: true, value: true
+    chainId: true, data: true, gasLimit: true, gasPrice: true, nonce: true, to: true, value: true,
+    type: true, accessList: true
 };
 export class JsonRpcProvider extends BaseProvider {
     constructor(url, network) {
@@ -269,10 +277,26 @@ export class JsonRpcProvider extends BaseProvider {
         }
         this._nextId = 42;
     }
+    get _cache() {
+        if (this._eventLoopCache == null) {
+            this._eventLoopCache = {};
+        }
+        return this._eventLoopCache;
+    }
     static defaultUrl() {
         return "http:/\/localhost:8545";
     }
     detectNetwork() {
+        if (!this._cache["detectNetwork"]) {
+            this._cache["detectNetwork"] = this._uncachedDetectNetwork();
+            // Clear this cache at the beginning of the next event loop
+            setTimeout(() => {
+                this._cache["detectNetwork"] = null;
+            }, 0);
+        }
+        return this._cache["detectNetwork"];
+    }
+    _uncachedDetectNetwork() {
         return __awaiter(this, void 0, void 0, function* () {
             yield timer(0);
             let chainId = null;
@@ -326,7 +350,13 @@ export class JsonRpcProvider extends BaseProvider {
             request: deepCopy(request),
             provider: this
         });
-        return fetchJson(this.connection, JSON.stringify(request), getResult).then((result) => {
+        // We can expand this in the future to any call, but for now these
+        // are the biggest wins and do not require any serializing parameters.
+        const cache = (["eth_chainId", "eth_blockNumber"].indexOf(method) >= 0);
+        if (cache && this._cache[method]) {
+            return this._cache[method];
+        }
+        const result = fetchJson(this.connection, JSON.stringify(request), getResult).then((result) => {
             this.emit("debug", {
                 action: "response",
                 request: request,
@@ -343,6 +373,14 @@ export class JsonRpcProvider extends BaseProvider {
             });
             throw error;
         });
+        // Cache the fetch, but clear it on the next event loop
+        if (cache) {
+            this._cache[method] = result;
+            setTimeout(() => {
+                this._cache[method] = null;
+            }, 0);
+        }
+        return result;
     }
     prepareRequest(method, params) {
         switch (method) {
@@ -478,7 +516,7 @@ export class JsonRpcProvider extends BaseProvider {
         checkProperties(transaction, allowed);
         const result = {};
         // Some nodes (INFURA ropsten; INFURA mainnet is fine) do not like leading zeros.
-        ["gasLimit", "gasPrice", "nonce", "value"].forEach(function (key) {
+        ["gasLimit", "gasPrice", "type", "nonce", "value"].forEach(function (key) {
             if (transaction[key] == null) {
                 return;
             }
@@ -494,6 +532,9 @@ export class JsonRpcProvider extends BaseProvider {
             }
             result[key] = hexlify(transaction[key]);
         });
+        if (transaction.accessList) {
+            result["accessList"] = accessListify(transaction.accessList);
+        }
         return result;
     }
 }

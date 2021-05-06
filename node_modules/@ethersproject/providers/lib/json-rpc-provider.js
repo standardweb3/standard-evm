@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -49,12 +51,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JsonRpcProvider = exports.JsonRpcSigner = void 0;
 var abstract_signer_1 = require("@ethersproject/abstract-signer");
 var bignumber_1 = require("@ethersproject/bignumber");
 var bytes_1 = require("@ethersproject/bytes");
 var hash_1 = require("@ethersproject/hash");
 var properties_1 = require("@ethersproject/properties");
 var strings_1 = require("@ethersproject/strings");
+var transactions_1 = require("@ethersproject/transactions");
 var web_1 = require("@ethersproject/web");
 var logger_1 = require("@ethersproject/logger");
 var _version_1 = require("./_version");
@@ -97,6 +101,12 @@ function checkError(method, error, params) {
     // "replacement transaction underpriced"
     if (message.match(/replacement transaction underpriced/)) {
         logger.throwError("replacement fee too low", logger_1.Logger.errors.REPLACEMENT_UNDERPRICED, {
+            error: error, method: method, transaction: transaction
+        });
+    }
+    // "replacement transaction underpriced"
+    if (message.match(/only replay-protected/)) {
+        logger.throwError("legacy pre-eip-155 transactions not supported", logger_1.Logger.errors.UNSUPPORTED_OPERATION, {
             error: error, method: method, transaction: transaction
         });
     }
@@ -321,7 +331,8 @@ var UncheckedJsonRpcSigner = /** @class */ (function (_super) {
     return UncheckedJsonRpcSigner;
 }(JsonRpcSigner));
 var allowedTransactionKeys = {
-    chainId: true, data: true, gasLimit: true, gasPrice: true, nonce: true, to: true, value: true
+    chainId: true, data: true, gasLimit: true, gasPrice: true, nonce: true, to: true, value: true,
+    type: true, accessList: true
 };
 var JsonRpcProvider = /** @class */ (function (_super) {
     __extends(JsonRpcProvider, _super);
@@ -358,10 +369,31 @@ var JsonRpcProvider = /** @class */ (function (_super) {
         _this._nextId = 42;
         return _this;
     }
+    Object.defineProperty(JsonRpcProvider.prototype, "_cache", {
+        get: function () {
+            if (this._eventLoopCache == null) {
+                this._eventLoopCache = {};
+            }
+            return this._eventLoopCache;
+        },
+        enumerable: false,
+        configurable: true
+    });
     JsonRpcProvider.defaultUrl = function () {
         return "http:/\/localhost:8545";
     };
     JsonRpcProvider.prototype.detectNetwork = function () {
+        var _this = this;
+        if (!this._cache["detectNetwork"]) {
+            this._cache["detectNetwork"] = this._uncachedDetectNetwork();
+            // Clear this cache at the beginning of the next event loop
+            setTimeout(function () {
+                _this._cache["detectNetwork"] = null;
+            }, 0);
+        }
+        return this._cache["detectNetwork"];
+    };
+    JsonRpcProvider.prototype._uncachedDetectNetwork = function () {
         return __awaiter(this, void 0, void 0, function () {
             var chainId, error_1, error_2, getNetwork;
             return __generator(this, function (_a) {
@@ -436,7 +468,13 @@ var JsonRpcProvider = /** @class */ (function (_super) {
             request: properties_1.deepCopy(request),
             provider: this
         });
-        return web_1.fetchJson(this.connection, JSON.stringify(request), getResult).then(function (result) {
+        // We can expand this in the future to any call, but for now these
+        // are the biggest wins and do not require any serializing parameters.
+        var cache = (["eth_chainId", "eth_blockNumber"].indexOf(method) >= 0);
+        if (cache && this._cache[method]) {
+            return this._cache[method];
+        }
+        var result = web_1.fetchJson(this.connection, JSON.stringify(request), getResult).then(function (result) {
             _this.emit("debug", {
                 action: "response",
                 request: request,
@@ -453,6 +491,14 @@ var JsonRpcProvider = /** @class */ (function (_super) {
             });
             throw error;
         });
+        // Cache the fetch, but clear it on the next event loop
+        if (cache) {
+            this._cache[method] = result;
+            setTimeout(function () {
+                _this._cache[method] = null;
+            }, 0);
+        }
+        return result;
     };
     JsonRpcProvider.prototype.prepareRequest = function (method, params) {
         switch (method) {
@@ -597,7 +643,7 @@ var JsonRpcProvider = /** @class */ (function (_super) {
         properties_1.checkProperties(transaction, allowed);
         var result = {};
         // Some nodes (INFURA ropsten; INFURA mainnet is fine) do not like leading zeros.
-        ["gasLimit", "gasPrice", "nonce", "value"].forEach(function (key) {
+        ["gasLimit", "gasPrice", "type", "nonce", "value"].forEach(function (key) {
             if (transaction[key] == null) {
                 return;
             }
@@ -613,6 +659,9 @@ var JsonRpcProvider = /** @class */ (function (_super) {
             }
             result[key] = bytes_1.hexlify(transaction[key]);
         });
+        if (transaction.accessList) {
+            result["accessList"] = transactions_1.accessListify(transaction.accessList);
+        }
         return result;
     };
     return JsonRpcProvider;

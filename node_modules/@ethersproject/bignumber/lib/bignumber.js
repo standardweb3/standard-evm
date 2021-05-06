@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports._base16To36 = exports._base36To16 = exports.BigNumber = exports.isBigNumberish = void 0;
 /**
  *  BigNumber
  *
@@ -152,6 +153,15 @@ var BigNumber = /** @class */ (function () {
             throwFault("overflow", "toNumber", this.toString());
         }
         return null;
+    };
+    BigNumber.prototype.toBigInt = function () {
+        try {
+            return BigInt(this.toString());
+        }
+        catch (e) { }
+        return logger.throwError("this platform does not support BigInt", logger_1.Logger.errors.UNSUPPORTED_OPERATION, {
+            value: this.toString()
+        });
     };
     BigNumber.prototype.toString = function () {
         // Lots of people expect this, which we do not support, so check (See: #889)

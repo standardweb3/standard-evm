@@ -4,6 +4,7 @@ import { BlockTag, TransactionRequest, TransactionResponse } from "@ethersprojec
 import { hexlify, hexValue, isHexString } from "@ethersproject/bytes";
 import { Network, Networkish } from "@ethersproject/networks";
 import { deepCopy, defineReadOnly } from "@ethersproject/properties";
+import { accessListify } from "@ethersproject/transactions";
 import { ConnectionInfo, fetchJson } from "@ethersproject/web";
 
 import { showThrottleMessage } from "./formatter";
@@ -20,10 +21,17 @@ function getTransactionPostData(transaction: TransactionRequest): Record<string,
     const result: Record<string, string> = { };
     for (let key in transaction) {
         if ((<any>transaction)[key] == null) { continue; }
-        let value = hexlify((<any>transaction)[key]);
+        let value = (<any>transaction)[key];
         // Quantity-types require no leading zero, unless 0
-        if ((<any>{ gasLimit: true, gasPrice: true, nonce: true, value: true })[key]) {
-            value = hexValue(value);
+        if ((<any>{ type: true, gasLimit: true, gasPrice: true, nonce: true, value: true })[key]) {
+            value = hexValue(hexlify(value));
+        } else if (key === "accessList") {
+            const sets = accessListify(value);
+            value = '[' + sets.map((set) => {
+                return `{address:"${ set.address }",storageKeys:["${ set.storageKeys.join('","') }"]}`;
+            }).join(",") + "]";
+        } else {
+            value = hexlify(value);
         }
         result[key] = value;
     }

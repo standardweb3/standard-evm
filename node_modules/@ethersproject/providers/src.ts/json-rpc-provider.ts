@@ -10,6 +10,7 @@ import { _TypedDataEncoder } from "@ethersproject/hash";
 import { Network, Networkish } from "@ethersproject/networks";
 import { checkProperties, deepCopy, Deferrable, defineReadOnly, getStatic, resolveProperties, shallowCopy } from "@ethersproject/properties";
 import { toUtf8Bytes } from "@ethersproject/strings";
+import { AccessList, accessListify } from "@ethersproject/transactions";
 import { ConnectionInfo, fetchJson, poll } from "@ethersproject/web";
 
 import { Logger } from "@ethersproject/logger";
@@ -60,6 +61,13 @@ function checkError(method: string, error: any, params: any): any {
     // "replacement transaction underpriced"
     if (message.match(/replacement transaction underpriced/)) {
         logger.throwError("replacement fee too low", Logger.errors.REPLACEMENT_UNDERPRICED, {
+            error, method, transaction
+        });
+    }
+
+    // "replacement transaction underpriced"
+    if (message.match(/only replay-protected/)) {
+        logger.throwError("legacy pre-eip-155 transactions not supported", Logger.errors.UNSUPPORTED_OPERATION, {
             error, method, transaction
         });
     }
@@ -264,7 +272,8 @@ class UncheckedJsonRpcSigner extends JsonRpcSigner {
 }
 
 const allowedTransactionKeys: { [ key: string ]: boolean } = {
-    chainId: true, data: true, gasLimit: true, gasPrice:true, nonce: true, to: true, value: true
+    chainId: true, data: true, gasLimit: true, gasPrice:true, nonce: true, to: true, value: true,
+    type: true, accessList: true
 }
 
 export class JsonRpcProvider extends BaseProvider {
@@ -272,6 +281,17 @@ export class JsonRpcProvider extends BaseProvider {
 
     _pendingFilter: Promise<number>;
     _nextId: number;
+
+    // During any given event loop, the results for a given call will
+    // all be the same, so we can dedup the calls to save requests and
+    // bandwidth. @TODO: Try out generalizing this against send?
+    _eventLoopCache: Record<string, Promise<any>>;
+    get _cache(): Record<string, Promise<any>> {
+        if (this._eventLoopCache == null) {
+            this._eventLoopCache = { };
+        }
+        return this._eventLoopCache;
+    }
 
     constructor(url?: ConnectionInfo | string, network?: Networkish) {
         logger.checkNew(new.target, JsonRpcProvider);
@@ -311,7 +331,19 @@ export class JsonRpcProvider extends BaseProvider {
         return "http:/\/localhost:8545";
     }
 
-    async detectNetwork(): Promise<Network> {
+    detectNetwork(): Promise<Network> {
+        if (!this._cache["detectNetwork"]) {
+            this._cache["detectNetwork"] = this._uncachedDetectNetwork();
+
+            // Clear this cache at the beginning of the next event loop
+            setTimeout(() => {
+                this._cache["detectNetwork"] = null;
+            }, 0);
+        }
+        return this._cache["detectNetwork"];
+    }
+
+    async _uncachedDetectNetwork(): Promise<Network> {
         await timer(0);
 
         let chainId = null;
@@ -369,7 +401,14 @@ export class JsonRpcProvider extends BaseProvider {
             provider: this
         });
 
-        return fetchJson(this.connection, JSON.stringify(request), getResult).then((result) => {
+        // We can expand this in the future to any call, but for now these
+        // are the biggest wins and do not require any serializing parameters.
+        const cache = ([ "eth_chainId", "eth_blockNumber" ].indexOf(method) >= 0);
+        if (cache && this._cache[method]) {
+            return this._cache[method];
+        }
+
+        const result = fetchJson(this.connection, JSON.stringify(request), getResult).then((result) => {
             this.emit("debug", {
                 action: "response",
                 request: request,
@@ -389,6 +428,16 @@ export class JsonRpcProvider extends BaseProvider {
 
             throw error;
         });
+
+        // Cache the fetch, but clear it on the next event loop
+        if (cache) {
+            this._cache[method] = result;
+            setTimeout(() => {
+                this._cache[method] = null;
+            }, 0);
+        }
+
+        return result;
     }
 
     prepareRequest(method: string, params: any): [ string, Array<any> ] {
@@ -529,7 +578,7 @@ export class JsonRpcProvider extends BaseProvider {
     //       before this is called
     // @TODO: This will likely be removed in future versions and prepareRequest
     //        will be the preferred method for this.
-    static hexlifyTransaction(transaction: TransactionRequest, allowExtra?: { [key: string]: boolean }): { [key: string]: string } {
+    static hexlifyTransaction(transaction: TransactionRequest, allowExtra?: { [key: string]: boolean }): { [key: string]: string | AccessList } {
         // Check only allowed properties are given
         const allowed = shallowCopy(allowedTransactionKeys);
         if (allowExtra) {
@@ -537,12 +586,13 @@ export class JsonRpcProvider extends BaseProvider {
                 if (allowExtra[key]) { allowed[key] = true; }
             }
         }
+
         checkProperties(transaction, allowed);
 
-        const result: { [key: string]: string } = {};
+        const result: { [key: string]: string | AccessList } = {};
 
         // Some nodes (INFURA ropsten; INFURA mainnet is fine) do not like leading zeros.
-        ["gasLimit", "gasPrice", "nonce", "value"].forEach(function(key) {
+        ["gasLimit", "gasPrice", "type", "nonce", "value"].forEach(function(key) {
             if ((<any>transaction)[key] == null) { return; }
             const value = hexValue((<any>transaction)[key]);
             if (key === "gasLimit") { key = "gas"; }
@@ -553,6 +603,10 @@ export class JsonRpcProvider extends BaseProvider {
             if ((<any>transaction)[key] == null) { return; }
             result[key] = hexlify((<any>transaction)[key]);
         });
+
+        if ((<any>transaction).accessList) {
+            result["accessList"] = accessListify((<any>transaction).accessList);
+        }
 
         return result;
     }

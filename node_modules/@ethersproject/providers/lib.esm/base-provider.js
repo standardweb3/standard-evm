@@ -453,11 +453,30 @@ export class BaseProvider extends Provider {
     _getInternalBlockNumber(maxAge) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this._ready();
-            const internalBlockNumber = this._internalBlockNumber;
-            if (maxAge > 0 && this._internalBlockNumber) {
-                const result = yield internalBlockNumber;
-                if ((getTime() - result.respTime) <= maxAge) {
-                    return result.blockNumber;
+            // Allowing stale data up to maxAge old
+            if (maxAge > 0) {
+                // While there are pending internal block requests...
+                while (this._internalBlockNumber) {
+                    // ..."remember" which fetch we started with
+                    const internalBlockNumber = this._internalBlockNumber;
+                    try {
+                        // Check the result is not too stale
+                        const result = yield internalBlockNumber;
+                        if ((getTime() - result.respTime) <= maxAge) {
+                            return result.blockNumber;
+                        }
+                        // Too old; fetch a new value
+                        break;
+                    }
+                    catch (error) {
+                        // The fetch rejected; if we are the first to get the
+                        // rejection, drop through so we replace it with a new
+                        // fetch; all others blocked will then get that fetch
+                        // which won't match the one they "remembered" and loop
+                        if (this._internalBlockNumber === internalBlockNumber) {
+                            break;
+                        }
+                    }
                 }
             }
             const reqTime = getTime();
@@ -482,6 +501,13 @@ export class BaseProvider extends Provider {
                 return { blockNumber, reqTime, respTime };
             });
             this._internalBlockNumber = checkInternalBlockNumber;
+            // Swallow unhandled exceptions; if needed they are handled else where
+            checkInternalBlockNumber.catch((error) => {
+                // Don't null the dead (rejected) fetch, if it has already been updated
+                if (this._internalBlockNumber === checkInternalBlockNumber) {
+                    this._internalBlockNumber = null;
+                }
+            });
             return (yield checkInternalBlockNumber).blockNumber;
         });
     }
@@ -490,7 +516,14 @@ export class BaseProvider extends Provider {
             const pollId = nextPollId++;
             // Track all running promises, so we can trigger a post-poll once they are complete
             const runners = [];
-            const blockNumber = yield this._getInternalBlockNumber(100 + this.pollingInterval / 2);
+            let blockNumber = null;
+            try {
+                blockNumber = yield this._getInternalBlockNumber(100 + this.pollingInterval / 2);
+            }
+            catch (error) {
+                this.emit("error", error);
+                return;
+            }
             this._setFastBlockNumber(blockNumber);
             // Emit a poll event after we have the latest (fast) block number
             this.emit("poll", pollId, blockNumber);
@@ -584,8 +617,8 @@ export class BaseProvider extends Provider {
             // Once all events for this loop have been processed, emit "didPoll"
             Promise.all(runners).then(() => {
                 this.emit("didPoll", pollId);
-            });
-            return null;
+            }).catch((error) => { this.emit("error", error); });
+            return;
         });
     }
     // Deprecated; do not use this
@@ -648,7 +681,7 @@ export class BaseProvider extends Provider {
     get blockNumber() {
         this._getInternalBlockNumber(100 + this.pollingInterval / 2).then((blockNumber) => {
             this._setFastBlockNumber(blockNumber);
-        });
+        }, (error) => { });
         return (this._fastBlockNumber != null) ? this._fastBlockNumber : -1;
     }
     get polling() {
@@ -656,7 +689,7 @@ export class BaseProvider extends Provider {
     }
     set polling(value) {
         if (value && !this._poller) {
-            this._poller = setInterval(this.poll.bind(this), this.pollingInterval);
+            this._poller = setInterval(() => { this.poll(); }, this.pollingInterval);
             if (!this._bootstrapPoll) {
                 this._bootstrapPoll = setTimeout(() => {
                     this.poll();
@@ -773,7 +806,16 @@ export class BaseProvider extends Provider {
     getGasPrice() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.getNetwork();
-            return BigNumber.from(yield this.perform("getGasPrice", {}));
+            const result = yield this.perform("getGasPrice", {});
+            try {
+                return BigNumber.from(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "getGasPrice",
+                    result, error
+                });
+            }
         });
     }
     getBalance(addressOrName, blockTag) {
@@ -783,7 +825,16 @@ export class BaseProvider extends Provider {
                 address: this._getAddress(addressOrName),
                 blockTag: this._getBlockTag(blockTag)
             });
-            return BigNumber.from(yield this.perform("getBalance", params));
+            const result = yield this.perform("getBalance", params);
+            try {
+                return BigNumber.from(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "getBalance",
+                    params, result, error
+                });
+            }
         });
     }
     getTransactionCount(addressOrName, blockTag) {
@@ -793,7 +844,16 @@ export class BaseProvider extends Provider {
                 address: this._getAddress(addressOrName),
                 blockTag: this._getBlockTag(blockTag)
             });
-            return BigNumber.from(yield this.perform("getTransactionCount", params)).toNumber();
+            const result = yield this.perform("getTransactionCount", params);
+            try {
+                return BigNumber.from(result).toNumber();
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "getTransactionCount",
+                    params, result, error
+                });
+            }
         });
     }
     getCode(addressOrName, blockTag) {
@@ -803,7 +863,16 @@ export class BaseProvider extends Provider {
                 address: this._getAddress(addressOrName),
                 blockTag: this._getBlockTag(blockTag)
             });
-            return hexlify(yield this.perform("getCode", params));
+            const result = yield this.perform("getCode", params);
+            try {
+                return hexlify(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "getCode",
+                    params, result, error
+                });
+            }
         });
     }
     getStorageAt(addressOrName, position, blockTag) {
@@ -814,7 +883,16 @@ export class BaseProvider extends Provider {
                 blockTag: this._getBlockTag(blockTag),
                 position: Promise.resolve(position).then((p) => hexValue(p))
             });
-            return hexlify(yield this.perform("getStorageAt", params));
+            const result = yield this.perform("getStorageAt", params);
+            try {
+                return hexlify(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "getStorageAt",
+                    params, result, error
+                });
+            }
         });
     }
     // This should be called by any subclass wrapping a TransactionResponse
@@ -884,6 +962,15 @@ export class BaseProvider extends Provider {
                 }
                 tx[key] = Promise.resolve(values[key]).then((v) => (v ? BigNumber.from(v) : null));
             });
+            ["type"].forEach((key) => {
+                if (values[key] == null) {
+                    return;
+                }
+                tx[key] = Promise.resolve(values[key]).then((v) => ((v != null) ? v : null));
+            });
+            if (values.accessList) {
+                tx.accessList = this.formatter.accessList(values.accessList);
+            }
             ["data"].forEach((key) => {
                 if (values[key] == null) {
                     return;
@@ -922,7 +1009,16 @@ export class BaseProvider extends Provider {
                 transaction: this._getTransactionRequest(transaction),
                 blockTag: this._getBlockTag(blockTag)
             });
-            return hexlify(yield this.perform("call", params));
+            const result = yield this.perform("call", params);
+            try {
+                return hexlify(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "call",
+                    params, result, error
+                });
+            }
         });
     }
     estimateGas(transaction) {
@@ -931,7 +1027,16 @@ export class BaseProvider extends Provider {
             const params = yield resolveProperties({
                 transaction: this._getTransactionRequest(transaction)
             });
-            return BigNumber.from(yield this.perform("estimateGas", params));
+            const result = yield this.perform("estimateGas", params);
+            try {
+                return BigNumber.from(result);
+            }
+            catch (error) {
+                return logger.throwError("bad result from backend", Logger.errors.SERVER_ERROR, {
+                    method: "estimateGas",
+                    params, result, error
+                });
+            }
         });
     }
     _getAddress(addressOrName) {

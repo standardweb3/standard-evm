@@ -1,4 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.version = "wordlists/5.0.7";
+exports.version = void 0;
+exports.version = "wordlists/5.1.0";
 //# sourceMappingURL=_version.js.map

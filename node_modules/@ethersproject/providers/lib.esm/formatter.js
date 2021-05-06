@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { hexDataLength, hexDataSlice, hexValue, hexZeroPad, isHexString } from "@ethersproject/bytes";
 import { AddressZero } from "@ethersproject/constants";
 import { shallowCopy } from "@ethersproject/properties";
-import { parse as parseTransaction } from "@ethersproject/transactions";
+import { accessListify, parse as parseTransaction } from "@ethersproject/transactions";
 import { Logger } from "@ethersproject/logger";
 import { version } from "./_version";
 const logger = new Logger(version);
@@ -25,6 +25,8 @@ export class Formatter {
         const strictData = (v) => { return this.data(v, true); };
         formats.transaction = {
             hash: hash,
+            type: Formatter.allowNull(number, null),
+            accessList: Formatter.allowNull(this.accessList.bind(this), null),
             blockHash: Formatter.allowNull(hash, null),
             blockNumber: Formatter.allowNull(number, null),
             transactionIndex: Formatter.allowNull(number, null),
@@ -50,6 +52,8 @@ export class Formatter {
             to: Formatter.allowNull(address),
             value: Formatter.allowNull(bigNumber),
             data: Formatter.allowNull(strictData),
+            type: Formatter.allowNull(number),
+            accessList: Formatter.allowNull(this.accessList.bind(this), null),
         };
         formats.receiptLog = {
             transactionIndex: number,
@@ -66,7 +70,8 @@ export class Formatter {
             from: Formatter.allowNull(this.address, null),
             contractAddress: Formatter.allowNull(address, null),
             transactionIndex: number,
-            root: Formatter.allowNull(hash),
+            // should be allowNull(hash), but broken-EIP-658 support is handled in receipt
+            root: Formatter.allowNull(hex),
             gasUsed: bigNumber,
             logsBloom: Formatter.allowNull(data),
             blockHash: hash,
@@ -111,6 +116,9 @@ export class Formatter {
             logIndex: number,
         };
         return formats;
+    }
+    accessList(accessList) {
+        return accessListify(accessList || []);
     }
     // Requires a BigNumberish that is within the IEEE754 safe integer range; returns a number
     // Strict! Used on input.
@@ -249,28 +257,9 @@ export class Formatter {
         if (transaction.to == null && transaction.creates == null) {
             transaction.creates = this.contractAddress(transaction);
         }
-        // @TODO: use transaction.serialize? Have to add support for including v, r, and s...
-        /*
-        if (!transaction.raw) {
- 
-             // Very loose providers (e.g. TestRPC) do not provide a signature or raw
-             if (transaction.v && transaction.r && transaction.s) {
-                 let raw = [
-                     stripZeros(hexlify(transaction.nonce)),
-                     stripZeros(hexlify(transaction.gasPrice)),
-                     stripZeros(hexlify(transaction.gasLimit)),
-                     (transaction.to || "0x"),
-                     stripZeros(hexlify(transaction.value || "0x")),
-                     hexlify(transaction.data || "0x"),
-                     stripZeros(hexlify(transaction.v || "0x")),
-                     stripZeros(hexlify(transaction.r)),
-                     stripZeros(hexlify(transaction.s)),
-                 ];
- 
-                 transaction.raw = rlpEncode(raw);
-             }
-         }
-         */
+        if (transaction.type === 1 && transaction.accessList == null) {
+            transaction.accessList = [];
+        }
         const result = Formatter.check(this.formats.transaction, transaction);
         if (transaction.chainId != null) {
             let chainId = transaction.chainId;
@@ -314,7 +303,29 @@ export class Formatter {
     }
     receipt(value) {
         const result = Formatter.check(this.formats.receipt, value);
-        if (value.status != null) {
+        // RSK incorrectly implemented EIP-658, so we munge things a bit here for it
+        if (result.root != null) {
+            if (result.root.length <= 4) {
+                // Could be 0x00, 0x0, 0x01 or 0x1
+                const value = BigNumber.from(result.root).toNumber();
+                if (value === 0 || value === 1) {
+                    // Make sure if both are specified, they match
+                    if (result.status != null && (result.status !== value)) {
+                        logger.throwArgumentError("alt-root-status/status mismatch", "value", { root: result.root, status: result.status });
+                    }
+                    result.status = value;
+                    delete result.root;
+                }
+                else {
+                    logger.throwArgumentError("invalid alt-root-status", "value.root", result.root);
+                }
+            }
+            else if (result.root.length !== 66) {
+                // Must be a valid bytes32
+                logger.throwArgumentError("invalid root hash", "value.root", result.root);
+            }
+        }
+        if (result.status != null) {
             result.byzantium = true;
         }
         return result;

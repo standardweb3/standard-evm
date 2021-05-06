@@ -10,7 +10,7 @@ import { version } from "./_version";
 const logger = new Logger(version);
 
 const allowedTransactionKeys: Array<string> = [
-    "chainId", "data", "from", "gasLimit", "gasPrice", "nonce", "to", "value"
+    "accessList", "chainId", "data", "from", "gasLimit", "gasPrice", "nonce", "to", "type", "value"
 ];
 
 const forwardErrors = [
@@ -173,7 +173,7 @@ export abstract class Signer {
                 Promise.resolve(tx.from),
                 this.getAddress()
             ]).then((result) => {
-                if (result[0] !== result[1]) {
+                if (result[0].toLowerCase() !== result[1].toLowerCase()) {
                     logger.throwArgumentError("from address mismatch", "transaction", transaction);
                 }
                 return result[0];
@@ -191,7 +191,16 @@ export abstract class Signer {
 
         const tx: Deferrable<TransactionRequest> = await resolveProperties(this.checkTransaction(transaction))
 
-        if (tx.to != null) { tx.to = Promise.resolve(tx.to).then((to) => this.resolveName(to)); }
+        if (tx.to != null) {
+            tx.to = Promise.resolve(tx.to).then(async (to) => {
+                if (to == null) { return null; }
+                const address = await this.resolveName(to);
+                if (address == null) {
+                    logger.throwArgumentError("provided ENS name resolves to null", "tx.to", to);
+                }
+                return address;
+            });
+        }
         if (tx.gasPrice == null) { tx.gasPrice = this.getGasPrice(); }
         if (tx.nonce == null) { tx.nonce = this.getTransactionCount("pending"); }
 

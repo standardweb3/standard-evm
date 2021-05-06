@@ -7,7 +7,7 @@ import { getAddress, getContractAddress } from "@ethersproject/address";
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import { arrayify, BytesLike, concat, hexlify, isBytes, isHexString } from "@ethersproject/bytes";
 import { Deferrable, defineReadOnly, deepCopy, getStatic, resolveProperties, shallowCopy } from "@ethersproject/properties";
-// @TOOD remove dependences transactions
+import { AccessList, accessListify, AccessListish } from "@ethersproject/transactions";
 
 import { Logger } from "@ethersproject/logger";
 import { version } from "./_version";
@@ -18,6 +18,8 @@ export interface Overrides {
     gasLimit?: BigNumberish | Promise<BigNumberish>;
     gasPrice?: BigNumberish | Promise<BigNumberish>;
     nonce?: BigNumberish | Promise<BigNumberish>;
+    type?: number;
+    accessList?: AccessListish;
 };
 
 export interface PayableOverrides extends Overrides {
@@ -45,6 +47,9 @@ export interface PopulatedTransaction {
     data?: string;
     value?: BigNumber;
     chainId?: number;
+
+    type?: number;
+    accessList?: AccessList;
 };
 
 export type EventFilter = {
@@ -94,7 +99,8 @@ export interface ContractTransaction extends TransactionResponse {
 ///////////////////////////////
 
 const allowedTransactionKeys: { [ key: string ]: boolean } = {
-    chainId: true, data: true, from: true, gasLimit: true, gasPrice:true, nonce: true, to: true, value: true
+    chainId: true, data: true, from: true, gasLimit: true, gasPrice:true, nonce: true, to: true, value: true,
+    type: true, accessList: true,
 }
 
 async function resolveName(resolver: Signer | Provider, nameOrPromise: string | Promise<string>): Promise<string> {
@@ -212,6 +218,9 @@ async function populateTransaction(contract: Contract, fragment: FunctionFragmen
     if (ro.gasPrice != null) { tx.gasPrice = BigNumber.from(ro.gasPrice); }
     if (ro.from != null) { tx.from = ro.from; }
 
+    if (ro.type != null) { tx.type = ro.type; }
+    if (ro.accessList != null) { tx.accessList = accessListify(ro.accessList); }
+
     // If there was no "gasLimit" override, but the ABI specifies a default, use it
     if (tx.gasLimit == null && fragment.gas != null) {
         // Conmpute the intrinisic gas cost for this transaction
@@ -246,6 +255,9 @@ async function populateTransaction(contract: Contract, fragment: FunctionFragmen
     delete overrides.gasPrice;
     delete overrides.from;
     delete overrides.value;
+
+    delete overrides.type;
+    delete overrides.accessList;
 
     // Make sure there are no stray overrides, which may indicate a
     // typo or using an unsupported key.
@@ -566,12 +578,12 @@ class WildcardRunningEvent extends RunningEvent {
     }
 }
 
-export type ContractInterface = string | Array<Fragment | JsonFragment | string> | Interface;
+export type ContractInterface = string | ReadonlyArray<Fragment | JsonFragment | string> | Interface;
 
 type InterfaceFunc = (contractInterface: ContractInterface) => Interface;
 
 
-export class Contract {
+export class BaseContract {
     readonly address: string;
     readonly interface: Interface;
 
@@ -585,9 +597,6 @@ export class Contract {
     readonly populateTransaction: { [ name: string ]: ContractFunction<PopulatedTransaction> };
 
     readonly filters: { [ name: string ]: (...args: Array<any>) => EventFilter };
-
-    // The meta-class properties
-    readonly [ key: string ]: ContractFunction | any;
 
     // This will always be an address. This will only differ from
     // address if an ENS name was used in the constructor
@@ -658,6 +667,10 @@ export class Contract {
         defineReadOnly(this, "_runningEvents", { });
         defineReadOnly(this, "_wrappedEmits", { });
 
+        if (addressOrName == null) {
+            logger.throwArgumentError("invalid contract address or ENS name", "addressOrName", addressOrName);
+        }
+
         defineReadOnly(this, "address", addressOrName);
         if (this.provider) {
             defineReadOnly(this, "resolvedAddress", resolveName(this.provider, addressOrName));
@@ -693,7 +706,7 @@ export class Contract {
                 uniqueNames[name].push(signature);
             }
 
-            if (this[signature] == null) {
+            if ((<Contract>this)[signature] == null) {
                 defineReadOnly<any, any>(this, signature, buildDefault(this, fragment, true));
             }
 
@@ -725,9 +738,12 @@ export class Contract {
 
             const signature = signatures[0];
 
-            if (this[name] == null) {
-                defineReadOnly(this, name, this[signature]);
-            }
+            // If overwriting a member property that is null, swallow the error
+            try {
+                if ((<Contract>this)[name] == null) {
+                    defineReadOnly(<Contract>this, name, (<Contract>this)[signature]);
+                }
+            } catch (e) { }
 
             if (this.functions[name] == null) {
                 defineReadOnly(this.functions, name, this.functions[signature]);
@@ -901,7 +917,7 @@ export class Contract {
 
             // If we have a poller for this, remove it
             const emit = this._wrappedEmits[runningEvent.tag];
-            if (emit) {
+            if (emit && runningEvent.filter) {
                 this.provider.off(runningEvent.filter, emit);
                 delete this._wrappedEmits[runningEvent.tag];
             }
@@ -1016,6 +1032,11 @@ export class Contract {
 
     listenerCount(eventName?: EventFilter | string): number {
         if (!this.provider) { return 0; }
+        if (eventName == null) {
+            return Object.keys(this._runningEvents).reduce((accum, key) => {
+                return accum + this._runningEvents[key].listenerCount();
+            }, 0);
+        }
         return this._getRunningEvent(eventName).listenerCount();
     }
 
@@ -1067,6 +1088,11 @@ export class Contract {
         return this.off(eventName, listener);
     }
 
+}
+
+export class Contract extends BaseContract {
+    // The meta-class properties
+    readonly [ key: string ]: ContractFunction | any;
 }
 
 export class ContractFactory {

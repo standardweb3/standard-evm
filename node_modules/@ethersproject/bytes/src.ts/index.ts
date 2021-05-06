@@ -136,7 +136,7 @@ export function arrayify(value: BytesLike | Hexable | number, options?: DataOpti
     return logger.throwArgumentError("invalid arrayify value", "value", value);
 }
 
-export function concat(items: Array<BytesLike>): Uint8Array {
+export function concat(items: ReadonlyArray<BytesLike>): Uint8Array {
     const objects = items.map(item => arrayify(item));
     const length = objects.reduce((accum, item) => (accum + item.length), 0);
 
@@ -275,7 +275,7 @@ export function hexDataSlice(data: BytesLike, offset: number, endOffset?: number
     return "0x" + data.substring(offset);
 }
 
-export function hexConcat(items: Array<BytesLike>): string {
+export function hexConcat(items: ReadonlyArray<BytesLike>): string {
     let result = "0x";
     items.forEach((item) => {
         result += hexlify(item).substring(2);
@@ -390,6 +390,8 @@ export function splitSignature(signature: SignatureLike): Signature {
         if (result.recoveryParam == null) {
             if (result.v == null) {
                 logger.throwArgumentError("signature missing v and recoveryParam", "signature", signature);
+            } else if (result.v === 0 || result.v === 1) {
+                result.recoveryParam = result.v;
             } else {
                 result.recoveryParam = 1 - (result.v % 2);
             }

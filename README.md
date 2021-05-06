@@ -1,7 +1,7 @@
 # Standard Protocol
 
-![banner](media/standard_banner.png)
-Standard protocol is the omni-stablecoin protocol secured with stability mechanisms and collaterized by digital assets across blockchains.
+Standard Protocol is the first Collateralized Rebasable Stablecoin (CRS) protocol for
+synthetic assets.
 
 Before getting started with this repo, please read:
 
@@ -12,25 +12,12 @@ For questions about interacting with Standard protocol, please visit [our Discor
 For security concerns, email [security@standardprotocol.org](mailto:security@standardprotocol.org).
 
 
-# Checklist
-
-ReserveBank.sol
-
-- [x] Implement WBTC->STC exchange
-- [ ] BTD->STC
-- [ ] Setup stability mechanism
-- [ ] 
-- [ ]
-
-# Documentation
-
-
 Discussion
 ----------
 
-For any concerns with the protocol, open an issue or visit us on [Discord](chat.standardprotocol.org) to discuss.
+For any concerns with the protocol, open an issue or visit us on [Discord](https://discord.gg/XUNxwXNZVA) to discuss.
 
-For security concerns, please email [security@standardprotocol.org](mailto:security@standardprotocol.org).
+For security concerns, please email [contact@standard.tech](mailto:contact@standard.tech).
 
 _© Copyright 2020, Digital Native_
 

@@ -73,9 +73,9 @@ contract WETHSTNDLPTokenSharePool is
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     IERC20 public stnd;
-    uint256 public constant DURATION = 30 days;
+    uint256 public constant DURATION = 60 days;
 
-    uint256 public initreward = 18479995 * 10**16; // 184,799.95 Shares
+    uint256 public initreward = 1000 * 10**18;
     uint256 public starttime; // starttime TBD
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;

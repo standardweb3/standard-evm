@@ -11,11 +11,11 @@ contract LPTokenWrapper {
 
     IERC20 public lpt;
 
-    uint256 private _totalSupply;
+    uint256 private _totalInput;
     mapping(address => uint256) private _balances;
 
-    function totalSupply() public view returns (uint256) {
-        return _totalSupply;
+    function totalInput() public view returns (uint256) {
+        return _totalInput;
     }
 
     function balanceOf(address account) public view returns (uint256) {
@@ -23,13 +23,13 @@ contract LPTokenWrapper {
     }
 
     function stake(uint256 amount) public virtual {
-        _totalSupply = _totalSupply.add(amount);
+        _totalInput = _totalInput.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
         lpt.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) public virtual {
-        _totalSupply = _totalSupply.sub(amount);
+        _totalInput = _totalInput.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         lpt.safeTransfer(msg.sender, amount);
     }

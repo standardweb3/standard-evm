@@ -73,9 +73,10 @@ contract WETHSTNDLPTokenSharePool is
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     IERC20 public stnd;
+    address private operator;
     uint256 public constant DURATION = 60 days;
 
-    uint256 public initreward = 1000 * 10**18;
+    uint256 public initreward = 300000 * 10**18;
     uint256 public starttime; // starttime TBD
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
@@ -97,6 +98,7 @@ contract WETHSTNDLPTokenSharePool is
         stnd = IERC20(stnd_);
         lpt = IERC20(lptoken_);
         starttime = starttime_;
+        operator = msg.sender;
     }
 
     modifier updateReward(address account) {
@@ -114,7 +116,7 @@ contract WETHSTNDLPTokenSharePool is
     }
 
     function rewardPerToken() public view returns (uint256) {
-        if (totalSupply() == 0) {
+        if (totalInput() == 0) {
             return rewardPerTokenStored;
         }
         return
@@ -123,7 +125,7 @@ contract WETHSTNDLPTokenSharePool is
                     .sub(lastUpdateTime)
                     .mul(rewardRate)
                     .mul(1e18)
-                    .div(totalSupply())
+                    .div(totalInput())
             );
     }
 
@@ -174,9 +176,14 @@ contract WETHSTNDLPTokenSharePool is
         }
     }
 
+    function withdrawReward(uint256 amount) public {
+        require(msg.sender == operator, "Not the operator of the pool");
+        stnd.safeTransfer(msg.sender, amount);
+    }
+
     modifier checkhalve() {
         if (block.timestamp >= periodFinish) {
-            initreward = initreward.mul(75).div(100);
+            initreward = initreward.mul(0).div(100);
 
             rewardRate = initreward.div(DURATION);
             periodFinish = block.timestamp.add(DURATION);

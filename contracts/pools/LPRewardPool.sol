@@ -200,7 +200,7 @@ contract WETHSTNDLPTokenSharePool is
     function notifyRewardAmount(uint256 reward)
         external
         override
-        onlyRewardDistribution
+        onlyOwner
         updateReward(address(0))
     {
         if (block.timestamp > starttime) {

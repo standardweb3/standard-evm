@@ -73,7 +73,7 @@ task('notify-reward', 'Notify reward amount on Staking')
     );
   
     console.log('Mining...');
-    await pool.notifyRewardAmount(reward);
+    await pool.connect(sender).notifyRewardAmount(reward);
     console.log(`Sender balance: ${ethers.utils.formatEther(await sender.getBalance())} ETH`);
     console.log(`Reward Rate: ${ethers.utils.formatEther(await pool.rewardRate())}`);
     console.log(`Last Update Time(timestamp): ${await pool.lastUpdateTime()}`);

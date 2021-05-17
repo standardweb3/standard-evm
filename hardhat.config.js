@@ -56,6 +56,7 @@ task('deploy-pool', 'Deploy Standard Staking pools')
 });
 
 task('notify-reward', 'Notify reward amount on Staking')
+  .addParam('pool', 'Pool contract address to notify reward amount')
   .addParam('reward', 'Total reward amount to rebase for staking in precision of 18 digit')
   .setAction(async ({pool: poolAddress, reward}) => {
     assert(ethers.utils.isAddress(poolAddress), `Pool address '${poolAddress}' is invalid.`);

@@ -61,22 +61,19 @@ task('notify-reward', 'Notify reward amount on Staking')
     assert(ethers.utils.isAddress(poolAddress), `Pool address '${poolAddress}' is invalid.`);
 
     const [deployer] = await ethers.getSigners();
-
-    console.log(
-      `Deploying Standard Staking Pool with the account: ${deployer.address}`
-    );
     
-    console.log(`Deployer balance: ${ethers.utils.formatEther(await deployer.getBalance())} ETH`);
+    console.log(`Notifier balance: ${ethers.utils.formatEther(await deployer.getBalance())} ETH`);
 
     const Pool = await ethers.getContractFactory('WETHSTNDLPTokenSharePool');
     const pool = await Pool.attach(poolAddress, Pool.interface);
 
     console.log(
-      `Notifying total reward amount to rebase to ${to}. Transaction sender: ${sender.address}`
+      `Notifying total reward amount to rebase to ${poolAddress}. Transaction sender: ${sender.address}`
     );
   
     console.log('Mining...');
     await pool.notifyRewardAmount(reward);
+    console.log(`Sender balance: ${ethers.utils.formatEther(await sender.getBalance())} ETH`);
     console.log(`Reward Rate: ${ethers.utils.formatEther(await pool.rewardRate())}`);
     console.log(`Last Update Time(timestamp): ${await pool.lastUpdateTime()}`);
     console.log(`Period Finishing Time(timestamp): ${await pool.periodFinish()}`);

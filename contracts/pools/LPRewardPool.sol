@@ -142,7 +142,6 @@ contract WETHSTNDLPTokenSharePool is
         public
         override
         updateReward(msg.sender)
-        checkhalve
         checkStart
     {
         require(amount > 0, "Cannot stake 0");
@@ -154,7 +153,6 @@ contract WETHSTNDLPTokenSharePool is
         public
         override
         updateReward(msg.sender)
-        checkhalve
         checkStart
     {
         require(amount > 0, "Cannot withdraw 0");
@@ -167,7 +165,7 @@ contract WETHSTNDLPTokenSharePool is
         getReward();
     }
 
-    function getReward() public updateReward(msg.sender) checkhalve checkStart {
+    function getReward() public updateReward(msg.sender)  checkStart {
         uint256 reward = earned(msg.sender);
         if (reward > 0) {
             rewards[msg.sender] = 0;
@@ -179,17 +177,6 @@ contract WETHSTNDLPTokenSharePool is
     function withdrawReward(uint256 amount) public {
         require(msg.sender == operator, "Not the operator of the pool");
         stnd.safeTransfer(msg.sender, amount);
-    }
-
-    modifier checkhalve() {
-        if (block.timestamp >= periodFinish) {
-            initreward = initreward.mul(0).div(100);
-
-            rewardRate = initreward.div(DURATION);
-            periodFinish = block.timestamp.add(DURATION);
-            emit RewardAdded(initreward);
-        }
-        _;
     }
 
     modifier checkStart() {

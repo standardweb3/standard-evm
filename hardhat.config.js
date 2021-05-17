@@ -55,6 +55,33 @@ task('deploy-pool', 'Deploy Standard Staking pools')
     console.log(`Deployer balance: ${ethers.utils.formatEther(await deployer.getBalance())} ETH`);
 });
 
+task('notify-reward', 'Notify reward amount on Staking')
+  .addParam('reward', 'Total reward amount to rebase for staking in precision of 18 digit')
+  .setAction(async ({pool: poolAddress, reward}) => {
+    assert(ethers.utils.isAddress(poolAddress), `Pool address '${poolAddress}' is invalid.`);
+
+    const [deployer] = await ethers.getSigners();
+
+    console.log(
+      `Deploying Standard Staking Pool with the account: ${deployer.address}`
+    );
+    
+    console.log(`Deployer balance: ${ethers.utils.formatEther(await deployer.getBalance())} ETH`);
+
+    const Pool = await ethers.getContractFactory('WETHSTNDLPTokenSharePool');
+    const pool = await Pool.attach(poolAddress, Pool.interface);
+
+    console.log(
+      `Notifying total reward amount to rebase to ${to}. Transaction sender: ${sender.address}`
+    );
+  
+    console.log('Mining...');
+    await pool.notifyRewardAmount(reward);
+    console.log(`Reward Rate: ${ethers.utils.formatEther(await pool.rewardRate())}`);
+    console.log(`Last Update Time(timestamp): ${await pool.lastUpdateTime()}`);
+    console.log(`Period Finishing Time(timestamp): ${await pool.periodFinish()}`);
+});
+
 task('revoke-blocked', 'Revoke tokens from blocked accounts')
   .addParam('token', 'Address of the protected token contract')
   .addParam('to', 'Address to transfer revoked tokens to')

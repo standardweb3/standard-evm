@@ -61,9 +61,9 @@ task('notify-reward', 'Notify reward amount on Staking')
   .setAction(async ({pool: poolAddress, reward}) => {
     assert(ethers.utils.isAddress(poolAddress), `Pool address '${poolAddress}' is invalid.`);
 
-    const [deployer] = await ethers.getSigners();
+    const [sender] = await ethers.getSigners();
     
-    console.log(`Notifier balance: ${ethers.utils.formatEther(await deployer.getBalance())} ETH`);
+    console.log(`Notifier balance: ${ethers.utils.formatEther(await sender.getBalance())} ETH`);
 
     const Pool = await ethers.getContractFactory('WETHSTNDLPTokenSharePool');
     const pool = await Pool.attach(poolAddress, Pool.interface);

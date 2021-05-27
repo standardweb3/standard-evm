@@ -205,7 +205,7 @@ contract WETHSTNDLPTokenSharePool is
             rewardRate = initreward.div(DURATION);
             lastUpdateTime = starttime;
             periodFinish = starttime.add(DURATION);
-            emit RewardAdded(reward);
+            emit RewardAdded(initreward);
         }
     }
 }

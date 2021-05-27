@@ -611,8 +611,8 @@
       ]
     },
     "/Users/maestrogap/DigitalNative/standard-evm/contracts/pools/LPRewardPool.sol": {
-      "lastModificationDate": 1622119982378,
-      "contentHash": "03cb2627311cf0590a9ffa4f382e61e7",
+      "lastModificationDate": 1622123908356,
+      "contentHash": "3f05f4ce0bb553fe9daaf6abf8a93eaf",
       "sourceName": "contracts/pools/LPRewardPool.sol",
       "solcConfig": {
         "version": "0.8.4",

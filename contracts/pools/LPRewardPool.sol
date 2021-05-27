@@ -74,7 +74,7 @@ contract WETHSTNDLPTokenSharePool is
     using SafeERC20 for IERC20;
     IERC20 public stnd;
     address private operator;
-    uint256 public constant DURATION = 60 days;
+    uint256 public constant DURATION = 5 minutes;
 
     uint256 public initreward = 300000 * 10**18;
     uint256 public starttime; // starttime TBD

@@ -12,3 +12,4 @@ truffle-config.js
 
 *.log
 !deployments/*.log
+node_modules

@@ -934,10 +934,8 @@ pragma solidity ^0.8.0;
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 is Context, IERC20, IERC20Metadata {
+abstract contract ERC20 is Context, IERC20, IERC20Metadata {
     mapping (address => uint256) private _balances;
-
-    mapping (address => mapping (address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
 
@@ -1017,86 +1015,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         return true;
     }
 
-    /**
-     * @dev See {IERC20-allowance}.
-     */
-    function allowance(address owner, address spender) public view virtual override returns (uint256) {
-        return _allowances[owner][spender];
-    }
-
-    /**
-     * @dev See {IERC20-approve}.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
-        _approve(_msgSender(), spender, amount);
-        return true;
-    }
-
-    /**
-     * @dev See {IERC20-transferFrom}.
-     *
-     * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {ERC20}.
-     *
-     * Requirements:
-     *
-     * - `sender` and `recipient` cannot be the zero address.
-     * - `sender` must have a balance of at least `amount`.
-     * - the caller must have allowance for ``sender``'s tokens of at least
-     * `amount`.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(sender, recipient, amount);
-
-        uint256 currentAllowance = _allowances[sender][_msgSender()];
-        require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
-        _approve(sender, _msgSender(), currentAllowance - amount);
-
-        return true;
-    }
-
-    /**
-     * @dev Atomically increases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender] + addedValue);
-        return true;
-    }
-
-    /**
-     * @dev Atomically decreases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `spender` must have allowance for the caller of at least
-     * `subtractedValue`.
-     */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        uint256 currentAllowance = _allowances[_msgSender()][spender];
-        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
-        _approve(_msgSender(), spender, currentAllowance - subtractedValue);
-
-        return true;
-    }
 
     /**
      * @dev Moves tokens `amount` from `sender` to `recipient`.
@@ -1170,27 +1088,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     }
 
     /**
-     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
-     *
-     * This internal function is equivalent to `approve`, and can be used to
-     * e.g. set automatic allowances for certain subsystems, etc.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `owner` cannot be the zero address.
-     * - `spender` cannot be the zero address.
-     */
-    function _approve(address owner, address spender, uint256 amount) internal virtual {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
-
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
-    }
-
-    /**
      * @dev Hook that is called before any transfer of tokens. This includes
      * minting and burning.
      *
@@ -1208,475 +1105,388 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 }
 
 
-// File @openzeppelin/contracts/security/Pausable.sol@v4.1.0
-
-
+// File: contracts/child/ChildToken/IChildToken.sol
 
 pragma solidity ^0.8.0;
 
-/**
- * @dev Contract module which allows children to implement an emergency stop
- * mechanism that can be triggered by an authorized account.
- *
- * This module is used through inheritance. It will make available the
- * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
- * the functions of your contract. Note that they will not be pausable by
- * simply including this module, only once the modifiers are put in place.
- */
-abstract contract Pausable is Context {
-    /**
-     * @dev Emitted when the pause is triggered by `account`.
-     */
-    event Paused(address account);
+interface IChildToken {
+    function deposit(address user, bytes calldata depositData) external;
+}
 
-    /**
-     * @dev Emitted when the pause is lifted by `account`.
-     */
-    event Unpaused(address account);
+// File: contracts/common/Initializable.sol
 
-    bool private _paused;
+pragma solidity ^0.8.0;
 
-    /**
-     * @dev Initializes the contract in unpaused state.
-     */
-    constructor () {
-        _paused = false;
-    }
+contract Initializable {
+    bool inited = false;
 
-    /**
-     * @dev Returns true if the contract is paused, and false otherwise.
-     */
-    function paused() public view virtual returns (bool) {
-        return _paused;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the contract is not paused.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
-     */
-    modifier whenNotPaused() {
-        require(!paused(), "Pausable: paused");
+    modifier initializer() {
+        require(!inited, "already inited");
         _;
-    }
-
-    /**
-     * @dev Modifier to make a function callable only when the contract is paused.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    modifier whenPaused() {
-        require(paused(), "Pausable: not paused");
-        _;
-    }
-
-    /**
-     * @dev Triggers stopped state.
-     *
-     * Requirements:
-     *
-     * - The contract must not be paused.
-     */
-    function _pause() internal virtual whenNotPaused {
-        _paused = true;
-        emit Paused(_msgSender());
-    }
-
-    /**
-     * @dev Returns to normal state.
-     *
-     * Requirements:
-     *
-     * - The contract must be paused.
-     */
-    function _unpause() internal virtual whenPaused {
-        _paused = false;
-        emit Unpaused(_msgSender());
+        inited = true;
     }
 }
 
-
-// File @openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol@v4.1.0
-
+// File: contracts/common/EIP712Base.sol
 
 
 pragma solidity ^0.8.0;
 
-
-/**
- * @dev ERC20 token with pausable token transfers, minting and burning.
- *
- * Useful for scenarios such as preventing trades until the end of an evaluation
- * period, or having an emergency switch for freezing all token transfers in the
- * event of a large bug.
- */
-abstract contract ERC20Pausable is ERC20, Pausable {
-    /**
-     * @dev See {ERC20-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
-        super._beforeTokenTransfer(from, to, amount);
-
-        require(!paused(), "ERC20Pausable: token transfer while paused");
-    }
-}
-
-
-// File contracts/ILiquidityProtectionService.sol
-
-
-pragma solidity ^0.8.0;
-
-interface ILiquidityProtectionService {
-    event Blocked(address pool, address trader, string trap);
-
-    function getLiquidityPool(address tokenA, address tokenB)
-    external view returns(address);
-
-    function LiquidityAmountTrap_preValidateTransfer(
-        address from, address to, uint amount,
-        address counterToken, uint8 trapBlocks, uint128 trapAmount)
-    external returns(bool passed);
-
-    function FirstBlockTrap_preValidateTransfer(
-        address from, address to, uint amount, address counterToken)
-    external returns(bool passed);
-
-    function LiquidityPercentTrap_preValidateTransfer(
-        address from, address to, uint amount,
-        address counterToken, uint8 trapBlocks, uint64 trapPercent)
-    external returns(bool passed);
-
-    function LiquidityActivityTrap_preValidateTransfer(
-        address from, address to, uint amount,
-        address counterToken, uint8 trapBlocks, uint8 trapCount)
-    external returns(bool passed);
-
-    function isBlocked(address counterToken, address who)
-    external view returns(bool);
-}
-
-
-// File contracts/UsingLiquidityProtectionService.sol
-
-
-pragma solidity ^0.8.0;
-
-abstract contract UsingLiquidityProtectionService {
-    bool private protected = true;
-    uint64 internal constant HUNDRED_PERCENT = 1e18;
-
-    function liquidityProtectionService() internal pure virtual returns(address);
-    function LPS_isAdmin() internal view virtual returns(bool);
-    function LPS_balanceOf(address _holder) internal view virtual returns(uint);
-    function LPS_transfer(address _from, address _to, uint _value) internal virtual;
-    function counterToken() internal pure virtual returns(address) {
-        return 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2; // WETH
-    }
-    function protectionChecker() internal view virtual returns(bool) {
-        return ProtectionSwitch_manual();
+contract EIP712Base is Initializable {
+    struct EIP712Domain {
+        string name;
+        string version;
+        address verifyingContract;
+        bytes32 salt;
     }
 
-    function FirstBlockTrap_skip() internal pure virtual returns(bool) {
-        return false;
+    string constant public ERC712_VERSION = "1";
+
+    bytes32 internal constant EIP712_DOMAIN_TYPEHASH = keccak256(
+        bytes(
+            "EIP712Domain(string name,string version,address verifyingContract,bytes32 salt)"
+        )
+    );
+    bytes32 internal domainSeperator;
+
+    // supposed to be called once while initializing.
+    // one of the contractsa that inherits this contract follows proxy pattern
+    // so it is not possible to do this in a constructor
+    function _initializeEIP712(
+        string memory name
+    )
+        internal
+        initializer
+    {
+        _setDomainSeperator(name);
     }
 
-    function LiquidityAmountTrap_skip() internal pure virtual returns(bool) {
-        return false;
-    }
-    function LiquidityAmountTrap_blocks() internal pure virtual returns(uint8) {
-        return 5;
-    }
-    function LiquidityAmountTrap_amount() internal pure virtual returns(uint128) {
-        return 5000 * 1e18; // Only valid for tokens with 18 decimals.
-    }
-
-    function LiquidityPercentTrap_skip() internal pure virtual returns(bool) {
-        return false;
-    }
-    function LiquidityPercentTrap_blocks() internal pure virtual returns(uint8) {
-        return 50;
-    }
-    function LiquidityPercentTrap_percent() internal pure virtual returns(uint64) {
-        return HUNDRED_PERCENT / 1000; // 0.1%
+    function _setDomainSeperator(string memory name) internal {
+        domainSeperator = keccak256(
+            abi.encode(
+                EIP712_DOMAIN_TYPEHASH,
+                keccak256(bytes(name)),
+                keccak256(bytes(ERC712_VERSION)),
+                address(this),
+                bytes32(getChainId())
+            )
+        );
     }
 
-    function LiquidityActivityTrap_skip() internal pure virtual returns(bool) {
-        return false;
-    }
-    function LiquidityActivityTrap_blocks() internal pure virtual returns(uint8) {
-        return 30;
-    }
-    function LiquidityActivityTrap_count() internal pure virtual returns(uint8) {
-        return 15;
+    function getDomainSeperator() public view returns (bytes32) {
+        return domainSeperator;
     }
 
-    function lps() private pure returns(ILiquidityProtectionService) {
-        return ILiquidityProtectionService(liquidityProtectionService());
-    }
-
-    function LPS_beforeTokenTransfer(address _from, address _to, uint _amount) internal {
-        if (protectionChecker()) {
-            if (!protected) {
-                return;
-            }
-            require(FirstBlockTrap_skip() || lps().FirstBlockTrap_preValidateTransfer(
-                _from, _to, _amount, counterToken()), 'FirstBlockTrap: blocked');
-            require(LiquidityAmountTrap_skip() || lps().LiquidityAmountTrap_preValidateTransfer(
-                _from,
-                _to,
-                _amount,
-                counterToken(),
-                LiquidityAmountTrap_blocks(),
-                LiquidityAmountTrap_amount()), 'LiquidityAmountTrap: blocked');
-            require(LiquidityPercentTrap_skip() || lps().LiquidityPercentTrap_preValidateTransfer(
-                _from,
-                _to,
-                _amount,
-                counterToken(),
-                LiquidityPercentTrap_blocks(),
-                LiquidityPercentTrap_percent()), 'LiquidityPercentTrap: blocked');
-            require(LiquidityActivityTrap_skip() || lps().LiquidityActivityTrap_preValidateTransfer(
-                _from,
-                _to,
-                _amount,
-                counterToken(),
-                LiquidityActivityTrap_blocks(),
-                LiquidityActivityTrap_count()), 'LiquidityActivityTrap: blocked');
+    function getChainId() public view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
         }
+        return id;
     }
 
-    function revokeBlocked(address[] calldata _holders, address _revokeTo) external {
-        require(LPS_isAdmin(), 'UsingLiquidityProtectionService: not admin');
-        require(protectionChecker(), 'UsingLiquidityProtectionService: protection removed');
-        protected = false;
-        for (uint i = 0; i < _holders.length; i++) {
-            address holder = _holders[i];
-            if (lps().isBlocked(counterToken(), _holders[i])) {
-                LPS_transfer(holder, _revokeTo, LPS_balanceOf(holder));
-            }
-        }
-        protected = true;
-    }
-
-    function disableProtection() external {
-        require(LPS_isAdmin(), 'UsingLiquidityProtectionService: not admin');
-        protected = false;
-    }
-
-    function isProtected() public view returns(bool) {
-        return protected;
-    }
-
-    function ProtectionSwitch_manual() internal view returns(bool) {
-        return protected;
-    }
-
-    function ProtectionSwitch_timestamp(uint _timestamp) internal view returns(bool) {
-        return not(passed(_timestamp));
-    }
-
-    function ProtectionSwitch_block(uint _block) internal view returns(bool) {
-        return not(blockPassed(_block));
-    }
-
-    function blockPassed(uint _block) internal view returns(bool) {
-        return _block < block.number;
-    }
-
-    function passed(uint _timestamp) internal view returns(bool) {
-        return _timestamp < block.timestamp;
-    }
-
-    function not(bool _condition) internal pure returns(bool) {
-        return !_condition;
+    /**
+     * Accept message hash and returns hash message in EIP712 compatible form
+     * So that it can be used to recover signer from signature signed using EIP712 formatted data
+     * https://eips.ethereum.org/EIPS/eip-712
+     * "\\x19" makes the encoding deterministic
+     * "\\x01" is the version byte to make it compatible to EIP-191
+     */
+    function toTypedMessageHash(bytes32 messageHash)
+        internal
+        view
+        returns (bytes32)
+    {
+        return
+            keccak256(
+                abi.encodePacked("\x19\x01", getDomainSeperator(), messageHash)
+            );
     }
 }
 
+// File: contracts/common/NativeMetaTransaction.sol
+
+
+pragma solidity ^0.8.0;
+
+contract NativeMetaTransaction is EIP712Base {
+    bytes32 private constant META_TRANSACTION_TYPEHASH = keccak256(
+        bytes(
+            "MetaTransaction(uint256 nonce,address from,bytes functionSignature)"
+        )
+    );
+    event MetaTransactionExecuted(
+        address userAddress,
+        address relayerAddress,
+        bytes functionSignature
+    );
+    mapping(address => uint256) nonces;
+
+    /*
+     * Meta transaction structure.
+     * No point of including value field here as if user is doing value transfer then he has the funds to pay for gas
+     * He should call the desired function directly in that case.
+     */
+    struct MetaTransaction {
+        uint256 nonce;
+        address from;
+        bytes functionSignature;
+    }
+
+    function executeMetaTransaction(
+        address userAddress,
+        bytes memory functionSignature,
+        bytes32 sigR,
+        bytes32 sigS,
+        uint8 sigV
+    ) public payable returns (bytes memory) {
+        MetaTransaction memory metaTx = MetaTransaction({
+            nonce: nonces[userAddress],
+            from: userAddress,
+            functionSignature: functionSignature
+        });
+
+        require(
+            verify(userAddress, metaTx, sigR, sigS, sigV),
+            "Signer and signature do not match"
+        );
+
+        // increase nonce for user (to avoid re-use)
+        nonces[userAddress] = nonces[userAddress] + 1;
+
+        emit MetaTransactionExecuted(
+            userAddress,
+            msg.sender,
+            functionSignature
+        );
+
+        // Append userAddress and relayer address at the end to extract it from calling context
+        (bool success, bytes memory returnData) = address(this).call(
+            abi.encodePacked(functionSignature, userAddress)
+        );
+        require(success, "Function call not successful");
+
+        return returnData;
+    }
+
+    function hashMetaTransaction(MetaTransaction memory metaTx)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return
+            keccak256(
+                abi.encode(
+                    META_TRANSACTION_TYPEHASH,
+                    metaTx.nonce,
+                    metaTx.from,
+                    keccak256(metaTx.functionSignature)
+                )
+            );
+    }
+
+    function getNonce(address user) public view returns (uint256 nonce) {
+        nonce = nonces[user];
+    }
+
+    function verify(
+        address signer,
+        MetaTransaction memory metaTx,
+        bytes32 sigR,
+        bytes32 sigS,
+        uint8 sigV
+    ) internal view returns (bool) {
+        require(signer != address(0), "NativeMetaTransaction: INVALID_SIGNER");
+        return
+            signer ==
+            ecrecover(
+                toTypedMessageHash(hashMetaTransaction(metaTx)),
+                sigV,
+                sigR,
+                sigS
+            );
+    }
+}
+
+// File: contracts/common/ContextMixin.sol
+
+
+pragma solidity ^0.8.0;
+
+abstract contract ContextMixin {
+    function msgSender()
+        internal
+        view
+        returns (address sender)
+    {
+        if (msg.sender == address(this)) {
+            bytes memory array = msg.data;
+            uint256 index = msg.data.length;
+            assembly {
+                // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
+                sender := and(
+                    mload(add(array, index)),
+                    0xffffffffffffffffffffffffffffffffffffffff
+                )
+            }
+        } else {
+            sender = msg.sender;
+        }
+        return sender;
+    }
+}
+
+// File misc/IParentToken.sol
+interface IParentToken {
+    function paused() external view returns (bool);
+}
 
 // File contracts/Standard.sol
 
-
-pragma solidity ^0.8.0;
-
-
-
 /**
- * @dev {ERC20} token, including:
+ * @dev {ERC20} child token for the Standard toktn, including:
  *
- *  - ability for holders to burn (destroy) their tokens
- *  - a minter role that allows for token minting (creation)
+ *  - ability for childChainManager to burn (destroy) tokens
+ *  - a minter role that allows for token minting (creation) for the childChainManager
  *  - a pauser role that allows to stop all token transfers
- *  - the liquidity protection
+ *  - a deposit role that allows for token depositing for the childChainManager
  *
  * This contract uses {AccessControl} to lock permissioned functions using the
  * different roles - head to its documentation for details.
+ * 
+ * It also uses NativeMetaTransaction and ContextMixin from the matic repo.
  *
  * The account that deploys the contract will be granted the minter and pauser
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to other accounts.
- *
- * The contract will mint 100M with 1 decimals tokens on deploy as a total supply.
  */
-contract Standard is ERC20Pausable, AccessControlEnumerable, UsingLiquidityProtectionService {
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-    constructor()
-    ERC20("Standard", "STND") {
+contract ChildStandardMintableERC20 is 
+    ERC20, 
+    AccessControlEnumerable,
+    IChildToken,
+    NativeMetaTransaction,
+    ContextMixin
+    {
+    bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
+    
+    // ERC721/ERC20 contract token address on root chain
+    address public parent;
+    address public childChainManagerProxy;
+
+    constructor(
+        address childChainManager
+    ) ERC20("Standard", "STND") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
-        _setupRole(MINTER_ROLE, _msgSender());
-        _setupRole(PAUSER_ROLE, _msgSender());
-        _setupRole(BURNER_ROLE, _msgSender());
+        _setupRole(DEPOSITOR_ROLE, childChainManager);
+        childChainManagerProxy = childChainManager;
 
-        _mint(msg.sender, 100000000 * 1e18);
-    }
-
-    function _beforeTokenTransfer(address _from, address _to, uint _amount) internal override {
-        super._beforeTokenTransfer(_from, _to, _amount);
-        LPS_beforeTokenTransfer(_from, _to, _amount);
+        _initializeEIP712("Standard");
     }
 
-    function LPS_isAdmin() internal view override returns(bool) {
-        return hasRole(DEFAULT_ADMIN_ROLE, _msgSender());
+    modifier onlyChildChain() {
+        require(
+            _msgSender() == childChainManagerProxy,
+            "Child token: caller is not the child chain contract"
+        );
+        _;
     }
-    function liquidityProtectionService() internal pure override returns(address) {
-        return 0xaabAe39230233d4FaFf04111EF08665880BD6dFb; // Replace with the correct address.
-    }
-    // Expose balanceOf().
-    function LPS_balanceOf(address _holder) internal view override returns(uint) {
-        return balanceOf(_holder);
-    }
-    // Expose internal transfer function.
-    function LPS_transfer(address _from, address _to, uint _value) internal override {
-        _transfer(_from, _to, _value);
-    }
-    // All the following overrides are optional, if you want to modify default behavior.
-
-    // How the protection gets disabled.
-    function protectionChecker() internal view override returns(bool) {
-        return ProtectionSwitch_timestamp(1620086399); // Switch off protection on Monday, May 3, 2021 11:59:59 PM.
-        // return ProtectionSwitch_block(13000000); // Switch off protection on block 13000000.
-        //return ProtectionSwitch_manual(); // Switch off protection by calling disableProtection(); from owner. Default.
-    }
-
-    // This token will be pooled in pair with:
-    function counterToken() internal pure override returns(address) {
-        return 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2; // WETH
-    }
-
-    // Disable/Enable FirstBlockTrap
-    function FirstBlockTrap_skip() internal pure override returns(bool) {
-        return false;
-    }
-
-    // Disable/Enable absolute amount of tokens bought trap.
-    // Per address per LiquidityAmountTrap_blocks.
-    function LiquidityAmountTrap_skip() internal pure override returns(bool) {
-        return false;
-    }
-    function LiquidityAmountTrap_blocks() internal pure override returns(uint8) {
-        return 4;
-    }
-    function LiquidityAmountTrap_amount() internal pure override returns(uint128) {
-        return 20000 * 1e18; // Only valid for tokens with 18 decimals.
-    }
-
-    // Disable/Enable percent of remaining liquidity bought trap.
-    // Per address per block.
-    function LiquidityPercentTrap_skip() internal pure override returns(bool) {
-        return false;
-    }
-    function LiquidityPercentTrap_blocks() internal pure override returns(uint8) {
-        return 6;
-    }
-    function LiquidityPercentTrap_percent() internal pure override returns(uint64) {
-        return HUNDRED_PERCENT / 20; // 5%
-    }
-
-    // Disable/Enable number of trades trap.
-    // Per block.
-    function LiquidityActivityTrap_skip() internal pure override returns(bool) {
-        return false;
-    }
-    function LiquidityActivityTrap_blocks() internal pure override returns(uint8) {
-        return 3;
-    }
-    function LiquidityActivityTrap_count() internal pure override returns(uint8) {
-        return 8;
-    }
-
+    
     /**
-     * @dev Pauses all token transfers.
-     *
-     * See {ERC20Pausable} and {Pausable-_pause}.
+     * @dev Modifier to make a function callable only when the parent token contract is not paused.
      *
      * Requirements:
      *
-     * - the caller must have the `PAUSER_ROLE`.
+     * - The parent token contract must not be paused.
      */
-    function pause() external {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "Standard: must have pauser role to pause");
-        _pause();
+    modifier whenNotPaused() {
+        require(parent != address(0x0) &&
+            !IParentToken(parent).paused(), "ChildStandardMintableERC20: parent token contract is paused");
+        _;
+    }
+
+    // This is to support Native meta transactions
+    // never use msg.sender directly, use _msgSender() instead
+    function _msgSender()
+        internal
+        override
+        view
+        returns (address sender)
+    {
+        return ContextMixin.msgSender();
+    }
+
+    function setParent(address _parent) external {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "ChildStandardMintableERC20: must have admin role to set parent");
+        require(_parent != address(0x0));
+        parent = _parent;
+    }
+
+
+    // change child chain address
+    function changeChildChain(address newAddress) external {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "ChildStandardMintableERC20: must have admin role to set childChainManager");
+        require(
+            newAddress != address(0),
+            "Child token: new child address is the zero address"
+        );
+        emit ChildChainChanged(childChainManagerProxy, newAddress);
+
+        revokeRole(DEPOSITOR_ROLE, childChainManagerProxy);
+        childChainManagerProxy = newAddress;
+        _setupRole(DEPOSITOR_ROLE, newAddress);
+    }
+
+    /// @dev Function that is called when a user or another contract wants to transfer funds.
+    /// @param to Address of token receiver.
+    /// @param value Number of tokens to transfer.
+    /// @return Returns success of function call.
+    function transfer(address to, uint256 value) public override whenNotPaused returns (bool) {
+        _transfer(_msgSender(), to, value);
+        return true;
     }
 
     /**
-     * @dev Unpauses all token transfers.
-     *
-     * See {ERC20Pausable} and {Pausable-_unpause}.
-     *
-     * Requirements:
-     *
-     * - the caller must have the `PAUSER_ROLE`.
+     * @notice called when user wants to withdraw tokens back to root chain
+     * @dev Should burn user's tokens. This transaction will be verified when exiting on root chain
+     * @param amount amount of tokens to withdraw
      */
-    function unpause() external {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "Standard: must have pauser role to unpause");
-        _unpause();
-    }
-
-
-    /**
-     * @dev Destroys `amount` tokens from the caller.
-     *
-     * See {ERC20-_burn}.
-     *
-     * Requirements:
-     *
-     * - the caller must have the `BURNER_ROLE`.
-     */
-    function burn(uint256 amount) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "Standard: must have burner role to burn");
-
+    function withdraw(uint256 amount) external whenNotPaused {
         _burn(_msgSender(), amount);
     }
 
     /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `amount`.
-     * - the caller must have the `BURNER_ROLE`.
+     * @notice called when token is deposited on root chain
+     * @dev Should be callable only by ChildChainManager
+     * Should handle deposit by minting the required amount for user
+     * Make sure minting is done only by this function
+     * Note: onlyChildChain is not required here due to role check
+     * @param user user address for whom deposit is being done
+     * @param depositData abi encoded amount
      */
-    function burnFrom(address account, uint256 amount) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "Standard: must have burner role to burn");
-
-        uint256 currentAllowance = allowance(account, _msgSender());
-        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
-        _approve(account, _msgSender(), currentAllowance - amount);
-        _burn(account, amount);
+    function deposit(address user, bytes calldata depositData)
+        external
+        override
+    {
+        require(hasRole(DEPOSITOR_ROLE, _msgSender()), "ChildStandardMintableERC20: must have depositor role to deposit");
+        uint256 amount = abi.decode(depositData, (uint256));
+        _mint(user, amount);
     }
+
+    function allowance(address, address) public override pure returns (uint256) {
+        revert("ChildStandardMintableERC20: Disabled feature");
+    }
+
+    function approve(address, uint256) public override pure returns (bool) {
+        revert("ChildStandardMintableERC20: Disabled feature");
+    }
+
+    function transferFrom(address, address, uint256) public override pure returns (bool) {
+        revert("ChildStandardMintableERC20: Disabled feature");
+    }
+
+    event ChildChainChanged(
+        address indexed previousAddress,
+        address indexed newAddress
+    );
 }

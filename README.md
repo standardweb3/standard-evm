@@ -1,5 +1,5 @@
 # Standard Protocol
-
+![banner](./media/standard-evm.png)
 Standard Protocol is the first Collateralized Rebasable Stablecoin (CRS) protocol for
 synthetic assets.
 

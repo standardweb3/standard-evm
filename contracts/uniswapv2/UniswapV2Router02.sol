@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity =0.6.12;
+pragma solidity ^0.8.0;
 
 import './libraries/UniswapV2Library.sol';
 import './libraries/SafeMath.sol';
@@ -9,12 +9,15 @@ import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IWETH.sol';
+import './interfaces/IMTRMarket.sol';
 
-contract UniswapV2Router02 is IUniswapV2Router02 {
+contract UniswapV2Router02 is IUniswapV2Router02, IMTRMarket {
     using SafeMathUniswap for uint;
 
     address public immutable override factory;
     address public immutable override WETH;
+    address public override vault;
+    address public override operator;
 
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, 'UniswapV2Router: EXPIRED');
@@ -28,6 +31,27 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
 
     receive() external payable {
         assert(msg.sender == WETH); // only accept ETH via fallback from the WETH contract
+    }
+    
+     // Migrate vault after upgrade
+    function migrate(address _vault) external override {
+        require(msg.sender == operator, 'UniswapV2: FORBIDDEN'); // sufficient check
+        vault = _vault;
+    }
+    
+    // **** LIQUIDATE ****
+    function liquidate(
+        address tokenA,
+        address tokenB,
+        uint amountA,
+        uint amountB
+    ) external {
+        require(msg.sender == vault, "Liqudate: FORBIDDEN");
+        // check the pair if it exists
+        require(IUniswapV2Factory(factory).getPair(tokenA, tokenB) != address(0), "Liquidate: Pair not supported");
+        address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
+        TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
+        TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
     }
 
     // **** ADD LIQUIDITY ****
@@ -150,7 +174,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountA, uint amountB) {
         address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint).max : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountA, amountB) = removeLiquidity(tokenA, tokenB, liquidity, amountAMin, amountBMin, to, deadline);
     }
@@ -164,7 +188,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountToken, uint amountETH) {
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint).max : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountETH) = removeLiquidityETH(token, liquidity, amountTokenMin, amountETHMin, to, deadline);
     }
@@ -201,7 +225,7 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountETH) {
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint).max : liquidity;
         IUniswapV2Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(
             token, liquidity, amountTokenMin, amountETHMin, to, deadline

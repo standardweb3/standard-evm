@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Initializable",
+  "sourceName": "contracts/bridge/StandardMaticEIP712+MetaTransaction.sol",
+  "abi": [],
+  "bytecode": "0x60806040526000805460ff19169055348015601957600080fd5b50603f8060276000396000f3fe6080604052600080fdfea2646970667358221220d6482156e00c982ed44b728dc95eb40b080475b2d21cd4dd91cf95c7b1621da764736f6c63430008040033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220d6482156e00c982ed44b728dc95eb40b080475b2d21cd4dd91cf95c7b1621da764736f6c63430008040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

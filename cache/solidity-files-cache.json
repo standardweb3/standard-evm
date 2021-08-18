@@ -1831,6 +1831,147 @@
       "artifacts": [
         "IUniswapV2ERC20"
       ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/oracle/AggregatorV3Interface.sol": {
+      "lastModificationDate": 1629328152951,
+      "contentHash": "b9be3f7aa79153708acdc3be6bd1cb35",
+      "sourceName": "contracts/oracle/AggregatorV3Interface.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/oracle/Price.sol": {
+      "lastModificationDate": 1629328875082,
+      "contentHash": "310ef5c703f968c08ad21524f58fb74b",
+      "sourceName": "contracts/oracle/Price.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./AggregatorV3Interface.sol",
+        "./IPrice.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "PriceConsumerV3"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vault/VaultFactory.sol": {
+      "lastModificationDate": 1629328911053,
+      "contentHash": "53a88bc7bd99c8d039863a270c2d25cd",
+      "sourceName": "contracts/vault/VaultFactory.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../oracle/IPrice.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Vault"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/oracle/IPrice.sol": {
+      "lastModificationDate": 1629328870082,
+      "contentHash": "574c698cb6bddc09c44e192b99dbd286",
+      "sourceName": "contracts/oracle/IPrice.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IPrice"
+      ]
     }
   }
 }

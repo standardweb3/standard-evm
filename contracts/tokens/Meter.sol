@@ -60,22 +60,22 @@ contract MeterToken is BlackList, AccessControl {
 
     function mint(address to, uint256 amount) public {
         // Check that the calling account has the minter role
-        require(hasRole(MINTER_ROLE, msg.sender), "Caller is not a minter");
+        require(hasRole(MINTER_ROLE, msg.sender), "Meter: Caller is not a minter");
         _mint(to, amount);
     }
 
     function pause() external {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "Standard: must have pauser role to pause");
+        require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have pauser role to pause");
         _pause();
     }
 
     function unpause() external {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "Standard: must have pauser role to unpause");
+        require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have pauser role to unpause");
         _unpause();
     }
 
     function burn(uint256 amount) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "Standard: must have burner role to burn");
+        require(hasRole(BURNER_ROLE, _msgSender()), "Meter: must have burner role to burn");
 
         _burn(_msgSender(), amount);
     }

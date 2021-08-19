@@ -10,11 +10,6 @@ contract PriceConsumerV3 is IPrice {
 
     string public name;
 
-    /**
-     * Network: Kovan
-     * Aggregator: ETH/USD
-     * Address: 0x9326BFA02ADD2366b30bacB125260Af641031331
-     */
     constructor(address _aggregator, string memory _name) public {
         priceFeed = AggregatorV3Interface(_aggregator);
         name = _name;

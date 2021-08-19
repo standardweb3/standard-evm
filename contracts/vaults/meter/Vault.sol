@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
 import '../../oracle/IPrice.sol';
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
@@ -16,6 +16,8 @@ contract Vault {
     address owner;
     /// Address of a factory
     address factory;
+    /// Address of meter;
+    address meter;
     /// Address of vault ownership registry
     address v1;
 
@@ -36,23 +38,24 @@ contract Vault {
     }
 
     // called once by the factory at time of deployment
-    function initialize(uint collateralId_, uint vaultId_, address aggregator_, address owner_, address v1_) external {
+    function initialize(uint collateralId_, uint vaultId_, address aggregator_, address owner_, address v1_, address meter_) external {
         require(msg.sender == factory, 'Vault: FORBIDDEN'); // sufficient check
         collateralId = collateralId_;
         vaultId = vaultId_;
         aggregator = aggregator_;
         owner = owner_;
         v1 = v1_;
+        meter = meter_;
     }
 
 
     /// Get collateral value in 8 decimal */USD
-    function _getPriceOf() internal returns(int) {
+    function _getCollateralValue() internal returns(int) {
         feed = IPrice(aggregator);
         return feed.getThePrice();
     }
 
-    ///  
+    /// liquidate
 
 
 }

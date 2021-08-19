@@ -45,13 +45,14 @@ contract UniswapV2Router02 is IUniswapV2Router02, IMTRMarket {
         address tokenB,
         uint amountA,
         uint amountB
-    ) external {
+    ) external override {
         require(msg.sender == vault, "Liqudate: FORBIDDEN");
         // check the pair if it exists
         require(IUniswapV2Factory(factory).getPair(tokenA, tokenB) != address(0), "Liquidate: Pair not supported");
         address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
         TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
         TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
+        emit Liquidated(tokenA, tokenB, amountA, amountB);
     }
 
     // **** ADD LIQUIDITY ****

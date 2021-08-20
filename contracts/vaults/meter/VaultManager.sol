@@ -2,9 +2,10 @@ pragma solidity ^0.8.0;
 
 import '../../oracle/OracleRegistry.sol';
 import './Vault.sol';
-import './IVaultFactory.sol';
+import './IVaultManager.sol';
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IV1.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 
@@ -12,14 +13,16 @@ library CDPEngine {
     //using SafeMath for uint;
     function isUndercollateralized(uint collateralPrice_, uint amount1, uint amount2, uint MCR) public returns (bool) {
         /// (10^8 * 10^18~30) / (10^8 * 10^18~30) * 10^2 <= 10^2
-        return ((collateralPrice_ * amount1) / (1e8 * amount2)) * 100 <= MCR; 
+        return (collateralPrice_ * amount1 * 100) / (1e8 * amount2)  <= MCR; 
     }
 }
 
-contract VaultManager is OracleRegistry, IVaultFactory {
+contract VaultManager is OracleRegistry, IVaultManager {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
     event VaultCreated(uint collateralId, uint256 vaultId, address creator, address vault);
+
+    // Vaults
+    mapping (uint => address) Vaults;
 
     // CDP configs
     /// key: Collateral Id, value: Collateral token contract address
@@ -61,7 +64,7 @@ contract VaultManager is OracleRegistry, IVaultFactory {
     }
 
     /// Vault cannot issue stablecoin, it just manages the position
-    function _createVault(uint collateralId_, uint vaultId_, address aggregator_, uint256 amount) internal returns (address vault) {
+    function _createVault(uint collateralId_, uint vaultId_, address aggregator_, uint256 amount_) internal returns (address vault) {
         // calculate cdp
         // require(!_isUndercollateralized(), "VaultManager: Undercollateralized");
         bytes memory bytecode = type(Vault).creationCode;
@@ -69,7 +72,7 @@ contract VaultManager is OracleRegistry, IVaultFactory {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(collateralId_, vaultId_, aggregator_, msg.sender, v1, meter);
+        Vault(vault).initialize(Collaterals[collateralId_], vaultId_, aggregator_, msg.sender, v1, meter, amount_);
         
         emit VaultCreated(collateralId_, vaultId_, msg.sender, vault);
         return vault;
@@ -79,16 +82,23 @@ contract VaultManager is OracleRegistry, IVaultFactory {
         // check tests
         // TODO: @derrenb to add tests for ratio 
         // create vault
-        gIndex.add(1);
+        // mint ERC721 for vault
+        IV1(v1).mint(_msgSender(), gIndex);
         vlt = _createVault(collateralId_, gIndex, PriceFeeds[collateralId_], mtrAmount_);
         // transfer collateral to the vault, manage collateral from there
         IERC20(Collaterals[collateralId_]).safeTransferFrom(_msgSender(), vlt, cAmount_);
+        gIndex.add(1);
         // mint mtr to the sender
-        IERC20(meter).safemint(_msgSender(), mtrAmount_);
+        // check rebased supply of meter
+        //IERC20(meter).safemint(_msgSender(), mtrAmount_);
     }
 
     function getCDPConfig(uint collateralId_) external view override returns (uint MCR, uint LFR) {
         return (MCRConfig[collateralId_], LFRConfig[collateralId_]);
+    }
+
+    function getVault(uint vaultId_) external view override returns (address) {
+        return Vaults[vaultId_];
     }
 
     function _isUndercollateralized(uint collateralPrice_, uint amount1, uint amount2, uint MCR) internal returns (bool) {

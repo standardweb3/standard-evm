@@ -4,6 +4,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./IStablecoin.sol";
 
 abstract contract BlackList is Ownable, ERC20Pausable {
 
@@ -43,22 +44,20 @@ abstract contract BlackList is Ownable, ERC20Pausable {
 
 }
 
-contract MeterToken is BlackList, AccessControl {
+contract MeterToken is BlackList, AccessControl, IStablecoin {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-
+    
     constructor()
     ERC20("Meter", "MTR") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
-        _setupRole(BURNER_ROLE, _msgSender());
     }
 
-    function mint(address to, uint256 amount) public {
+    function mint(address to, uint256 amount) external override {
         // Check that the calling account has the minter role
         require(hasRole(MINTER_ROLE, msg.sender), "Meter: Caller is not a minter");
         _mint(to, amount);
@@ -74,9 +73,14 @@ contract MeterToken is BlackList, AccessControl {
         _unpause();
     }
 
-    function burn(uint256 amount) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "Meter: must have burner role to burn");
-
+    function burn(uint256 amount) external override {
         _burn(_msgSender(), amount);
+    }
+
+    function burnFrom(address account, uint256 amount) external override {
+        uint256 currentAllowance = allowance(account, _msgSender());
+        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
+        _approve(account, _msgSender(), currentAllowance - amount);
+        _burn(account, amount);
     }
 }

@@ -18,20 +18,18 @@ library CDPEngine {
 
 contract VaultManager is OracleRegistry, IVaultManager {
     using SafeERC20 for IERC20;
-    event VaultCreated(uint collateralId, uint256 vaultId, address creator, address vault);
+    event VaultCreated(address collateral, uint256 vaultId, address creator, address vault);
 
     // Vaults
     mapping (uint => address) Vaults;
 
     // CDP configs
-    /// key: Collateral Id, value: Collateral token contract address
-    mapping (uint => address) internal Collaterals;
-    /// key: Collateral Id, value: Liquidation Fee Ratio (LFR) in percent(%) 
-    mapping (uint => uint) internal LFRConfig;
-    /// key: Collateral Id, value: Minimum Collateralization Ratio (MCR) in percent(%)
-    mapping (uint => uint) internal MCRConfig;
-    /// key: Collateral Id, value: Stability Fee Ratio (SFR) in percent(%)
-    mapping (uint => uint) internal SFRConfig; 
+    /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) 
+    mapping (address => uint) internal LFRConfig;
+    /// key: Collateral address, value: Minimum Collateralization Ratio (MCR) in percent(%)
+    mapping (address => uint) internal MCRConfig;
+    /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%)
+    mapping (address => uint) internal SFRConfig; 
     
     /// Address of cdp nft registry
     address v1;
@@ -55,45 +53,47 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _;
     }
 
-    function initializeCDP(uint collateralId_, address collateral_, uint MCR_, uint LFR_, uint SFR_) external onlyManager {
-        Collaterals[collateralId_] = collateral_;
-        LFRConfig[collateralId_] = LFR_;
-        MCRConfig[collateralId_] = MCR_;
-        SFRConfig[collateralId_] = SFR_;   
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) external onlyManager {
+        LFRConfig[collateral_] = LFR_;
+        MCRConfig[collateral_] = MCR_;
+        SFRConfig[collateral_] = SFR_;   
     }
 
     /// Vault cannot issue stablecoin, it just manages the position
-    function _createVault(uint collateralId_, uint vaultId_, address aggregator_, uint256 amount_) internal returns (address vault) {
+    function _createVault(address collateral_, uint vaultId_, uint256 amount_) internal returns (address vault) {
         // calculate cdp
         // require(!_isUndercollateralized(), "VaultManager: Undercollateralized");
+        // get aggregators
+        address cAggregator = PriceFeeds[collateral_];
+        address dAggregator = PriceFeeds[meter];
         bytes memory bytecode = type(Vault).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(aggregator_, msg.sender));
+        bytes32 salt = keccak256(abi.encodePacked(collateral_, vaultId_, cAggregator, dAggregator, amount_, msg.sender));
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(Collaterals[collateralId_], vaultId_, aggregator_, msg.sender, v1, meter, amount_);
+        Vault(vault).initialize(collateral_, vaultId_, cAggregator, dAggregator, v1, meter, amount_);
         
-        emit VaultCreated(collateralId_, vaultId_, msg.sender, vault);
+        emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }
 
-    function createCDP(uint collateralId_, uint cAmount_, uint mtrAmount_) public {
+    function createCDP(address collateral_, uint cAmount_, uint mtrAmount_) public {
         // check tests
         // TODO: @derrenb to add tests for ratio 
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
-        vlt = _createVault(collateralId_, gIndex, PriceFeeds[collateralId_], mtrAmount_);
+        vlt = _createVault(collateral_, gIndex, mtrAmount_);
         // transfer collateral to the vault, manage collateral from there
-        IERC20(Collaterals[collateralId_]).safeTransferFrom(_msgSender(), vlt, cAmount_);
-        gIndex.add(1);
+        IERC20(collateral_).safeTransferFrom(_msgSender(), vlt, cAmount_);
+        gIndex + 1;
         // mint mtr to the sender
         // check rebased supply of meter
         //IERC20(meter).safemint(_msgSender(), mtrAmount_);
     }
 
-    function getCDPConfig(uint collateralId_) external view override returns (uint MCR, uint LFR) {
-        return (MCRConfig[collateralId_], LFRConfig[collateralId_]);
+    function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR) {
+        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_]);
     }
 
     function getVault(uint vaultId_) external view override returns (address) {
@@ -104,4 +104,5 @@ contract VaultManager is OracleRegistry, IVaultManager {
         /// (10^8 * 10^18~30) / (10^8 * 10^18~30) * 10^2 <= 10^2
         return ((collateralPrice_ * amount1) / (1e8 * amount2)) * 100 <= MCR; 
     }
+
 }

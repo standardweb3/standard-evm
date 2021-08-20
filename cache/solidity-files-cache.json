@@ -1939,8 +1939,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/V1.sol": {
-      "lastModificationDate": 1629415106997,
-      "contentHash": "0dbb4615335360457d368c05178184d7",
+      "lastModificationDate": 1629421708426,
+      "contentHash": "bffd39caa8d26ae0d5cd5d86f8ff4cd7",
       "sourceName": "contracts/vaults/meter/V1.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2126,8 +2126,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/Vault.sol": {
-      "lastModificationDate": 1629413544050,
-      "contentHash": "d82fdf2962db23121ec7646cf9c5d12d",
+      "lastModificationDate": 1629453704479,
+      "contentHash": "7122df0df75a881818fd67ace9bfc94d",
       "sourceName": "contracts/vaults/meter/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2155,8 +2155,11 @@
         "../../oracle/IPrice.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "./IVault.sol"
+        "./IVault.sol",
+        "./IVaultManager.sol",
+        "./IV1.sol",
+        "../../uniswapv2/interfaces/IMTRMarket.sol",
+        "../../tokens/IStablecoin.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -2166,8 +2169,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/oracle/OracleRegistry.sol": {
-      "lastModificationDate": 1629358429706,
-      "contentHash": "4f7ea8bfa35b7d71bd70d57cbd4bb89f",
+      "lastModificationDate": 1629453049958,
+      "contentHash": "661c7bda4784bc60a550d9fc606e39cd",
       "sourceName": "contracts/oracle/OracleRegistry.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2271,8 +2274,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/VaultManager.sol": {
-      "lastModificationDate": 1629414882894,
-      "contentHash": "c0c303c76068cec1714b3c2f49631814",
+      "lastModificationDate": 1629453462944,
+      "contentHash": "b6fe23f74a7a7816f60f73a701758a42",
       "sourceName": "contracts/vaults/meter/VaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2300,7 +2303,6 @@
         "../../oracle/OracleRegistry.sol",
         "./Vault.sol",
         "./IVaultManager.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "./IV1.sol",
         "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
@@ -2314,8 +2316,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IVaultManager.sol": {
-      "lastModificationDate": 1629415082309,
-      "contentHash": "efab34a6c12387e9098dff3bd49f104a",
+      "lastModificationDate": 1629452725110,
+      "contentHash": "e740716e26afcb0032a4c2e3e8b54c5b",
       "sourceName": "contracts/vaults/meter/IVaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2348,8 +2350,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IV1.sol": {
-      "lastModificationDate": 1629415116785,
-      "contentHash": "13590928e45ad33128bab3adc4e59580",
+      "lastModificationDate": 1629421652754,
+      "contentHash": "17c33442ab336c36b476ccc7c230dc4d",
       "sourceName": "contracts/vaults/meter/IV1.sol",
       "solcConfig": {
         "version": "0.8.4",

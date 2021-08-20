@@ -5,19 +5,13 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract OracleRegistry is AccessControl {
     bytes32 public constant ORACLE_OPERATOR_ROLE = keccak256("ORACLE_OPERATOR_ROLE");
-    event AggregatorAdded(uint assetId, address aggregator);
-    mapping (uint => address) internal PriceFeeds;
+    event AggregatorAdded(address asset, address aggregator);
+    mapping (address => address) internal PriceFeeds;
     IPrice feed;
 
-    function _getPriceOf(uint assetId_) internal returns(int) {
-        require(PriceFeeds[assetId_] != address(0x0), "VAULT: Asset not registered");
-        feed = IPrice(PriceFeeds[assetId_]);
-        return feed.getThePrice();
-    }
-
-    function addOracle(uint assetId_, address aggregator_) public {
+    function addOracle(address asset_, address aggregator_) public {
         require(hasRole(ORACLE_OPERATOR_ROLE, msg.sender), "Meter: Caller is not an Oracle Operator");
-        PriceFeeds[assetId_] = aggregator_;
-        emit AggregatorAdded(assetId_, aggregator_);
+        PriceFeeds[asset_] = aggregator_;
+        emit AggregatorAdded(asset_, aggregator_);
     }
 }

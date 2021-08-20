@@ -4,6 +4,7 @@ import '../../oracle/IPrice.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./IVault.sol";
+import "./IVaultManager.sol";
 import "./IV1.sol";
 import "../../uniswapv2/interfaces/IMTRMarket.sol";
 import "../../tokens/IStablecoin.sol";
@@ -15,68 +16,68 @@ contract Vault is IVault {
     IERC721 V1;
     /// Market interface 
     IMTRMarket market;
-    /// Aggregator contract address to get processed price data
-    address aggregator;
-    /// Owner of a vault
-    address owner;
-    /// Address of a factory
-    address factory;
-    /// Address of meter;
-    address meter;
+    /// Vault manager
+    IVaultManager vltManager;
+    /// Collateral Aggregator contract address to get processed price data
+    address cAggregator;
+    /// Debt Aggregator contract address to get processed price data
+    address dAggregator;
+    /// Address of a manager
+    address manager;
+    /// Address of debt;
+    address debt;
     /// Address of vault ownership registry
     address v1;
     /// address of a collateral
     address collateral;
-
     /// Vault global identifier
     uint vaultId;
-
-    /// debt amount 
-    uint256 debt;
-
-    /// stability fee
-    uint256 stabilityFee;
-
-    /// debt price aggregator
-    address debtPrice;
+    /// borrowed amount 
+    uint256 borrow;
 
 
     constructor() public {
-        factory = msg.sender;
+        manager = msg.sender;
     }
 
-    modifier onlyVaultOwner(uint256 vaultId_) {
+    modifier onlyVaultOwner {
         V1 = IERC721(v1);
-        require(V1.ownerOf(vaultId_) == msg.sender, "Vault: Vault is not owned by you");
+        require(V1.ownerOf(vaultId) == msg.sender, "Vault: Vault is not owned by you");
         _;
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address aggregator_, address owner_, address v1_, address meter_, uint256 amount_) external {
-        require(msg.sender == factory, 'Vault: FORBIDDEN'); // sufficient check
+    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_) external {
+        require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;
-        aggregator = aggregator_;
-        owner = owner_;
+        cAggregator = cAggregator_;
+        dAggregator = dAggregator_;
         v1 = v1_;
-        meter = meter_;
-        debt = amount_;
+        debt = debt_;
+        borrow = amount_;
     }
 
 
     /// Get collateral value in 8 decimal */USD
-    function _getCollateralValue() internal returns(int) {
-        feed = IPrice(aggregator);
-        return feed.getThePrice();
+    function _getAssetPrice(address aggregator_) internal returns(uint) {
+        feed = IPrice(aggregator_);
+        return uint(feed.getThePrice());
     }
 
     /// liquidate
-    function _liquidate() internal {
-        IMTRMarket(market).liquidate(collateral, meter, IERC20(collateral).balanceOf(address(this)), 0);
+    function liquidate() public {
+        if (collateral == address(0)) {
+            require(!isValidCollateral(cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
+        } else {
+            require(!isValidCollateral(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
+        }
     }
     
     /// Deposit collateral
-    function depositCollateralNative(uint256 amount_) payable public onlyVaultOwner {
+    function depositCollateralNative() payable public onlyVaultOwner {
         require(collateral == address(0), "Vault: collateral is not a native asset"); 
         emit DepositCollateral(vaultId, msg.value);        
     }
@@ -84,35 +85,28 @@ contract Vault is IVault {
     /// Deposit collateral
     function depositCollateral(uint256 amount_) public onlyVaultOwner {
         IERC20(collateral).transferFrom(msg.sender, address(this), amount_);
-        emit DepositCollateral(vaultId, msg.value);        
+        emit DepositCollateral(vaultId, amount_);        
     }
 
     /// Withdraw collateral
-    function withdrawCollateralNative(uint256 amount_) public onlyVaultOwner {
+    function withdrawCollateralNative() payable public onlyVaultOwner {
         require(collateral == address(0), "Vault: collateral is not a native asset");
-        require(address(this).balance >= amount_, "Vault: Not enough collateral");
-
-        
-        if(debt != 0) {
-            require(isValidCollateral(address(this).balance - amount_, debt), "Withdrawal would put vault below minimum collateral percentage");
+        uint256 balance = address(this).balance;
+        require(balance >= msg.value, "Vault: Not enough collateral");    
+        if(borrow != 0) {
+            require(isValidCollateral(cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral percentage");
         }
-
-        msg.sender.transfer(amount_);
-
-        emit WithdrawCollateral(vaultId, amount_);
+        payable(msg.sender).transfer(msg.value);
+        emit WithdrawCollateral(vaultId, msg.value);
     }
 
     /// Withdraw collateral
     function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
         require(address(this).balance >= amount_, "Vault: Not enough collateral");
-
-        
-        if(debt != 0) {
-            require(isValidCollateral(address(this).balance - amount_, debt), "Withdrawal would put vault below minimum collateral percentage");
+        if(borrow != 0) {
+            require(isValidCollateral(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral percentage");
         }
-
         IERC20(collateral).transfer(msg.sender, amount_);
-
         emit WithdrawCollateral(vaultId, amount_);
     }
 
@@ -120,10 +114,10 @@ contract Vault is IVault {
     function payback() public onlyVaultOwner {
         // calculate debt with interest
         // burn mtr debt with interest
-        _burnMTRFromVault(debt);
+        _burnMTRFromVault(borrow);
         // burn vault nft
         _burnV1FromVault();
-        emit PayBack(vaultId, debt, stabilityFee);
+        emit PayBack(vaultId, borrow, borrow); // replace this with stability fee 
         // self destruct the contract
     }
 
@@ -134,33 +128,32 @@ contract Vault is IVault {
 
     /// burn vault mtr
     function _burnMTRFromVault(uint256 amount_) internal {
-        IStablecoin(meter).burnFrom(msg.sender, amount_);
+        IStablecoin(debt).burnFrom(msg.sender, amount_);
     }
 
-    function isValidCollateral(uint256 collateral, uint256 debt) private view returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = calculateCollateralProperties(collateral, debt);
+    function isValidCollateral(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
+        (uint256 collateralValueTimes100, uint256 debtValue) = calculatePosition(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
-        uint256 collateralPercentage = collateralValueTimes100.div(debtValue);
+        uint256 collateralPercentage = collateralValueTimes100 / debtValue; // overflow check
 
-        return collateralPercentage >= _minimumCollateralPercentage;
+        (uint mcr, uint lfr, uint sfr) = IVaultManager(manager).getCDPConfig(collateral);
+
+        return collateralPercentage >= mcr;
     }
 
-    function calculateCollateralProperties(uint256 collateral, uint256 debt) private view returns (uint256, uint256) {
-        assert(getEthPriceSource() != 0);
-        assert(getTokenPriceSource() != 0);
+    function calculatePosition(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
+        uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
+        uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
+        uint256 collateralValueTimes100 = collateralValue * 100;
+        assert(collateralValueTimes100 >= collateralValue); // overflow check
+        return (collateralValue, debtValue);        
+    }
 
-        uint256 collateralValue = collateral.mul(getEthPriceSource() );
-
-        assert(collateralValue >= collateral);
-
-        uint256 debtValue = debt.mul(getTokenPriceSource());
-
-        assert(debtValue >= debt);
-
-        uint256 collateralValueTimes100 = collateralValue.mul(100);
-
-        assert(collateralValueTimes100 > collateralValue);
-
-        return (collateralValueTimes100, debtValue);
+    function _getAssetValue(address aggregator, uint256 amount_) internal returns (uint256) {
+        uint price = _getAssetPrice(aggregator);
+        assert(price != 0);
+        uint256 assetValue = price * amount_;
+        assert(assetValue >= amount_); // overflow check
+        return assetValue;
     }
 }

@@ -15,7 +15,7 @@ contract Vault is IVault {
     /// Vault NFT interface
     IERC721 V1;
     /// Market interface 
-    IMTRMarket market;
+    address market;
     /// Vault manager
     IVaultManager vltManager;
     /// Collateral Aggregator contract address to get processed price data
@@ -50,7 +50,7 @@ contract Vault is IVault {
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_) external {
+    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market) external {
         require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;

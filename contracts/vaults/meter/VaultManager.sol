@@ -37,10 +37,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
     uint256 gIndex = 0;
     /// Address pointer for vault
     address vlt;
+    /// Address of Standard market
+    address market;
 
-    constructor(address v1_, address meter_) {
+    constructor(address v1_, address meter_, address market_) {
         v1 = v1_;
         meter = meter_;
+        market = market_;
         manager = _msgSender();
     }
 
@@ -63,7 +66,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_);
+        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market);
         
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;

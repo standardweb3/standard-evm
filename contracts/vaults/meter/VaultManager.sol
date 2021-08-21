@@ -90,6 +90,26 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
 
+    function createCDPNative(uint dAmount_) payable public {
+        // get aggregators
+        address cAggregator = PriceFeeds[address(0)];
+        address dAggregator = PriceFeeds[meter];
+        // check tests
+        isValidCollateral(address(0), cAggregator, dAggregator, msg.value, dAmount_);
+        // create vault
+        // mint ERC721 for vault
+        IV1(v1).mint(_msgSender(), gIndex);
+        vlt = _createVault(address(0), gIndex, cAggregator, dAggregator, dAmount_);
+        // transfer collateral native currency to the vault, manage collateral from there...which is already done
+        gIndex + 1; // increment vault id
+        // check rebased supply of meter
+        if (rebaseActive) {
+            require(IERC20(meter).totalSupply() + dAmount_ <= desiredSupply, "VaultManager: MTR borrow is blocked for stability");
+        }
+        // mint mtr to the sender
+        IStablecoin(meter).mint(_msgSender(), dAmount_);
+    }
+
     function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR) {
         return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_]);
     }

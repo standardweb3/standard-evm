@@ -34,10 +34,13 @@ contract Vault is IVault {
     uint vaultId;
     /// borrowed amount 
     uint256 borrow;
+    /// created block timestamp
+    uint256 createdAt;
 
 
     constructor() public {
         manager = msg.sender;
+        createdAt = block.timestamp;
     }
 
     modifier onlyVaultOwner {
@@ -56,13 +59,6 @@ contract Vault is IVault {
         v1 = v1_;
         debt = debt_;
         borrow = amount_;
-    }
-
-
-    /// Get collateral value in 8 decimal */USD
-    function _getAssetPrice(address aggregator_) internal returns(uint) {
-        feed = IPrice(aggregator_);
-        return uint(feed.getThePrice());
     }
 
     /// liquidate
@@ -111,14 +107,17 @@ contract Vault is IVault {
     }
 
     /// Close CDP
-    function payback() public onlyVaultOwner {
+    function payback(uint256 amount_) public onlyVaultOwner {
         // calculate debt with interest
+        uint fee = _calculateFee();
+        require(fee + borrow == amount_, "Vault: not enough balance to payback");
         // burn mtr debt with interest
-        _burnMTRFromVault(borrow);
+        _burnMTRFromVault(amount_);
         // burn vault nft
         _burnV1FromVault();
-        emit PayBack(vaultId, borrow, borrow); // replace this with stability fee 
+        emit PayBack(vaultId, borrow, fee); // replace this with stability fee 
         // self destruct the contract
+        selfdestruct(payable(msg.sender));
     }
 
     /// burn vault v1
@@ -132,7 +131,7 @@ contract Vault is IVault {
     }
 
     function isValidCollateral(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = calculatePosition(cAggregator_, dAggregator_, cAmount_, dAmount_);
+        (uint256 collateralValueTimes100, uint256 debtValue) = _calculatePosition(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
         uint256 collateralPercentage = collateralValueTimes100 / debtValue; // overflow check
 
@@ -141,12 +140,18 @@ contract Vault is IVault {
         return collateralPercentage >= mcr;
     }
 
-    function calculatePosition(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
+    function _calculatePosition(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
         uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
         assert(collateralValueTimes100 >= collateralValue); // overflow check
         return (collateralValue, debtValue);        
+    }
+
+    /// Get collateral value in 8 decimal */USD
+    function _getAssetPrice(address aggregator_) internal returns(uint) {
+        feed = IPrice(aggregator_);
+        return uint(feed.getThePrice());
     }
 
     function _getAssetValue(address aggregator, uint256 amount_) internal returns (uint256) {
@@ -155,5 +160,18 @@ contract Vault is IVault {
         uint256 assetValue = price * amount_;
         assert(assetValue >= amount_); // overflow check
         return assetValue;
+    }
+
+    function _calculateFee() internal returns (uint) {
+        uint256 assetValue = _getAssetValue(dAggregator, borrow);
+        (uint mcr, uint lfr, uint sfr) = IVaultManager(manager).getCDPConfig(collateral);
+        /// (sfr * assetValue/100) * (duration in months)
+        uint256 fee = sfr * assetValue;
+        assert(fee >= assetValue);
+        return fee / 100;
+    }
+
+    function getDebt() public returns (uint) {
+        return _calculateFee() + borrow;
     }
 }

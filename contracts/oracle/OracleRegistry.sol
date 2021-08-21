@@ -9,6 +9,12 @@ contract OracleRegistry is AccessControl {
     mapping (address => address) internal PriceFeeds;
     IPrice feed;
 
+    function _getPriceOf(address asset_) internal returns(int) {
+        require(PriceFeeds[asset_] != address(0x0), "VAULT: Asset not registered");
+        feed = IPrice(PriceFeeds[asset_]);
+        return feed.getThePrice();
+    }
+
     function addOracle(address asset_, address aggregator_) public {
         require(hasRole(ORACLE_OPERATOR_ROLE, msg.sender), "Meter: Caller is not an Oracle Operator");
         PriceFeeds[asset_] = aggregator_;

@@ -9,6 +9,11 @@ const expectArray = (actual, expected) => {
   }
 };
 
+
+// Case 1: create vault with two mock tokens
+describe('')
+
+/*
 describe('StandardToken', function() {
   let owner, user1, user2, user3, revoker;
   let ownerSigner, user1Signer, user2Signer, user3Signer, revokerSigner;
@@ -394,3 +399,4 @@ describe('StandardToken', function() {
   });
 });
 
+*/

@@ -22,7 +22,8 @@
     "dotenv": "^9.0.0",
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.1.0",
-    "hardhat": "^2.1.2"
+    "hardhat": "^2.1.2",
+    "hardhat-gas-reporter": "^1.0.4"
   },
   "dependencies": {
     "@remix-project/remixd": "^0.5.0",

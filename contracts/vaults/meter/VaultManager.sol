@@ -26,6 +26,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     mapping (address => uint) internal MCRConfig;
     /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%)
     mapping (address => uint) internal SFRConfig; 
+    /// key: Collateral address, value: collateral decimals, oracles come with same precision, so amounts has to be adjusted to collateral
+    mapping (address => uint8) internal CDecimals;
     
     /// Address of cdp nft registry
     address v1;
@@ -77,7 +79,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         address cAggregator = PriceFeeds[collateral_];
         address dAggregator = PriceFeeds[meter];
         // check tests
-        isValidCollateral(collateral_, cAggregator, dAggregator, cAmount_, dAmount_);
+        isValidCDP(collateral_, cAggregator, dAggregator, cAmount_, dAmount_);
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
@@ -98,7 +100,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         address cAggregator = PriceFeeds[address(0)];
         address dAggregator = PriceFeeds[meter];
         // check tests
-        isValidCollateral(address(0), cAggregator, dAggregator, msg.value, dAmount_);
+        isValidCDP(address(0), cAggregator, dAggregator, msg.value, dAmount_);
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
@@ -113,8 +115,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
 
-    function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR) {
-        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_]);
+    function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals) {
+        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], CDecimals[collateral_]);
     }
 
     function getVault(uint vaultId_) external view override returns (address) {
@@ -132,17 +134,23 @@ contract VaultManager is OracleRegistry, IVaultManager {
         desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
     }
 
-    function isValidCollateral(address collateral_, address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = _calculatePosition(cAggregator_, dAggregator_, cAmount_, dAmount_);
+    function isValidCDP(address collateral_, address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
+        (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
-        uint256 collateralPercentage = collateralValueTimes100 / debtValue; // overflow check
+        (uint mcr, uint lfr, uint sfr, uint cDecimals) = this.getCDPConfig(collateral_);
 
-        (uint mcr, uint lfr, uint sfr) = this.getCDPConfig(collateral_);
+        uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
-        return collateralPercentage >= mcr;
+        if (debtValueAdjusted == 0) {
+            return true;
+        }
+
+        uint256 collateralRatio = collateralValueTimes100 / debtValueAdjusted;
+
+        return collateralRatio >= mcr;
     }
 
-    function _calculatePosition(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
+    function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
         uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;

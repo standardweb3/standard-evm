@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
 require("@openzeppelin/hardhat-upgrades");
+require("hardhat-gas-reporter");
 // const { start } = require('node:repl');
 const LPS = require("./test/LiquidityProtectionService.json");
 
@@ -233,4 +234,8 @@ module.exports = {
       },
     },
   },
+  gasReporter: {
+    currency: 'ETH',
+    gasPrice: 67.80
+  }
 };

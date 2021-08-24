@@ -64,10 +64,10 @@ contract Vault is IVault {
     /// liquidate
     function liquidate() public {
         if (collateral == address(0)) {
-            require(!isValidCollateral(cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            require(!isValidCDP(collateral, cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
             IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
         } else {
-            require(!isValidCollateral(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            require(!isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
             IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
         }
     }
@@ -90,7 +90,7 @@ contract Vault is IVault {
         uint256 balance = address(this).balance;
         require(balance >= msg.value, "Vault: Not enough collateral");    
         if(borrow != 0) {
-            require(isValidCollateral(cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral percentage");
+            require(isValidCDP(collateral, cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral percentage");
         }
         payable(msg.sender).transfer(msg.value);
         emit WithdrawCollateral(vaultId, msg.value);
@@ -100,7 +100,7 @@ contract Vault is IVault {
     function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
         require(address(this).balance >= amount_, "Vault: Not enough collateral");
         if(borrow != 0) {
-            require(isValidCollateral(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral percentage");
+            require(isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral percentage");
         }
         IERC20(collateral).transfer(msg.sender, amount_);
         emit WithdrawCollateral(vaultId, amount_);
@@ -130,17 +130,24 @@ contract Vault is IVault {
         IStablecoin(debt).burnFrom(msg.sender, amount_);
     }
 
-    function isValidCollateral(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = _calculatePosition(cAggregator_, dAggregator_, cAmount_, dAmount_);
+    function isValidCDP(address collateral_, address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
+        (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
-        uint256 collateralPercentage = collateralValueTimes100 / debtValue; // overflow check
+        (uint mcr, uint lfr, uint sfr, uint cDecimals) = IVaultManager(manager).getCDPConfig(collateral);
 
-        (uint mcr, uint lfr, uint sfr) = IVaultManager(manager).getCDPConfig(collateral);
+        uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
-        return collateralPercentage >= mcr;
+        // if the debt become obsolete
+        if (debtValueAdjusted == 0) {
+            return true;
+        }
+
+        uint256 collateralRatio = collateralValueTimes100 / debtValueAdjusted;
+
+        return collateralRatio >= mcr;
     }
 
-    function _calculatePosition(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
+    function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
         uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
@@ -164,7 +171,7 @@ contract Vault is IVault {
 
     function _calculateFee() internal returns (uint) {
         uint256 assetValue = _getAssetValue(dAggregator, borrow);
-        (uint mcr, uint lfr, uint sfr) = IVaultManager(manager).getCDPConfig(collateral);
+        (uint mcr, uint lfr, uint sfr, uint cDecimals) = IVaultManager(manager).getCDPConfig(collateral);
         /// (sfr * assetValue/100) * (duration in months)
         uint256 fee = sfr * assetValue;
         assert(fee >= assetValue);

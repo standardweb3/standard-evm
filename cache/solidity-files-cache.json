@@ -2126,8 +2126,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/Vault.sol": {
-      "lastModificationDate": 1629558266325,
-      "contentHash": "6204312e1c2ad5ac25957725a2e41003",
+      "lastModificationDate": 1629811943477,
+      "contentHash": "7bb0dd6034a08aeeea2062417dabee5e",
       "sourceName": "contracts/vaults/meter/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2274,8 +2274,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/VaultManager.sol": {
-      "lastModificationDate": 1629528523215,
-      "contentHash": "22770aaf307df06131583fd7838f8a45",
+      "lastModificationDate": 1629788325629,
+      "contentHash": "0b3a0bc96d5e8c8fbf510c6fa4d323cf",
       "sourceName": "contracts/vaults/meter/VaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2311,13 +2311,12 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "CDPEngine",
         "VaultManager"
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IVaultManager.sol": {
-      "lastModificationDate": 1629527807799,
-      "contentHash": "e740716e26afcb0032a4c2e3e8b54c5b",
+      "lastModificationDate": 1629783162762,
+      "contentHash": "206df94223e52e16d2fe3cb62ba0cbcb",
       "sourceName": "contracts/vaults/meter/IVaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",

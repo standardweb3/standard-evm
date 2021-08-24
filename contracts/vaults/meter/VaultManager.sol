@@ -141,6 +141,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
+        // if the debt become obsolete
         if (debtValueAdjusted == 0) {
             return true;
         }

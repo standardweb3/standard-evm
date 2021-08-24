@@ -14,3 +14,4 @@ truffle-config.js
 !deployments/*.log
 node_modules
 artifacts
+cache

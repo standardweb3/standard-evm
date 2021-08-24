@@ -11,6 +11,13 @@ For questions about interacting with Standard protocol, please visit [our Discor
 
 For security concerns, email [security@standardprotocol.org](mailto:security@standardprotocol.org).
 
+# Contracts
+
+| Contract Name         | Kovan                                      | Mumbai | Eth Mainnet | Polygon Mainnet | Shiden |
+|-----------------------|--------------------------------------------|--------|-------------|-----------------|--------|
+| UniswapV2Factory.sol  | 0x0795106fE1D6B169E26AeC99EFDf27a4262a4a9e |        |             |                 |        |
+| UniswapV2Router02.sol | 0x26C9e0cA922636C319bD76d9Eebff7A9f94c7890 |        |             |                 |        |
+|                       |                                            |        |             |                 |        |
 
 Discussion
 ----------

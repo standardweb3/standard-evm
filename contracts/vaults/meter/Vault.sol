@@ -36,6 +36,8 @@ contract Vault is IVault {
     uint256 borrow;
     /// created block timestamp
     uint256 createdAt;
+    /// address of fee Pool
+    address feePool;
 
 
     constructor() public {
@@ -106,17 +108,39 @@ contract Vault is IVault {
         emit WithdrawCollateral(vaultId, amount_);
     }
 
+    /// Payback MTR
+    function payDebt(uint256 amount_) public onlyVaultOwner {
+        // calculate debt with interest
+        uint fee = _calculateFee();
+        require(amount_ != 0, "Vault: amount is zero");
+        // send MTR to the vault
+        IERC20(debt).transferFrom(msg.sender, address(this), amount_);
+        // send fee to the pool
+        IERC20(debt).transfer(feePool, fee);
+        // burn mtr debt
+        uint256 burn = amount_ - fee;
+        _burnMTRFromVault(burn);
+        borrow -=  burn;
+        emit PayBack(vaultId, borrow, fee);
+        // self destruct the contract, send remaining balance if collateral is native currency
+        selfdestruct(payable(msg.sender));
+    }
+
     /// Close CDP
-    function payback(uint256 amount_) public onlyVaultOwner {
+    function closeVault(uint256 amount_) public onlyVaultOwner {
         // calculate debt with interest
         uint fee = _calculateFee();
         require(fee + borrow == amount_, "Vault: not enough balance to payback");
+        // send MTR to the vault
+        IERC20(debt).transferFrom(msg.sender, address(this), amount_);
+        // send fee to the pool
+        IERC20(debt).transfer(feePool, fee);
         // burn mtr debt with interest
-        _burnMTRFromVault(amount_);
+        _burnMTRFromVault(amount_ - fee);
         // burn vault nft
         _burnV1FromVault();
-        emit PayBack(vaultId, borrow, fee); // replace this with stability fee 
-        // self destruct the contract
+        emit CloseVault(address(this), amount_, fee); 
+        // self destruct the contract, send remaining balance if collateral is native currency
         selfdestruct(payable(msg.sender));
     }
 
@@ -138,13 +162,7 @@ contract Vault is IVault {
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
         // if the debt become obsolete
-        if (debtValueAdjusted == 0) {
-            return true;
-        }
-
-        uint256 collateralRatio = collateralValueTimes100 / debtValueAdjusted;
-
-        return collateralRatio >= mcr;
+        return debtValueAdjusted == 0 ? true : collateralValueTimes100 / debtValueAdjusted >= mcr;
     }
 
     function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {

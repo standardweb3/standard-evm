@@ -142,13 +142,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
         // if the debt become obsolete
-        if (debtValueAdjusted == 0) {
-            return true;
-        }
-
-        uint256 collateralRatio = collateralValueTimes100 / debtValueAdjusted;
-
-        return collateralRatio >= mcr;
+        return debtValueAdjusted == 0 ? true : collateralValueTimes100 / debtValueAdjusted >= mcr;
     }
 
     function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {

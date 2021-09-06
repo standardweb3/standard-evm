@@ -1119,8 +1119,8 @@
       "artifacts": []
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/tokens/Meter.sol": {
-      "lastModificationDate": 1629409142552,
-      "contentHash": "4c67fd433c767cdb7b94afa91e928e71",
+      "lastModificationDate": 1630970980823,
+      "contentHash": "343da97da7aa72484e8a438550c9cd8d",
       "sourceName": "contracts/tokens/Meter.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2126,8 +2126,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/Vault.sol": {
-      "lastModificationDate": 1629812355199,
-      "contentHash": "e4767d7e4fc60af7a9841acfa21e87da",
+      "lastModificationDate": 1630970575674,
+      "contentHash": "180aac1a6a254650089baec5bdc00d56",
       "sourceName": "contracts/vaults/meter/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2240,8 +2240,8 @@
       "artifacts": []
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IVault.sol": {
-      "lastModificationDate": 1629558278357,
-      "contentHash": "aa0e6812530dac3f8d0f7bbe456db89e",
+      "lastModificationDate": 1629950933217,
+      "contentHash": "bb7dd3a2827a458528408c00b50a2ca3",
       "sourceName": "contracts/vaults/meter/IVault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2274,8 +2274,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/VaultManager.sol": {
-      "lastModificationDate": 1629813642252,
-      "contentHash": "5a53417fff1592f57b7a1de4b0efd064",
+      "lastModificationDate": 1630971133734,
+      "contentHash": "b228198180a9802e099f8f60ec5fc074",
       "sourceName": "contracts/vaults/meter/VaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2383,8 +2383,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/tokens/IStablecoin.sol": {
-      "lastModificationDate": 1629527691435,
-      "contentHash": "5ccbe1a8aa3601e6ef77b63f9f0ad6a2",
+      "lastModificationDate": 1630970948963,
+      "contentHash": "db1be3b7eb1a09f6fca03853ee6c229f",
       "sourceName": "contracts/tokens/IStablecoin.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2450,6 +2450,77 @@
       ],
       "artifacts": [
         "Dummy"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/FeePool.sol": {
+      "lastModificationDate": 1630970274203,
+      "contentHash": "9cac2571449e8ae483768b0653a40e2b",
+      "sourceName": "contracts/vaults/meter/FeePool.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../../security/MonthGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "FeePool"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/security/MonthGuard.sol": {
+      "lastModificationDate": 1630970111605,
+      "contentHash": "6ad5d327d08922f170181f9f6e225af1",
+      "sourceName": "contracts/security/MonthGuard.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MonthGuard"
       ]
     }
   }

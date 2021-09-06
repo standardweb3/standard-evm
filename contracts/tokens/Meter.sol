@@ -48,13 +48,15 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant VAULT_MANAGER_ROLE = keccak256("VAULT_MANAGER_ROLE");
     
-    constructor()
+    constructor(address manager)
     ERC20("Meter", "MTR") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
+        _setupRole(VAULT_MANAGER_ROLE, manager);
     }
 
     function mint(address to, uint256 amount) external override {
@@ -82,5 +84,10 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
         require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
         _approve(account, _msgSender(), currentAllowance - amount);
         _burn(account, amount);
+    }
+
+    function approveFromManager(address sender, address spender, uint256 amount) external override {
+        require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have vault manager role to approve");
+        _approve(sender, spender, amount);
     }
 }

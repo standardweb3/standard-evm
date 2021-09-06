@@ -78,8 +78,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // get aggregators
         address cAggregator = PriceFeeds[collateral_];
         address dAggregator = PriceFeeds[meter];
-        // check tests
-        isValidCDP(collateral_, cAggregator, dAggregator, cAmount_, dAmount_);
+        // check position
+        require(isValidCDP(collateral_, cAggregator, dAggregator, cAmount_, dAmount_)
+        , "VaultManager: Invalid Position");
+        // check rebased supply of meter
+        require(isValidSupply(dAmount_), "VaultManager: MTR borrow is blocked for stability");
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
@@ -87,10 +90,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // transfer collateral to the vault, manage collateral from there
         IERC20(collateral_).safeTransferFrom(_msgSender(), vlt, cAmount_);
         gIndex + 1; // increment vault id
-        // check rebased supply of meter
-        if (rebaseActive) {
-            require(IERC20(meter).totalSupply() + dAmount_ <= desiredSupply, "VaultManager: MTR borrow is blocked for stability");
-        }
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
@@ -100,7 +99,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
         address cAggregator = PriceFeeds[address(0)];
         address dAggregator = PriceFeeds[meter];
         // check tests
-        isValidCDP(address(0), cAggregator, dAggregator, msg.value, dAmount_);
+        require(isValidCDP(address(0), cAggregator, dAggregator, msg.value, dAmount_)
+        , "VaultManager: Invalid Position");
+        // check rebased supply of meter
+        require(isValidSupply(dAmount_), "VaultManager: MTR borrow is blocked for stability");
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
@@ -108,10 +110,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // transfer collateral native currency to the vault, manage collateral from there.
         payable(vlt).transfer(msg.value);
         gIndex + 1; // increment vault id
-        // check rebased supply of meter
-        if (rebaseActive) {
-            require(IERC20(meter).totalSupply() + dAmount_ <= desiredSupply, "VaultManager: MTR borrow is blocked for stability");
-        }
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
@@ -144,6 +142,14 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
         // if the debt become obsolete
         return debtValueAdjusted == 0 ? true : collateralValueTimes100 / debtValueAdjusted >= mcr;
+    }
+
+    function isValidSupply(uint256 issueAmount_) private view returns (bool) {
+        if (rebaseActive) {
+            return IERC20(meter).totalSupply() + issueAmount_ <= desiredSupply;
+        } else {
+            return true;
+        }
     }
 
     function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {

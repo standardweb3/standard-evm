@@ -122,8 +122,6 @@ contract Vault is IVault {
         _burnMTRFromVault(burn);
         borrow -=  burn;
         emit PayBack(vaultId, borrow, fee);
-        // self destruct the contract, send remaining balance if collateral is native currency
-        selfdestruct(payable(msg.sender));
     }
 
     /// Close CDP

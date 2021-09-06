@@ -69,7 +69,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
         Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market);
-        IStablecoin(meter).approveFromManager(msg.sender, vault, amount_ * 2);
+        IStablecoin(meter).approveFromManager(msg.sender, vault, amount_ *2);
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }
@@ -105,7 +105,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
         vlt = _createVault(address(0), gIndex, cAggregator, dAggregator, dAmount_);
-        // transfer collateral native currency to the vault, manage collateral from there...which is already done
+        // transfer collateral native currency to the vault, manage collateral from there.
+        payable(vlt).transfer(msg.value);
         gIndex + 1; // increment vault id
         // check rebased supply of meter
         if (rebaseActive) {

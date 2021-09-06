@@ -92,7 +92,7 @@ contract Vault is IVault {
         uint256 balance = address(this).balance;
         require(balance >= msg.value, "Vault: Not enough collateral");    
         if(borrow != 0) {
-            require(isValidCDP(collateral, cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral percentage");
+            require(isValidCDP(collateral, cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
         payable(msg.sender).transfer(msg.value);
         emit WithdrawCollateral(vaultId, msg.value);
@@ -102,7 +102,7 @@ contract Vault is IVault {
     function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
         require(address(this).balance >= amount_, "Vault: Not enough collateral");
         if(borrow != 0) {
-            require(isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral percentage");
+            require(isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
         IERC20(collateral).transfer(msg.sender, amount_);
         emit WithdrawCollateral(vaultId, amount_);

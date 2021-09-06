@@ -89,7 +89,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         vlt = _createVault(collateral_, gIndex, cAggregator, dAggregator, dAmount_);
         // transfer collateral to the vault, manage collateral from there
         IERC20(collateral_).safeTransferFrom(_msgSender(), vlt, cAmount_);
-        gIndex + 1; // increment vault id
+        gIndex += 1; // increment vault id
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
@@ -109,7 +109,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         vlt = _createVault(address(0), gIndex, cAggregator, dAggregator, dAmount_);
         // transfer collateral native currency to the vault, manage collateral from there.
         payable(vlt).transfer(msg.value);
-        gIndex + 1; // increment vault id
+        gIndex += 1; // increment vault id
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }

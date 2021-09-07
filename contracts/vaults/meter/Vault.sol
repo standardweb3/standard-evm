@@ -52,7 +52,7 @@ contract Vault is IVault {
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market) external {
+    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market_) external {
         require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;
@@ -61,6 +61,7 @@ contract Vault is IVault {
         v1 = v1_;
         debt = debt_;
         borrow = amount_;
+        market = market_;
     }
 
     /// liquidate

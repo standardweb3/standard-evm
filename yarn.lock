@@ -725,10 +725,10 @@
     "proper-lockfile" "^4.1.1"
     "solidity-ast" "^0.4.15"
 
-"@remix-project/remixd@^0.5.0":
-  "integrity" "sha512-fptRDyGurH54Id3ZEy8bLOGO/uv5QcUg0W5haQHnkUR0LXFRTpHu2JEgbIPZuA1pz7kIWtD5tSjvg4wWuXGNCg=="
-  "resolved" "https://registry.npmjs.org/@remix-project/remixd/-/remixd-0.5.0.tgz"
-  "version" "0.5.0"
+"@remix-project/remixd@^0.5.1":
+  "integrity" "sha512-FnF1Hi5hopnqEUhvM1eXjV1ITD8/4764AVNryguTH0TdHW+Kx6jAmOtdpIbUwPGZ4P4XL4uucoNezi41vVtYfw=="
+  "resolved" "https://registry.npmjs.org/@remix-project/remixd/-/remixd-0.5.1.tgz"
+  "version" "0.5.1"
   dependencies:
     "@remixproject/plugin" "^0.3.11"
     "@remixproject/plugin-api" "^0.3.11"

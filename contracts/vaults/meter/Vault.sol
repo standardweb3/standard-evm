@@ -83,7 +83,7 @@ contract Vault is IVault {
 
     /// Deposit collateral
     function depositCollateral(uint256 amount_) public onlyVaultOwner {
-        IERC20(collateral).transferFrom(msg.sender, address(this), amount_);
+        require(IERC20(collateral).transferFrom(msg.sender, address(this), amount_), "Vault: Collateral Deposit failed");
         emit DepositCollateral(vaultId, amount_);        
     }
 
@@ -105,7 +105,7 @@ contract Vault is IVault {
         if(borrow != 0) {
             require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
-        IERC20(collateral).transfer(msg.sender, amount_);
+        require(IERC20(collateral).transfer(msg.sender, amount_), "Vault: Transferring collateral withdrawal failed");
         emit WithdrawCollateral(vaultId, amount_);
     }
 
@@ -115,9 +115,9 @@ contract Vault is IVault {
         uint fee = _calculateFee();
         require(amount_ != 0, "Vault: amount is zero");
         // send MTR to the vault
-        IERC20(debt).transferFrom(msg.sender, address(this), amount_);
+        require(IERC20(debt).transferFrom(msg.sender, address(this), amount_), "Vault: MTR transfer from sender to vault failed");
         // send fee to the pool
-        IERC20(debt).transfer(feePool, fee);
+        require(IERC20(debt).transfer(feePool, fee), "Vault: Fee transfer from vault to pool failed");
         // burn mtr debt
         uint256 burn = amount_ - fee;
         _burnMTRFromVault(burn);
@@ -131,9 +131,9 @@ contract Vault is IVault {
         uint fee = _calculateFee();
         require(fee + borrow == amount_, "Vault: not enough balance to payback");
         // send MTR to the vault
-        IERC20(debt).transferFrom(msg.sender, address(this), amount_);
+        require(IERC20(debt).transferFrom(msg.sender, address(this), amount_), "Vault: MTR transfer from sender to vault failed");
         // send fee to the pool
-        IERC20(debt).transfer(feePool, fee);
+        require(IERC20(debt).transfer(feePool, fee), "Vault: Fee transfer from vault to pool failed");
         // burn mtr debt with interest
         _burnMTRFromVault(amount_ - fee);
         // burn vault nft

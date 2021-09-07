@@ -5,10 +5,8 @@ import './Vault.sol';
 import './IVaultManager.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./IV1.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract VaultManager is OracleRegistry, IVaultManager {
-    using SafeERC20 for IERC20;
     event VaultCreated(address collateral, uint256 vaultId, address creator, address vault);
 
     /// Desirable supply of stablecoin 
@@ -32,7 +30,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     /// Address of cdp nft registry
     address v1;
     /// Manager of Vaults
-    address manager;
+    address feeSetter;
     /// Address of meter
     address meter;
     /// Vault global identifier index, increments on every creation of vault
@@ -41,23 +39,30 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address vlt;
     /// Address of Standard market
     address market;
+    /// Address of Standard MTR fee pool
+    address feePool;
 
-    constructor(address v1_, address meter_, address market_) {
+    constructor(address v1_, address meter_, address market_, address feePool_) {
         v1 = v1_;
         meter = meter_;
         market = market_;
-        manager = _msgSender();
+        feePool = feePool_;
+        feeSetter = _msgSender();
     }
 
-    modifier onlyManager {
-        require(_msgSender() == manager, "VaultFactory: Factory is not managed by you");
+    modifier onlyFeeSetter {
+        require(_msgSender() == feeSetter, "VaultManager: Invalid Access");
         _;
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) external onlyManager {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) external onlyFeeSetter {
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_;   
+    }
+
+    function setFeeStrategy(address feePool_) onlyFeeSetter public {
+        feePool=feePool_;
     }
 
     /// Vault cannot issue stablecoin, it just manages the position
@@ -87,7 +92,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IV1(v1).mint(_msgSender(), gIndex);
         vlt = _createVault(collateral_, gIndex, cAggregator, dAggregator, dAmount_);
         // transfer collateral to the vault, manage collateral from there
-        IERC20(collateral_).safeTransferFrom(_msgSender(), vlt, cAmount_);
+        require(IERC20(collateral_).transferFrom(_msgSender(), vlt, cAmount_), "VaultManager: TransferFrom failed");
         gIndex += 1; // increment vault id
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
@@ -118,19 +123,19 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function getMCR(address collateral_) external view override returns (uint) {
-        return (MCRConfig[collateral_]);
+        return MCRConfig[collateral_];
     }
 
     function getLFR(address collateral_) external view override returns (uint) {
-        return (LFRConfig[collateral_]);
+        return LFRConfig[collateral_];
     }
 
     function getSFR(address collateral_) external view override returns (uint) {
-        return (SFRConfig[collateral_]);
+        return SFRConfig[collateral_];
     } 
     
     function getCDecimal(address collateral_) external view override returns (uint) {
-        return (CDecimals[collateral_]);
+        return CDecimals[collateral_];
     }     
 
     function getVault(uint vaultId_) external view override returns (address) {
@@ -151,7 +156,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function isValidCDP(address collateral_, address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
         (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
-        (uint mcr, uint lfr, uint sfr, uint cDecimals) = this.getCDPConfig(collateral_);
+        uint mcr = this.getMCR(collateral_);
+        uint cDecimals = this.getCDecimal(collateral_);
 
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 

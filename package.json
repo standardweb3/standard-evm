@@ -7,7 +7,8 @@
     "compile": "hardhat compile",
     "hardhat": "hardhat",
     "test": "hardhat test",
-    "fork": "hardhat node --fork "
+    "fork": "hardhat node --fork ",
+    "remix": "npx remixd -s ./ --remix-ide https://remix.ethereum.org"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +27,7 @@
     "hardhat-gas-reporter": "^1.0.4"
   },
   "dependencies": {
-    "@remix-project/remixd": "^0.5.0",
+    "@remix-project/remixd": "^0.5.1",
     "node": "^16.1.0"
   }
 }

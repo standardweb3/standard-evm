@@ -127,7 +127,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function getSFR(address collateral_) external view override returns (uint) {
         return (SFRConfig[collateral_]);
-    }    
+    } 
+    
+    function getCDecimal(address collateral_) external view override returns (uint) {
+        return (CDecimals[collateral_]);
+    }     
 
     function getVault(uint vaultId_) external view override returns (address) {
         return Vaults[vaultId_];

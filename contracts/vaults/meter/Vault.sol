@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 import '../../oracle/IPrice.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "./IVault.sol";
-import "./IVaultManager.sol";
-import "./IV1.sol";
+import "./interfaces/IVault.sol";
+import "./interfaces/IVaultManager.sol";
+import "./interfaces/IV1.sol";
 import "../../uniswapv2/interfaces/IMTRMarket.sol";
 import "../../tokens/IStablecoin.sol";
 

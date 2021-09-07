@@ -2,8 +2,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./IVaultManager.sol";
-import "./IV1.sol";
+import "./interfaces/IVaultManager.sol";
+import "./interfaces/IV1.sol";
 
 contract V1 is ERC721, AccessControl, IV1  {
      // Create a new role identifier for the minter role

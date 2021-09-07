@@ -2,9 +2,9 @@ pragma solidity ^0.8.0;
 
 import '../../oracle/OracleRegistry.sol';
 import './Vault.sol';
-import './IVaultManager.sol';
+import './interfaces/IVaultManager.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./IV1.sol";
+import "./interfaces/IV1.sol";
 
 contract VaultManager is OracleRegistry, IVaultManager {
     event VaultCreated(address collateral, uint256 vaultId, address creator, address vault);

@@ -38,12 +38,12 @@ contract V1 is ERC721, AccessControl, IV1  {
     }
 
     function burnFromVault(uint vaultId_) external override {
-        require(IVaultManager(manager).getVault(vaultId_)  == _msgSender(), "MTRV1: vault must be registered");
+        require(IVaultManager(manager).getVault(vaultId_)  == _msgSender(), "MTRV1: Caller is not vault");
         _burn(vaultId_);
     }
 
-    function exists(uint256 tokenId_) public returns (bool) {
-        _exists(tokenId_);
+    function exists(uint256 tokenId_) external view override returns (bool) {
+        return _exists(tokenId_);
     }
 }
 

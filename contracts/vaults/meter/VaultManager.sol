@@ -55,13 +55,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _;
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) external onlyFeeSetter {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public onlyFeeSetter {
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_;   
     }
 
-    function setFeeStrategy(address feePool_) onlyFeeSetter public {
+    function setFeeStrategy(address feePool_) public onlyFeeSetter {
         feePool=feePool_;
     }
 

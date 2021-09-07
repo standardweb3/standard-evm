@@ -66,10 +66,10 @@ contract Vault is IVault {
     /// liquidate
     function liquidate() public {
         if (collateral == address(0)) {
-            require(!isValidCDP(collateral, cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            require(!isValidCDP(cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
             IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
         } else {
-            require(!isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+            require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
             IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
         }
     }
@@ -92,7 +92,7 @@ contract Vault is IVault {
         uint256 balance = address(this).balance;
         require(balance >= msg.value, "Vault: Not enough collateral");    
         if(borrow != 0) {
-            require(isValidCDP(collateral, cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral ratio");
+            require(isValidCDP(cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
         payable(msg.sender).transfer(msg.value);
         emit WithdrawCollateral(vaultId, msg.value);
@@ -102,7 +102,7 @@ contract Vault is IVault {
     function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
         require(address(this).balance >= amount_, "Vault: Not enough collateral");
         if(borrow != 0) {
-            require(isValidCDP(collateral, cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
+            require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
         IERC20(collateral).transfer(msg.sender, amount_);
         emit WithdrawCollateral(vaultId, amount_);
@@ -152,7 +152,7 @@ contract Vault is IVault {
         IStablecoin(debt).burnFrom(msg.sender, amount_);
     }
 
-    function isValidCDP(address collateral_, address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
+    function isValidCDP(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
         (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
         (uint mcr, uint lfr, uint sfr, uint cDecimals) = IVaultManager(manager).getCDPConfig(collateral);

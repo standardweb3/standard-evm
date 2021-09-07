@@ -155,7 +155,8 @@ contract Vault is IVault {
     function isValidCDP(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
         (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
 
-        (uint mcr, uint lfr, uint sfr, uint cDecimals) = IVaultManager(manager).getCDPConfig(collateral);
+        uint mcr = IVaultManager(manager).getMCR(collateral);
+        uint cDecimals = IVaultManager(manager).getCDecimal(collateral);
 
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
@@ -187,7 +188,7 @@ contract Vault is IVault {
 
     function _calculateFee() internal returns (uint) {
         uint256 assetValue = _getAssetValue(dAggregator, borrow);
-        (uint mcr, uint lfr, uint sfr, uint cDecimals) = IVaultManager(manager).getCDPConfig(collateral);
+        uint sfr = IVaultManager(manager).getSFR(collateral);
         /// (sfr * assetValue/100) * (duration in months)
         uint256 fee = sfr * assetValue;
         assert(fee >= assetValue);

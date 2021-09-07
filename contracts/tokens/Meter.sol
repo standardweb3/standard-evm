@@ -45,6 +45,10 @@ abstract contract BlackList is Ownable, ERC20Pausable {
 
 }
 
+/**
+ * @title MeterToken
+ * @dev This contract is template for MTR stablecoins
+ */
 contract MeterToken is BlackList, AccessControl, IStablecoin {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -52,13 +56,16 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant VAULT_MANAGER_ROLE = keccak256("VAULT_MANAGER_ROLE");
     
-    constructor(address manager, string memory name, string memory symbol)
+
+    /**
+     * @dev Creates an instance of `MeterToken` where `name` and `symbol` is initialized.
+     * Names and symbols can vary from the pegging currency
+     */
+    constructor(string memory name, string memory symbol)
     ERC20(name, symbol) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
-        _setupRole(VAULT_MANAGER_ROLE, manager);
     }
 
     function mint(address to, uint256 amount) external override {
@@ -68,16 +75,19 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     }
 
     function pause() external {
+        // Check that the calling account has the pauser role
         require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have pauser role to pause");
         _pause();
     }
 
     function unpause() external {
+        // Check that the calling account has the pauser role 
         require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have pauser role to unpause");
         _unpause();
     }
 
     function burn(uint256 amount) external override {
+        // Check that the calling account has the burner role
         require(hasRole(BURNER_ROLE, _msgSender()), "Meter: must have burner role to burn");
         _burn(_msgSender(), amount);
     }

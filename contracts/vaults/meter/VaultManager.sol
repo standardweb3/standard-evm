@@ -69,7 +69,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
         Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market);
-        IStablecoin(meter).approveFromManager(msg.sender, vault, amount_ *2);
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }

@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
@@ -48,10 +49,11 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant VAULT_MANAGER_ROLE = keccak256("VAULT_MANAGER_ROLE");
     
-    constructor(address manager)
-    ERC20("Meter", "MTR") {
+    constructor(address manager, string memory name, string memory symbol)
+    ERC20(name, symbol) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
@@ -76,6 +78,7 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     }
 
     function burn(uint256 amount) external override {
+        require(hasRole(BURNER_ROLE, _msgSender()), "Meter: must have burner role to burn");
         _burn(_msgSender(), amount);
     }
 
@@ -84,10 +87,5 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
         require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
         _approve(account, _msgSender(), currentAllowance - amount);
         _burn(account, amount);
-    }
-
-    function approveFromManager(address sender, address spender, uint256 amount) external override {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "Meter: must have vault manager role to approve");
-        _approve(sender, spender, amount);
     }
 }

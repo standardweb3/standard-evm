@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IVault.sol";
 import "./interfaces/IVaultManager.sol";
 import "./interfaces/IV1.sol";
+import "./interfaces/IWETH.sol";
+import "./libraries/UniswapV2Library.sol";
 import "./interfaces/IUniswapV2Factory.sol";
-import "../../uniswapv2/interfaces/IMTRMarket.sol";
 import "../../tokens/IStablecoin.sol";
 
 contract Vault is IVault {
@@ -39,6 +40,8 @@ contract Vault is IVault {
     uint256 createdAt;
     /// address of fee Pool
     address feePool;
+    /// address of wrapped eth
+    address WETH;
 
 
     constructor() public {
@@ -53,7 +56,7 @@ contract Vault is IVault {
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market_) external {
+    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market_, address weth_) external {
         require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;
@@ -63,31 +66,25 @@ contract Vault is IVault {
         debt = debt_;
         borrow = amount_;
         market = market_;
+        WETH = weth_;
     }
 
     /// liquidate
     function liquidate() public {
+        require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
         // check the pair if it exists
-        require(IUniswapV2Factory(market).getPair(tokenA, tokenB) != address(0), "Vault: Liquidating pair not supported");
-        address pair = UniswapV2Library.pairFor(market, tokenA, tokenB);
-        IERC20(collateral).TransferFrom(msg.sender, pair, );
-        emit Liquidated(collateral, amount);
-    }
-
-    /// liquidate ETH
-    function liquidateNative() public {
-        address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
-        IWETH(WETH).deposit{value: amountETH}();
-        assert(IWETH(WETH).transfer(pair, amountETH));
-        liquidity = IUniswapV2Pair(pair).mint(to);
-        // refund dust eth, if any
-        if (msg.value > amountETH) TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
+        require(IUniswapV2Factory(market).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
+        address pair = UniswapV2Library.pairFor(market, collateral, debt);
+        uint256 balance = IERC20(collateral).balanceOf(address(this));
+        require(IERC20(collateral).transferFrom(msg.sender, pair, balance), "Vault: liquidation with collateral token failed");
+        emit Liquidated(collateral, balance);
     }
     
     /// Deposit collateral
     function depositCollateralNative() payable public onlyVaultOwner {
-        require(collateral == address(0), "Vault: collateral is not a native asset"); 
+        require(collateral == address(WETH), "Vault: collateral is not a native asset");
+        // wrap deposit
+        IWETH(WETH).deposit{value: msg.value}(); 
         emit DepositCollateral(vaultId, msg.value);        
     }
 
@@ -97,21 +94,22 @@ contract Vault is IVault {
         emit DepositCollateral(vaultId, amount_);        
     }
 
-    /// Withdraw collateral
-    function withdrawCollateralNative() payable public onlyVaultOwner {
-        require(collateral == address(0), "Vault: collateral is not a native asset");
-        uint256 balance = address(this).balance;
-        require(balance >= msg.value, "Vault: Not enough collateral");    
+    /// Withdraw collateral as native currency
+    function withdrawCollateralNative(uint256 amount_) payable public onlyVaultOwner {
+        require(collateral == address(WETH), "Vault: collateral is not a native asset");
         if(borrow != 0) {
-            require(isValidCDP(cAggregator, dAggregator, balance - msg.value, borrow), "Withdrawal would put vault below minimum collateral ratio");
+            require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }
-        payable(msg.sender).transfer(msg.value);
-        emit WithdrawCollateral(vaultId, msg.value);
+        // unwrap collateral
+        IWETH(WETH).withdraw(amount_);
+        // send withdrawn native currency
+        payable(msg.sender).transfer(address(this).balance);
+        emit WithdrawCollateral(vaultId, amount_);
     }
 
     /// Withdraw collateral
     function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
-        require(address(this).balance >= amount_, "Vault: Not enough collateral");
+        require(IERC20(collateral).balanceOf(address(this)) >= amount_, "Vault: Not enough collateral");
         if(borrow != 0) {
             require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
         }

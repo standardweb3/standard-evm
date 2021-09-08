@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IVault.sol";
 import "./interfaces/IVaultManager.sol";
 import "./interfaces/IV1.sol";
+import "./interfaces/IUniswapV2Factory.sol";
 import "../../uniswapv2/interfaces/IMTRMarket.sol";
 import "../../tokens/IStablecoin.sol";
 
@@ -66,13 +67,22 @@ contract Vault is IVault {
 
     /// liquidate
     function liquidate() public {
-        if (collateral == address(0)) {
-            require(!isValidCDP(cAggregator, dAggregator, address(this).balance, IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
-            IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
-        } else {
-            require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
-            IMTRMarket(market).liquidate(collateral, debt, IERC20(collateral).balanceOf(address(this)), 0);
-        }
+        // check the pair if it exists
+        require(IUniswapV2Factory(market).getPair(tokenA, tokenB) != address(0), "Vault: Liquidating pair not supported");
+        address pair = UniswapV2Library.pairFor(market, tokenA, tokenB);
+        IERC20(collateral).TransferFrom(msg.sender, pair, );
+        emit Liquidated(collateral, amount);
+    }
+
+    /// liquidate ETH
+    function liquidateNative() public {
+        address pair = UniswapV2Library.pairFor(factory, token, WETH);
+        TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
+        IWETH(WETH).deposit{value: amountETH}();
+        assert(IWETH(WETH).transfer(pair, amountETH));
+        liquidity = IUniswapV2Pair(pair).mint(to);
+        // refund dust eth, if any
+        if (msg.value > amountETH) TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
     }
     
     /// Deposit collateral

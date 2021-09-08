@@ -77,7 +77,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market, wet);
+        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market, WETH);
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }
@@ -116,7 +116,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IV1(v1).mint(_msgSender(), gIndex);
         vlt = _createVault(WETH, gIndex, cAggregator, dAggregator, dAmount_);
         // wrap native currency
-        IWETH(WETH).deposit{value: this.balance}();
+        IWETH(WETH).deposit{value: address(this).balance}();
         uint256 weth = IERC20(WETH).balanceOf(address(this));
         // then transfer collateral native currency to the vault, manage collateral from there.
         assert(IWETH(WETH).transfer(vlt, weth)); 

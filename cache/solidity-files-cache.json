@@ -1160,680 +1160,6 @@
         "MeterToken"
       ]
     },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IERC20.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "e1618a34e4b67aedf5e9dfe4c83adc7b",
-      "sourceName": "contracts/uniswapv2/interfaces/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IERC20Uniswap"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/UniswapV2Router02.sol": {
-      "lastModificationDate": 1629405155024,
-      "contentHash": "8dc94b78eefb3c168a3d4955f3f7156e",
-      "sourceName": "contracts/uniswapv2/UniswapV2Router02.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./libraries/UniswapV2Library.sol",
-        "./libraries/SafeMath.sol",
-        "./libraries/TransferHelper.sol",
-        "./interfaces/IUniswapV2Router02.sol",
-        "./interfaces/IUniswapV2Factory.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IWETH.sol",
-        "./interfaces/IMTRMarket.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UniswapV2Router02"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/libraries/UniswapV2Library.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "d9a11c5d0de43a5e917e2e679b99d478",
-      "sourceName": "contracts/uniswapv2/libraries/UniswapV2Library.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../interfaces/IUniswapV2Pair.sol",
-        "./SafeMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UniswapV2Library"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/libraries/SafeMath.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "d3a692d34b1a666e45cd26482ec4f6e1",
-      "sourceName": "contracts/uniswapv2/libraries/SafeMath.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeMathUniswap"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/libraries/TransferHelper.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "1ae3496227da15f3470978ed9374cd5f",
-      "sourceName": "contracts/uniswapv2/libraries/TransferHelper.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "TransferHelper"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2Router02.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "6ad255f18605e43af8f1f6b12da2332a",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2Router02.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IUniswapV2Router01.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Router02"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2Factory.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "d198bcd7fe50362c13205a49a264308d",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2Factory.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Factory"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IWETH.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "544f01449bed2a6dbe2a5addb8a6815e",
-      "sourceName": "contracts/uniswapv2/interfaces/IWETH.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IWETH"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IMTRMarket.sol": {
-      "lastModificationDate": 1629405095192,
-      "contentHash": "b6ee0f46e500f376734334f863ea07b0",
-      "sourceName": "contracts/uniswapv2/interfaces/IMTRMarket.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IMTRMarket"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2Pair.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "f752430d5f09b9f563592f001dafc406",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2Pair.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Pair"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2Router01.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "2cc0128871f2ced6dc1caff07f965932",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2Router01.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Router01"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/UniswapV2Factory.sol": {
-      "lastModificationDate": 1629327818952,
-      "contentHash": "293117f5c2dadcad3ea035c6e6c64069",
-      "sourceName": "contracts/uniswapv2/UniswapV2Factory.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./interfaces/IUniswapV2Factory.sol",
-        "./interfaces/IMTRMarket.sol",
-        "./UniswapV2Pair.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UniswapV2Factory"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/UniswapV2Pair.sol": {
-      "lastModificationDate": 1629327818952,
-      "contentHash": "0c80d2273057530e271d0b59a4667737",
-      "sourceName": "contracts/uniswapv2/UniswapV2Pair.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./UniswapV2ERC20.sol",
-        "./libraries/Math.sol",
-        "./libraries/UQ112x112.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IUniswapV2Factory.sol",
-        "./interfaces/IUniswapV2Callee.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IMigrator",
-        "UniswapV2Pair"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/UniswapV2ERC20.sol": {
-      "lastModificationDate": 1629327818952,
-      "contentHash": "f6a34f3d3d95dfbee1bf5222d84adfb4",
-      "sourceName": "contracts/uniswapv2/UniswapV2ERC20.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./libraries/SafeMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UniswapV2ERC20"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/libraries/Math.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "6239a829714ea5c66872e8e54f45c219",
-      "sourceName": "contracts/uniswapv2/libraries/Math.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Math"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/libraries/UQ112x112.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "7e73ff67ea0b385c9fc541fc6fa16667",
-      "sourceName": "contracts/uniswapv2/libraries/UQ112x112.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UQ112x112"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2Callee.sol": {
-      "lastModificationDate": 1629327818960,
-      "contentHash": "80d689cf8bc5df93a87bff04028314be",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2Callee.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV2Callee"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IMTRPair.sol": {
-      "lastModificationDate": 1628606523262,
-      "contentHash": "ff153498b58ac3f3091d46eecd076d7f",
-      "sourceName": "contracts/uniswapv2/interfaces/IMTRPair.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IMTRPair"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/uniswapv2/interfaces/IUniswapV2ERC20.sol": {
-      "lastModificationDate": 1628338832516,
-      "contentHash": "58593c09900e9d1acb2f19d86544e0a7",
-      "sourceName": "contracts/uniswapv2/interfaces/IUniswapV2ERC20.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV2ERC20"
-      ]
-    },
     "/home/hskang9/digitalnative/standard-evm/contracts/oracle/AggregatorV3Interface.sol": {
       "lastModificationDate": 1630983531692,
       "contentHash": "b9be3f7aa79153708acdc3be6bd1cb35",
@@ -1940,8 +1266,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/V1.sol": {
-      "lastModificationDate": 1630984601599,
-      "contentHash": "6806708b47990c7293494fdcf4fb7596",
+      "lastModificationDate": 1630984830118,
+      "contentHash": "4d7e395ca7d0010a23507c860b0841bf",
       "sourceName": "contracts/vaults/meter/V1.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1968,8 +1294,8 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC721/ERC721.sol",
         "@openzeppelin/contracts/access/AccessControl.sol",
-        "./IVaultManager.sol",
-        "./IV1.sol"
+        "./interfaces/IVaultManager.sol",
+        "./interfaces/IV1.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -2127,8 +1453,8 @@
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/Vault.sol": {
-      "lastModificationDate": 1630983554296,
-      "contentHash": "f290089d2c98d6bbfd2dc73205a77f60",
+      "lastModificationDate": 1631137975383,
+      "contentHash": "1b91f72495c401627bc744042748c140",
       "sourceName": "contracts/vaults/meter/Vault.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2156,10 +1482,12 @@
         "../../oracle/IPrice.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
-        "./IVault.sol",
-        "./IVaultManager.sol",
-        "./IV1.sol",
-        "../../uniswapv2/interfaces/IMTRMarket.sol",
+        "./interfaces/IVault.sol",
+        "./interfaces/IVaultManager.sol",
+        "./interfaces/IV1.sol",
+        "./interfaces/IWETH.sol",
+        "./libraries/UniswapV2Library.sol",
+        "./interfaces/IUniswapV2Factory.sol",
         "../../tokens/IStablecoin.sol"
       ],
       "versionPragmas": [
@@ -2240,43 +1568,9 @@
       ],
       "artifacts": []
     },
-    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IVault.sol": {
-      "lastModificationDate": 1629950933217,
-      "contentHash": "bb7dd3a2827a458528408c00b50a2ca3",
-      "sourceName": "contracts/vaults/meter/IVault.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IVault"
-      ]
-    },
     "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/VaultManager.sol": {
-      "lastModificationDate": 1630984376832,
-      "contentHash": "766b7b7c763061301ae5058f9b29b15f",
+      "lastModificationDate": 1631138168862,
+      "contentHash": "743a40f1da0eeddd63da73eef3df1978",
       "sourceName": "contracts/vaults/meter/VaultManager.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2303,83 +1597,16 @@
       "imports": [
         "../../oracle/OracleRegistry.sol",
         "./Vault.sol",
-        "./IVaultManager.sol",
+        "./interfaces/IVaultManager.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./IV1.sol"
+        "./interfaces/IV1.sol",
+        "./interfaces/IWETH.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
         "VaultManager"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IVaultManager.sol": {
-      "lastModificationDate": 1630983553864,
-      "contentHash": "07c43b1fbf3612cc7122912780ac198d",
-      "sourceName": "contracts/vaults/meter/IVaultManager.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IVaultManager"
-      ]
-    },
-    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/IV1.sol": {
-      "lastModificationDate": 1630984607379,
-      "contentHash": "3d4719b9516d3397592ec34f64dac0d8",
-      "sourceName": "contracts/vaults/meter/IV1.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IV1"
       ]
     },
     "/home/hskang9/digitalnative/standard-evm/contracts/tokens/IStablecoin.sol": {
@@ -2521,6 +1748,769 @@
       ],
       "artifacts": [
         "BondedStrategy"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IVaultManager.sol": {
+      "lastModificationDate": 1630984808970,
+      "contentHash": "07c43b1fbf3612cc7122912780ac198d",
+      "sourceName": "contracts/vaults/meter/interfaces/IVaultManager.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IVaultManager"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IV1.sol": {
+      "lastModificationDate": 1630984808878,
+      "contentHash": "3d4719b9516d3397592ec34f64dac0d8",
+      "sourceName": "contracts/vaults/meter/interfaces/IV1.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IV1"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IWETH.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "544f01449bed2a6dbe2a5addb8a6815e",
+      "sourceName": "contracts/vaults/meter/interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IVault.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "4eefebcfdf6bc0b654b00eefb0a3a920",
+      "sourceName": "contracts/vaults/meter/interfaces/IVault.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IVault"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/libraries/UniswapV2Library.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "d9a11c5d0de43a5e917e2e679b99d478",
+      "sourceName": "contracts/vaults/meter/libraries/UniswapV2Library.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IUniswapV2Pair.sol",
+        "./SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "UniswapV2Library"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Factory.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "d198bcd7fe50362c13205a49a264308d",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2Factory.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Factory"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Pair.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "f752430d5f09b9f563592f001dafc406",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2Pair.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Pair"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/libraries/SafeMath.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "d3a692d34b1a666e45cd26482ec4f6e1",
+      "sourceName": "contracts/vaults/meter/libraries/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeMathUniswap"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/proxy.sol": {
+      "lastModificationDate": 1630984929882,
+      "contentHash": "ef0be47481b26872ffa2d32aef108d44",
+      "sourceName": "contracts/vaults/futures/proxy.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/interfaces/IPerpetual.sol": {
+      "lastModificationDate": 1630985196380,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/interfaces/IPerpetual.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/interfaces/IPerpetualManager.sol": {
+      "lastModificationDate": 1630985199380,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/interfaces/IPerpetualManager.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/interfaces/IS1.sol": {
+      "lastModificationDate": 1630985202764,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/interfaces/IS1.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/Perpetual.sol": {
+      "lastModificationDate": 1630985186592,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/Perpetual.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/PerpetualManager.sol": {
+      "lastModificationDate": 1630985190324,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/PerpetualManager.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/futures/S1.sol": {
+      "lastModificationDate": 1630985207748,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/vaults/futures/S1.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IERC20.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "e1618a34e4b67aedf5e9dfe4c83adc7b",
+      "sourceName": "contracts/vaults/meter/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IERC20Uniswap"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Callee.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "80d689cf8bc5df93a87bff04028314be",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2Callee.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Callee"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2ERC20.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "58593c09900e9d1acb2f19d86544e0a7",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2ERC20.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2ERC20"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Router01.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "2cc0128871f2ced6dc1caff07f965932",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2Router01.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Router01"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Router02.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "6ad255f18605e43af8f1f6b12da2332a",
+      "sourceName": "contracts/vaults/meter/interfaces/IUniswapV2Router02.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IUniswapV2Router01.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Router02"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/libraries/Math.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "6239a829714ea5c66872e8e54f45c219",
+      "sourceName": "contracts/vaults/meter/libraries/Math.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/libraries/TransferHelper.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "1ae3496227da15f3470978ed9374cd5f",
+      "sourceName": "contracts/vaults/meter/libraries/TransferHelper.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "TransferHelper"
+      ]
+    },
+    "/home/hskang9/digitalnative/standard-evm/contracts/vaults/meter/libraries/UQ112x112.sol": {
+      "lastModificationDate": 1631135959143,
+      "contentHash": "7e73ff67ea0b385c9fc541fc6fa16667",
+      "sourceName": "contracts/vaults/meter/libraries/UQ112x112.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "UQ112x112"
       ]
     }
   }

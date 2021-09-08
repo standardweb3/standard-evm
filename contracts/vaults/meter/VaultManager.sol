@@ -77,7 +77,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market, WETH);
+        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market, wet);
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }
@@ -104,17 +104,17 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function createCDPNative(uint dAmount_) payable public {
         // get aggregators
-        address cAggregator = PriceFeeds[weth];
+        address cAggregator = PriceFeeds[WETH];
         address dAggregator = PriceFeeds[meter];
         // check tests
-        require(isValidCDP(weth, cAggregator, dAggregator, msg.value, dAmount_)
+        require(isValidCDP(WETH, cAggregator, dAggregator, msg.value, dAmount_)
         , "VaultManager: Invalid Position");
         // check rebased supply of meter
         require(isValidSupply(dAmount_), "VaultManager: MTR borrow is blocked for stability");
         // create vault
         // mint ERC721 for vault
         IV1(v1).mint(_msgSender(), gIndex);
-        vlt = _createVault(weth, gIndex, cAggregator, dAggregator, dAmount_);
+        vlt = _createVault(WETH, gIndex, cAggregator, dAggregator, dAmount_);
         // wrap native currency
         IWETH(WETH).deposit{value: this.balance}();
         uint256 weth = IERC20(WETH).balanceOf(address(this));

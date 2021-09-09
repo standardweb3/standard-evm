@@ -78,9 +78,14 @@ contract Vault is IVault {
         uint256 balance = IERC20(collateral).balanceOf(address(this));
         uint256 lfr = IVaultManager(manager).getLFR(collateral);
         uint256 liquidationFee = lfr*balance/100;
+        // Distribute collaterals
         require(IERC20(collateral).transfer(msg.sender, liquidationFee), "Vault: liquidation fee transfer with collateral token failed");
         require(IERC20(collateral).transfer(pair, balance - liquidationFee), "Vault: liquidation with collateral token failed");
-        emit Liquidated(collateral, balance);
+        // burn vault nft
+        _burnV1FromVault();
+        emit Liquidated(address(this), collateral, balance);
+        // self destruct the contract, send remaining balance if collateral is native currency
+        selfdestruct(payable(msg.sender));
     }
     
     /// Deposit collateral

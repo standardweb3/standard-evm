@@ -76,7 +76,10 @@ contract Vault is IVault {
         require(IUniswapV2Factory(market).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
         address pair = UniswapV2Library.pairFor(market, collateral, debt);
         uint256 balance = IERC20(collateral).balanceOf(address(this));
-        require(IERC20(collateral).transferFrom(msg.sender, pair, balance), "Vault: liquidation with collateral token failed");
+        uint256 lfr = IVaultManager(manager).getLFR(collateral);
+        uint256 liquidationFee = lfr*balance/100;
+        require(IERC20(collateral).transfer(msg.sender, liquidationFee), "Vault: liquidation fee transfer with collateral token failed");
+        require(IERC20(collateral).transfer(pair, balance - liquidationFee), "Vault: liquidation with collateral token failed");
         emit Liquidated(collateral, balance);
     }
     

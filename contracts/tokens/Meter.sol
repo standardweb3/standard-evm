@@ -66,6 +66,7 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
+        _mint(msg.sender, 100e18);
     }
 
     function mint(address to, uint256 amount) external override {

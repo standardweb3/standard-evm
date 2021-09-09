@@ -6,6 +6,7 @@ import './interfaces/IVaultManager.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
+import "./libraries/VaultLibrary.sol";
 
 contract VaultManager is OracleRegistry, IVaultManager {
     event VaultCreated(address collateral, uint256 vaultId, address creator, address vault);
@@ -16,7 +17,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
     bool rebaseActive;
 
     // Vaults
-    mapping (uint => address) Vaults;
+    address[] public allVaults;
+    // Vault registry
+    /// key: Borrower address, value: Array of Vault Ids 
+    mapping(address => uint[]) public vaultOf;
 
     // CDP configs
     /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) 
@@ -34,10 +38,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address feeSetter;
     /// Address of meter
     address meter;
-    /// Vault global identifier index, increments on every creation of vault
-    uint256 gIndex = 0;
-    /// Address pointer for vault
-    address vlt;
     /// Address of Standard market
     address market;
     /// Address of Standard MTR fee pool
@@ -73,7 +73,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function _createVault(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, uint256 amount_) internal returns (address vault) {
 
         bytes memory bytecode = type(Vault).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(collateral_, vaultId_, cAggregator_, dAggregator_, amount_, msg.sender));
+        bytes32 salt = keccak256(abi.encodePacked(vaultId_));
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
@@ -93,11 +93,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
         require(isValidSupply(dAmount_), "VaultManager: MTR borrow is blocked for stability");
         // create vault
         // mint ERC721 for vault
+        uint256 gIndex = this.allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
-        vlt = _createVault(collateral_, gIndex, cAggregator, dAggregator, dAmount_);
+        address vlt = _createVault(collateral_, gIndex, cAggregator, dAggregator, dAmount_);
         // transfer collateral to the vault, manage collateral from there
         require(IERC20(collateral_).transferFrom(_msgSender(), vlt, cAmount_), "VaultManager: TransferFrom failed");
-        gIndex += 1; // increment vault id
+        allVaults.push(vlt);
+        vaultOf[_msgSender()].push(gIndex);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
@@ -113,16 +115,22 @@ contract VaultManager is OracleRegistry, IVaultManager {
         require(isValidSupply(dAmount_), "VaultManager: MTR borrow is blocked for stability");
         // create vault
         // mint ERC721 for vault
+        uint256 gIndex = this.allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
-        vlt = _createVault(WETH, gIndex, cAggregator, dAggregator, dAmount_);
+        address vlt = _createVault(WETH, gIndex, cAggregator, dAggregator, dAmount_);
         // wrap native currency
         IWETH(WETH).deposit{value: address(this).balance}();
         uint256 weth = IERC20(WETH).balanceOf(address(this));
         // then transfer collateral native currency to the vault, manage collateral from there.
         assert(IWETH(WETH).transfer(vlt, weth)); 
-        gIndex += 1; // increment vault id
+        allVaults.push(vlt);
+        vaultOf[_msgSender()].push(gIndex);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
+    }
+    
+    function allVaultsLength() external view returns (uint) {
+        return allVaults.length;
     }
 
     function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals) {
@@ -146,7 +154,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }     
 
     function getVault(uint vaultId_) external view override returns (address) {
-        return Vaults[vaultId_];
+        return VaultLibrary.vaultFor(address(this), vaultId_);
     }
 
     // Set desirable supply of issuing stablecoin

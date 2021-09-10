@@ -54,19 +54,23 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-    bytes32 public constant VAULT_MANAGER_ROLE = keccak256("VAULT_MANAGER_ROLE");
     
 
     /**
      * @dev Creates an instance of `MeterToken` where `name` and `symbol` is initialized.
      * Names and symbols can vary from the pegging currency
      */
-    constructor(string memory name, string memory symbol)
+    constructor(string memory name, string memory symbol, address manager)
     ERC20(name, symbol) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
-        _mint(msg.sender, 100e18);
+        _setupRole(MINTER_ROLE, manager);
+    }
+    
+    function setManager(address manager_) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "MTRV1: Caller is not a default admin");
+        _setupRole(MINTER_ROLE, manager_);
     }
 
     function mint(address to, uint256 amount) external override {

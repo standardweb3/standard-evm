@@ -5,9 +5,9 @@ import "../../security/MonthGuard.sol";
 
 contract BondedStrategy is MonthGuard {
 
-    address stnd;
-    address mtr;
-    mapping(address => uint256) bonded;
+    address public stnd;
+    address public mtr;
+    mapping(address => uint256) public bonded;
 
     event DividendClaimed(address claimer, uint256 amount);
     

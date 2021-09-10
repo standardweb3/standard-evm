@@ -21,7 +21,13 @@ contract V1 is ERC721, AccessControl, IV1  {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(MINTER_ROLE, manager);
         _setupRole(BURNER_ROLE, _msgSender());
+        manager = manager_;
+    }
+    
+    function setManager(address manager_) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "MTRV1: Caller is not a default admin");
         manager = manager_;
     }
 

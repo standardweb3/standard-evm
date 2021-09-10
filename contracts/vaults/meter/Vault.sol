@@ -16,8 +16,8 @@ contract Vault is IVault {
     IPrice feed;
     /// Vault NFT interface
     IERC721 V1;
-    /// Market interface 
-    address market;
+    /// uniswap v2 factory interface 
+    address v2Factory;
     /// Vault manager
     IVaultManager vltManager;
     /// Collateral Aggregator contract address to get processed price data
@@ -56,7 +56,7 @@ contract Vault is IVault {
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address market_, address weth_) external {
+    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address v2Factory_, address weth_) external {
         require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;
@@ -65,7 +65,7 @@ contract Vault is IVault {
         v1 = v1_;
         debt = debt_;
         borrow = amount_;
-        market = market_;
+        v2Factory = v2Factory_;
         WETH = weth_;
     }
 
@@ -73,8 +73,8 @@ contract Vault is IVault {
     function liquidate() public {
         require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
         // check the pair if it exists
-        require(IUniswapV2Factory(market).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
-        address pair = UniswapV2Library.pairFor(market, collateral, debt);
+        require(IUniswapV2Factory(v2Factory).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
+        address pair = UniswapV2Library.pairFor(v2Factory, collateral, debt);
         uint256 balance = IERC20(collateral).balanceOf(address(this));
         uint256 lfr = IVaultManager(manager).getLFR(collateral);
         uint256 liquidationFee = lfr*balance/100;

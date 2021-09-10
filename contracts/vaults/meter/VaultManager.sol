@@ -12,9 +12,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     event VaultCreated(address collateral, uint256 vaultId, address creator, address vault);
 
     /// Desirable supply of stablecoin 
-    uint256 desiredSupply;
+    uint256 public desiredSupply;
     /// switch to on/off rebase;
-    bool rebaseActive;
+    bool public rebaseActive;
 
     // Vaults
     address[] public allVaults;
@@ -33,22 +33,22 @@ contract VaultManager is OracleRegistry, IVaultManager {
     mapping (address => uint8) internal CDecimals;
     
     /// Address of cdp nft registry
-    address v1;
+    address public v1;
     /// Manager of Vaults
     address feeSetter;
     /// Address of meter
-    address meter;
-    /// Address of Standard market
-    address market;
+    address public meter;
+    /// Address of uniswapv2 factory;
+    address public v2Factory;
     /// Address of Standard MTR fee pool
-    address feePool;
+    address public feePool;
     /// Address of Wrapped eth;
-    address WETH;
+    address public WETH;
 
-    constructor(address v1_, address meter_, address market_, address feePool_, address weth_) {
+    constructor(address v1_, address meter_, address v2Factory_, address feePool_, address weth_) {
         v1 = v1_;
         meter = meter_;
-        market = market_;
+        v2Factory = v2Factory_;
         feePool = feePool_;
         feeSetter = _msgSender();
         WETH = weth_;
@@ -68,6 +68,14 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function setFeeStrategy(address feePool_) public onlyFeeSetter {
         feePool=feePool_;
     }
+    
+    function migrate(address v1_, address meter_, address v2Factory_, address feePool_, address weth_) public onlyFeeSetter {
+        v1 = v1_;
+        meter = meter_;
+        v2Factory = v2Factory_;
+        feePool = feePool_;
+        WETH = weth_;
+    }
 
     /// Vault cannot issue stablecoin, it just manages the position
     function _createVault(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, uint256 amount_) internal returns (address vault) {
@@ -77,7 +85,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, market, WETH);
+        Vault(vault).initialize(collateral_, vaultId_, cAggregator_, dAggregator_, v1, meter, amount_, v2Factory, WETH);
         emit VaultCreated(collateral_, vaultId_, msg.sender, vault);
         return vault;
     }

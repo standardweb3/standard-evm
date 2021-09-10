@@ -222,7 +222,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     fork: {
-      url: "http://localhost:8545",
+      url: process.env.ALCHEMY,
     },
   },
   solidity: {

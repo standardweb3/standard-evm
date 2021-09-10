@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract OracleRegistry is AccessControl {
     bytes32 public constant ORACLE_OPERATOR_ROLE = keccak256("ORACLE_OPERATOR_ROLE");
     event AggregatorAdded(address asset, address aggregator);
-    mapping (address => address) internal PriceFeeds;
+    mapping (address => address) public PriceFeeds;
     IPrice feed;
 
     function _getPriceOf(address asset_) internal returns(int) {

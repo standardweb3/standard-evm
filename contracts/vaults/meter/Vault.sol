@@ -208,8 +208,10 @@ contract Vault is IVault {
         uint sfr = IVaultManager(manager).getSFR(collateral);
         /// (sfr * assetValue/100) * (duration in months)
         uint256 fee = sfr * assetValue;
+        // get duration in months
+        uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30; 
         assert(fee >= assetValue);
-        return fee / 100;
+        return (fee / 100) * duration;
     }
 
     function getDebt() public returns (uint) {

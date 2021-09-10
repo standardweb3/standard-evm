@@ -22,7 +22,8 @@ For security concerns, email [security@standardprotocol.org](mailto:security@sta
 | MeterToken.sol        |                                            |        |             |                 |        |
 | StandardToken.sol     |                                            |        |             |                 |        |
 | FeePool.sol           |                                            |        |             |                 |        |
-  
+| V1.sol                |                                            |        |             |                 |        |
+
 Discussion
 ----------
 

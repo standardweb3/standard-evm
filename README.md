@@ -15,14 +15,14 @@ For security concerns, email [security@standardprotocol.org](mailto:security@sta
 
 | Contract Name         | Kovan                                      | Mumbai | Eth Mainnet | Polygon Mainnet | Shiden |
 |-----------------------|--------------------------------------------|--------|-------------|-----------------|--------|
-| UniswapV2Factory.sol  | 0xD4485578Da796f2342979f9d650fF89079886C46 |        |             |                 |        |
-| UniswapV2Router02.sol | 0x00cA95bfcc23565eD953ac0fd2236f0fb1Fdf81E |        |             |                 |        |
-| VaultManager.sol      | 0x5Da0Bcfec0d35D4fd9C898B5532c27ef4368cddE |        |             |                 |        |
+| UniswapV2Factory.sol  | 0x00cA95bfcc23565eD953ac0fd2236f0fb1Fdf81E |        |             |                 |        |
+| UniswapV2Router02.sol | 0xD4485578Da796f2342979f9d650fF89079886C46 |        |             |                 |        |
+| VaultManager.sol      | 0x78c092ae7F1EC6dADD46f9eb4ECe26d81869572B |        |             |                 |        |
 | WETH9                 | 0xd0A1E359811322d97991E03f863a0C30C2cF029C |        |             |                 |        |
-| MeterToken.sol        | 0xcE495DCD35F609610659F3D4aB8532eD13724DDD |        |             |                 |        |
-| StandardToken.sol     | 0xa710F775D0F90CddfB63802DfCf9554aDEf4e42F |        |             |                 |        |
-| FeePool.sol           | 0x976A78F4eaB8a5b1Bc10Eb7572aE44F82333083e |        |             |                 |        |
-| V1.sol                | 0x23a04475a5b0f3df17051124D8EfeBE012622813 |        |             |                 |        |
+| MeterToken            | 0x0F02c12A13267Ed2b386af681e7E5E9FA9f18Ef6 |        |             |                 |        |
+| Standard              | 0xF2E892309762Fe83292cda29A972CcaD97506c01 |        |             |                 |        |
+| BondedStrategy        | 0xc0219d75668DCC4aD254c8BC58a1952a619c0Bd5 |        |             |                 |        |
+| V1                    | 0x4B3C56dBbaE40cd8e82eADBF39528410BD6826bA |        |             |                 |        |
 
 Discussion
 ----------

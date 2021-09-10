@@ -15,10 +15,14 @@ For security concerns, email [security@standardprotocol.org](mailto:security@sta
 
 | Contract Name         | Kovan                                      | Mumbai | Eth Mainnet | Polygon Mainnet | Shiden |
 |-----------------------|--------------------------------------------|--------|-------------|-----------------|--------|
-| UniswapV2Factory.sol  | 0xCE9Fa59dE891CBDB6C2fc7EE062C54b9aD4Ee36c |        |             |                 |        |
-| UniswapV2Router02.sol | 0x1310A6c52132b6C8a74373b6ed5b77404921e26A |        |             |                 |        |
-|                       |                                            |        |             |                 |        |
-
+| UniswapV2Factory.sol  | 0xD4485578Da796f2342979f9d650fF89079886C46 |        |             |                 |        |
+| UniswapV2Router02.sol | 0x00cA95bfcc23565eD953ac0fd2236f0fb1Fdf81E |        |             |                 |        |
+| VaultManager.sol      |                                            |        |             |                 |        |
+| WETH9                 | 0xd0A1E359811322d97991E03f863a0C30C2cF029C |        |             |                 |        |
+| MeterToken.sol        |                                            |        |             |                 |        |
+| StandardToken.sol     |                                            |        |             |                 |        |
+| FeePool.sol           |                                            |        |             |                 |        |
+  
 Discussion
 ----------
 

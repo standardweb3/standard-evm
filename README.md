@@ -15,8 +15,8 @@ For security concerns, email [security@standardprotocol.org](mailto:security@sta
 
 | Contract Name         | Kovan                                      | Ropsten                                    | Mumbai | Eth Mainnet | Polygon Mainnet | Shiden |
 |-----------------------|--------------------------------------------|--------------------------------------------|--------|-------------|-----------------|--------|
-| UniswapV2Factory.sol  | 0x0795106fE1D6B169E26AeC99EFDf27a4262a4a9e | 0xa41A122F29ebfB4c36C8D8B3C008C8C71102Ade0 |        |             |                 |        |
-| UniswapV2Router02.sol | 0x26C9e0cA922636C319bD76d9Eebff7A9f94c7890 | 0x264df23E4E62BB0d47473e853ab3f0E1e6193425 |        |             |                 |        |
+| UniswapV2Factory.sol  | 0x414e4EDB62e8C95BA4E10703c49AC20533E6CcCe | 0xa41A122F29ebfB4c36C8D8B3C008C8C71102Ade0 |        |             |                 |        |
+| UniswapV2Router02.sol | 0xDC4E3be13CD73BAC3C22489D224726d1Aa1B714e | 0x264df23E4E62BB0d47473e853ab3f0E1e6193425 |        |             |                 |        |
 | VaultManager          | 0x78c092ae7F1EC6dADD46f9eb4ECe26d81869572B |                                            |        |             |                 |        |
 | WETH9                 | 0xd0A1E359811322d97991E03f863a0C30C2cF029C |                                            |        |             |                 |        |
 | MeterToken            | 0x0F02c12A13267Ed2b386af681e7E5E9FA9f18Ef6 |                                            |        |             |                 |        |

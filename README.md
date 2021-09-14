@@ -23,6 +23,7 @@ For security concerns, email [security@standardprotocol.org](mailto:security@sta
 | Standard          | 0xF2E892309762Fe83292cda29A972CcaD97506c01 |                                            |                                            |        |             |                 |        |
 | BondedStrategy    | 0xc0219d75668DCC4aD254c8BC58a1952a619c0Bd5 |                                            |                                            |        |             |                 |        |
 | V1                | 0x4B3C56dBbaE40cd8e82eADBF39528410BD6826bA |                                            |                                            |        |             |                 |        |
+| MasterPool        | 0x7f04EF46C40C2a6F06d36A9F2D9083b59E80B2A7 |                                            |                                            |        |             |                 |        |
 
 Discussion
 ----------

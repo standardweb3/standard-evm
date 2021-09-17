@@ -10,7 +10,7 @@
         "settings": {
           "optimizer": {
             "enabled": false,
-            "runs": 200
+            "runs": 99999
           },
           "outputSelection": {
             "*": {
@@ -52,7 +52,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -97,16 +97,16 @@
         "SignedSafeMath"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/stnd_multichain_impl.sol": {
-      "lastModificationDate": 1631893977395,
-      "contentHash": "4c3a48ba08778a00e4162cc31a383506",
-      "sourceName": "contracts/tokens/stnd_multichain_impl.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/interfaces/IChildToken.sol": {
+      "lastModificationDate": 1631901177059,
+      "contentHash": "fb61f938822fcf9b0260df6f7d75359b",
+      "sourceName": "contracts/tokens/multichain/interfaces/IChildToken.sol",
       "solcConfig": {
         "version": "0.6.12",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -133,72 +133,1125 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.6.0",
-        "^0.6.0",
-        "^0.6.0",
-        "^0.6.2",
-        "0.6.12",
-        "0.6.12",
-        "^0.6.0",
-        "^0.6.0",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "0.6.12",
-        "^0.6.0",
-        "0.6.12",
         "0.6.12"
       ],
       "artifacts": [
-        "AccessControl",
-        "AccessControlMixin",
-        "Address",
-        "Blacklistable",
-        "Context",
-        "ContextMixin",
-        "ECRecover",
-        "EIP712",
-        "EIP712Domain",
-        "ERC20",
-        "EnumerableSet",
-        "GasAbstraction",
-        "IChildToken",
-        "IERC20",
-        "IERC20Internal",
-        "Initializable",
-        "MaticGasAbstraction",
-        "NativeMetaTransaction",
-        "Nonces",
-        "Pausable",
-        "Permit",
-        "Rescuable",
-        "SafeERC20",
-        "SafeMath",
-        "UChildAdministrableERC20",
-        "UChildERC20"
+        "IChildToken"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/stnd_multichain_proxy.sol": {
-      "lastModificationDate": 1631893973962,
-      "contentHash": "f9b26a782c178d4b542eb82c0a65e3d6",
-      "sourceName": "contracts/tokens/stnd_multichain_proxy.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/UChildERC20.sol": {
+      "lastModificationDate": 1631902425725,
+      "contentHash": "78a9d07ac2960b5eb035bf41ff653abe",
+      "sourceName": "contracts/tokens/multichain/UChildERC20.sol",
       "solcConfig": {
         "version": "0.6.12",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./libraries/ERC20.sol",
+        "./libraries/access/AccessControlMixin.sol",
+        "./interfaces/IChildToken.sol",
+        "./libraries/Initializable.sol",
+        "./libraries/meta-transaction/NativeMetaTransaction.sol",
+        "./libraries/meta-transaction/MaticGasAbstraction.sol",
+        "./libraries/meta-transaction/Permit.sol",
+        "./libraries/ContextMixin.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "UChildERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/ERC20.sol": {
+      "lastModificationDate": 1631901096431,
+      "contentHash": "e8857f461ec650676226f37ef421677e",
+      "sourceName": "contracts/tokens/multichain/libraries/ERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./access/Context.sol",
+        "../interfaces/IERC20.sol",
+        "../interfaces/IERC20Internal.sol",
+        "./SafeMath.sol",
+        "./access/Address.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/access/AccessControlMixin.sol": {
+      "lastModificationDate": 1631900996910,
+      "contentHash": "4b7458aba512da9f59e470fae9cda4a8",
+      "sourceName": "contracts/tokens/multichain/libraries/access/AccessControlMixin.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./AccessControl.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "AccessControlMixin"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/Initializable.sol": {
+      "lastModificationDate": 1631901241084,
+      "contentHash": "05ff7cfeb0a74ee2cc1cbd19e07d7d92",
+      "sourceName": "contracts/tokens/multichain/libraries/Initializable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Initializable"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/NativeMetaTransaction.sol": {
+      "lastModificationDate": 1631901545213,
+      "contentHash": "f98061f093186ef066247cb5098386df",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/NativeMetaTransaction.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./EIP712Domain.sol",
+        "./Nonces.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "NativeMetaTransaction"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/MaticGasAbstraction.sol": {
+      "lastModificationDate": 1631901810897,
+      "contentHash": "0fd7f7ebff1f0cec4cddc1dec08af6b4",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/MaticGasAbstraction.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./GasAbstraction.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "MaticGasAbstraction"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/Permit.sol": {
+      "lastModificationDate": 1631901646129,
+      "contentHash": "bfca5d4eb645b964f5cce8471310d69e",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/Permit.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../../interfaces/IERC20Internal.sol",
+        "./EIP712Domain.sol",
+        "./Nonces.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Permit"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/ContextMixin.sol": {
+      "lastModificationDate": 1631901921171,
+      "contentHash": "26548d3687dd83dda47808051ac60b78",
+      "sourceName": "contracts/tokens/multichain/libraries/ContextMixin.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ContextMixin"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/access/Context.sol": {
+      "lastModificationDate": 1631901077004,
+      "contentHash": "a96f2c74ed2069f56db4e8f7a04a2915",
+      "sourceName": "contracts/tokens/multichain/libraries/access/Context.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/interfaces/IERC20.sol": {
+      "lastModificationDate": 1631900664816,
+      "contentHash": "78fd0a0bd62be0b96a4438fd3b46c9f3",
+      "sourceName": "contracts/tokens/multichain/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/interfaces/IERC20Internal.sol": {
+      "lastModificationDate": 1631900425784,
+      "contentHash": "ebfe9bdf5b6d06072717ca7b6b54031b",
+      "sourceName": "contracts/tokens/multichain/interfaces/IERC20Internal.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IERC20Internal"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/SafeMath.sol": {
+      "lastModificationDate": 1631900325016,
+      "contentHash": "315a58ae8ed9e6e12611ea523f065279",
+      "sourceName": "contracts/tokens/multichain/libraries/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/access/Address.sol": {
+      "lastModificationDate": 1631901074196,
+      "contentHash": "eb0960733a8c4990211f8c208c1c7c0d",
+      "sourceName": "contracts/tokens/multichain/libraries/access/Address.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.2"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/access/AccessControl.sol": {
+      "lastModificationDate": 1631901113725,
+      "contentHash": "3899f0583d32635475e1da7df37d6590",
+      "sourceName": "contracts/tokens/multichain/libraries/access/AccessControl.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./EnumerableSet.sol",
+        "./Context.sol",
+        "./Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "AccessControl"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/access/EnumerableSet.sol": {
+      "lastModificationDate": 1631900997000,
+      "contentHash": "e05769b7f29d1445ccfa30a2ca4dff93",
+      "sourceName": "contracts/tokens/multichain/libraries/access/EnumerableSet.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "EnumerableSet"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/EIP712Domain.sol": {
+      "lastModificationDate": 1631901485169,
+      "contentHash": "8b036089f6125eebb1c73cf979070d6d",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/EIP712Domain.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./EIP712.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "EIP712Domain"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/Nonces.sol": {
+      "lastModificationDate": 1631901537924,
+      "contentHash": "c343744f596b178e488ce7fa9b7d15de",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/Nonces.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Nonces"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/EIP712.sol": {
+      "lastModificationDate": 1631901485075,
+      "contentHash": "473b8602e4ce2bf4886f8cefd3a05c2d",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/EIP712.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ECRecover.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "EIP712"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/ECRecover.sol": {
+      "lastModificationDate": 1631901485006,
+      "contentHash": "1b3e731e5eccc608ff201b50f12bf1d1",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/ECRecover.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "ECRecover"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/meta-transaction/GasAbstraction.sol": {
+      "lastModificationDate": 1631901732214,
+      "contentHash": "d3ebc6a5d91f9e89b4c489b26dfb77a0",
+      "sourceName": "contracts/tokens/multichain/libraries/meta-transaction/GasAbstraction.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../../interfaces/IERC20Internal.sol",
+        "./EIP712Domain.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "GasAbstraction"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/SafeERC20.sol": {
+      "lastModificationDate": 1631902164107,
+      "contentHash": "b26fc02a6642e1b6d1d278a111b3d5f3",
+      "sourceName": "contracts/tokens/multichain/libraries/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./SafeMath.sol",
+        "../interfaces/IERC20.sol",
+        "./access/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/admin/Rescuable.sol": {
+      "lastModificationDate": 1631902183565,
+      "contentHash": "29d305f2ca490ec1d454120f04f95ad8",
+      "sourceName": "contracts/tokens/multichain/libraries/admin/Rescuable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../access/AccessControlMixin.sol",
+        "../SafeERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Rescuable"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/stnd_multichain_impl.sol": {
+      "lastModificationDate": 1631902446842,
+      "contentHash": "41ad2b2de3740091c5ba192308fa8af0",
+      "sourceName": "contracts/tokens/multichain/stnd_multichain_impl.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./UChildERC20.sol",
+        "./libraries/admin/Pausable.sol",
+        "./libraries/admin/Rescuable.sol",
+        "./libraries/admin/Blacklistable.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "UChildAdministrableERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/admin/Pausable.sol": {
+      "lastModificationDate": 1631902030040,
+      "contentHash": "d299efa12b7defffc172313499bb7c5a",
+      "sourceName": "contracts/tokens/multichain/libraries/admin/Pausable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../access/AccessControlMixin.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Pausable"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/libraries/admin/Blacklistable.sol": {
+      "lastModificationDate": 1631901996266,
+      "contentHash": "aaa83b932faf63248204cfaedb000ef2",
+      "sourceName": "contracts/tokens/multichain/libraries/admin/Blacklistable.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../access/AccessControlMixin.sol"
+      ],
+      "versionPragmas": [
+        "0.6.12"
+      ],
+      "artifacts": [
+        "Blacklistable"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/multichain/stnd_multichain_proxy.sol": {
+      "lastModificationDate": 1631900249975,
+      "contentHash": "f9b26a782c178d4b542eb82c0a65e3d6",
+      "sourceName": "contracts/tokens/multichain/stnd_multichain_proxy.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -246,7 +1299,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -296,7 +1349,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -341,7 +1394,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -383,7 +1436,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -433,7 +1486,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -477,7 +1530,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -519,7 +1572,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -561,7 +1614,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {
@@ -605,7 +1658,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 99999
+            "runs": 10000
           },
           "outputSelection": {
             "*": {

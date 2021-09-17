@@ -305,6 +305,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
+            // For token, set 10000
             runs: 99999,
           },
         },
@@ -314,7 +315,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: false,
-            runs: 200,
+            runs: 99999,
           },
         },
       },

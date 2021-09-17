@@ -5,6 +5,7 @@ import "./amm"
 import "./token"
 import "./vault"
 import "./synth"
+import "./pool"
 
 
 

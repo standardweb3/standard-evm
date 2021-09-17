@@ -1,14 +1,13 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants, ContractFactory } from "ethers";
 import { executeTx, deployContract } from "./helper";
-
 const assert = (condition, message) => {
     if (condition) return;
     throw new Error(message);
   };
 
   // npx hardhat --network rinkeby deploy-amm  --weth 0xdf032bc4b9dc2782bb09352007d4c57b75160b15
-  task("deploy-amm", "Deploy Standard AMM")
+  task("amm-deploy", "Deploy Standard AMM")
   .addParam("weth", "Address of Wrapped ETH")
   .setAction(async ({weth}, { ethers }) => {
     const [deployer] = await ethers.getSigners();
@@ -49,6 +48,21 @@ const assert = (condition, message) => {
       )} ETH`
     );
 
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+    // Verify Factory
+    await hre.run("verify:verify", {
+        contract: "contracts/uniswapv2/UniswapV2Factory.sol:UniswapV2Factory",
+        address: factory.address,
+        constructorArguments: [deployer.address],
+    })
+
+    // Verify Router
+    await hre.run("verify:verify", {
+        contract: "contracts/uniswapv2/UniswapV2Router02.sol:UniswapV2Router02",
+        address: router.address,
+        constructorArguments: [factory.address, weth],
+    })
   });
 
 

@@ -1884,60 +1884,6 @@
         "UniswapV2Factory"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/bridge/PolkadotClaim.sol": {
-      "lastModificationDate": 1631870416174,
-      "contentHash": "4321be11c67d986f017f66f230e18122",
-      "sourceName": "contracts/bridge/PolkadotClaim.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "../Standard.sol",
-        "@openzeppelin/contracts/utils/math/Math.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/utils/Address.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "PolkadotClaim"
-      ]
-    },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/Standard.sol": {
       "lastModificationDate": 1631870416174,
       "contentHash": "935fabdaebf0a055ec39db947b60dc5f",

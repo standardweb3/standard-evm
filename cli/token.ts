@@ -1,11 +1,10 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants } from "ethers";
 import "@nomiclabs/hardhat-etherscan";
-import { executeTx, deployContract } from "./helper";
-import { hrtime } from "process";
+import { executeTx, deployContract} from "./helper";
 import { ConstructorFragment } from "@ethersproject/abi";
 
-task("deploy-stnd", "Deploy Standard Multichain Token").setAction(async (args, {ethers}) => {
+task("token-deploy", "Deploy Standard Multichain Token").setAction(async (args, {ethers}) => {
     
     const [deployer] = await ethers.getSigners();
     
@@ -37,12 +36,13 @@ task("deploy-stnd", "Deploy Standard Multichain Token").setAction(async (args, {
       )} ETH`
     );
 
+    // INFO: hre can only be imported inside task
     const hre = require("hardhat")
     // Verify Impl
     await hre.run("verify:verify", {
         contract: "contracts/tokens/multichain/stnd_multichain_impl.sol:UChildAdministrableERC20",
         address: impl.address,
-        ConstructorArguments: []
+        constructorArguments: []
     })
 
     // Verify proxy

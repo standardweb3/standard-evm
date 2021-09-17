@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/WETH9.sol": {
-      "lastModificationDate": 1631870416176,
-      "contentHash": "5f4ebfcbf39015b43f4495f55612f5fc",
+      "lastModificationDate": 1631890568643,
+      "contentHash": "f8a4ecaee35affe93abe7cd69b6fc0c7",
       "sourceName": "contracts/tokens/WETH9.sol",
       "solcConfig": {
         "version": "0.4.19",
@@ -95,6 +95,146 @@
         "IRewarder",
         "MasterPool",
         "SignedSafeMath"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/stnd_multichain_impl.sol": {
+      "lastModificationDate": 1631893977395,
+      "contentHash": "4c3a48ba08778a00e4162cc31a383506",
+      "sourceName": "contracts/tokens/stnd_multichain_impl.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.2",
+        "0.6.12",
+        "0.6.12",
+        "^0.6.0",
+        "^0.6.0",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "^0.6.0",
+        "0.6.12",
+        "0.6.12"
+      ],
+      "artifacts": [
+        "AccessControl",
+        "AccessControlMixin",
+        "Address",
+        "Blacklistable",
+        "Context",
+        "ContextMixin",
+        "ECRecover",
+        "EIP712",
+        "EIP712Domain",
+        "ERC20",
+        "EnumerableSet",
+        "GasAbstraction",
+        "IChildToken",
+        "IERC20",
+        "IERC20Internal",
+        "Initializable",
+        "MaticGasAbstraction",
+        "NativeMetaTransaction",
+        "Nonces",
+        "Pausable",
+        "Permit",
+        "Rescuable",
+        "SafeERC20",
+        "SafeMath",
+        "UChildAdministrableERC20",
+        "UChildERC20"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/stnd_multichain_proxy.sol": {
+      "lastModificationDate": 1631893973962,
+      "contentHash": "f9b26a782c178d4b542eb82c0a65e3d6",
+      "sourceName": "contracts/tokens/stnd_multichain_proxy.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.6.12",
+        "0.6.12",
+        "0.6.12",
+        "0.6.12"
+      ],
+      "artifacts": [
+        "IERCProxy",
+        "Proxy",
+        "UChildERC20Proxy",
+        "UpgradableProxy"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/uniswapv2/UniswapV2Router02.sol": {
@@ -3014,8 +3154,8 @@
       "artifacts": []
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/WSBY.sol": {
-      "lastModificationDate": 1631870416176,
-      "contentHash": "66f42c7a771c3be698b76e72412e4281",
+      "lastModificationDate": 1631890493008,
+      "contentHash": "59bcf0ebdb715813dd5a277277c6e72c",
       "sourceName": "contracts/tokens/WSBY.sol",
       "solcConfig": {
         "version": "0.8.7",

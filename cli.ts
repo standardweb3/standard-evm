@@ -7,7 +7,7 @@ const assert = (condition, message) => {
     throw new Error(message);
   };
 
-task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
+task("deploy", "Deploy Standard Token").setAction(async (args, { ethers }) => {
     const [deployer] = await ethers.getSigners();
   
     console.log(`Deploying Standard Token with the account: ${deployer.address}`);
@@ -31,6 +31,10 @@ task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
       )} ETH`
     );
   });
+
+task("deploy-amm", "Deploy Standard AMM").setAction(async (args, {ethers})=> {
+    const [deployer]
+})
   
   task("deploy-pool", "Deploy Standard Staking pools")
     .addParam("reward", "Address of the reward token contract")
@@ -156,11 +160,11 @@ task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
       );
   
       let tx;
-      const batchSize = 50n;
-      for (let i = 0n; i <= BigInt(blocked.length) / batchSize; i++) {
+      const batchSize: bigint = 50n;
+      for (let i: bigint = 0n; i <= BigInt(blocked.length) / batchSize; i++) {
         let entries = blocked.slice(
-          parseInt(i * batchSize),
-          parseInt((i + 1n) * batchSize)
+          i * batchSize,
+          (i + 1n) * batchSize
         );
         tx = await token.connect(sender).revokeBlocked(entries, to);
         console.log(`Batch ${i + 1n}: ${tx.hash}`);
@@ -180,7 +184,7 @@ task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
   
   task("disableProtection", "Manually disable liquidity protection")
     .addParam("token", "Address of the protected token contract")
-    .setAction(async ({ token: tokenAddress }) => {
+    .setAction(async ({ token: tokenAddress }, {ethers}) => {
       assert(
         ethers.utils.isAddress(tokenAddress),
         `Token address '${tokenAddress}' is invalid.`
@@ -188,7 +192,7 @@ task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
       const [sender] = await ethers.getSigners();
   
       const Token = await ethers.getContractFactory("Standard");
-      const token = await Token.attach(tokenAddress, Token.interface);
+      const token = await Token.attach(tokenAddress);
   
       console.log(
         `Disabling liquidity protection with account: ${sender.address}`

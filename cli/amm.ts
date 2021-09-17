@@ -1,7 +1,6 @@
 import { task, types } from "hardhat/config";
-import { BigNumber, constants } from "ethers";
-import "./helper"
-import { executeTx } from "./helper";
+import { BigNumber, constants, ContractFactory } from "ethers";
+import { executeTx, deployContract } from "./helper";
 
 const assert = (condition, message) => {
     if (condition) return;
@@ -22,13 +21,9 @@ const assert = (condition, message) => {
 
     // Deploy factory
     console.log(`Deploying Standard AMM factory with the account: ${deployer.address}`);
-
     const Factory = await ethers.getContractFactory("UniswapV2Factory");
     const factory = await Factory.deploy(deployer.address);
-    console.log("UniswapV2Factory address:", factory.address);
-  
-    console.log("Mining...");
-    await factory.deployed();
+    await deployContract(factory, "UniswapV2Factory")
 
 
     // Set Fee to
@@ -42,15 +37,9 @@ const assert = (condition, message) => {
         `WETH address '${weth}' is invalid.`
     );
     console.log(`Deploying Standard AMM router with the account: ${deployer.address}`);
-  
     const Router = await ethers.getContractFactory("UniswapV2Router02");
-
     const router = await Router.deploy(factory.address, weth);
-
-    console.log("UniswapV2Router02 address:", router.address);
-
-    console.log("Mining...");
-    await router.deployed();
+    await deployContract(router, "UniswapV2Router02")
 
     // Get results
     console.log(
@@ -60,5 +49,7 @@ const assert = (condition, message) => {
     );
 
   });
+
+
 
 

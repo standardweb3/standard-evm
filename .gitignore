@@ -1,6 +1,5 @@
 .idea/
 .env
-node_modules/
 
 build/
 .DS_Store
@@ -15,3 +14,4 @@ truffle-config.js
 node_modules
 artifacts
 cache
+node_modules

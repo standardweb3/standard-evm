@@ -30,7 +30,7 @@ contract WSBY0 is AccessControl, ERC20 {
 
     function mint(address to, uint256 amount) external  {
         // Check that the calling account has the minter role
-        require(hasRole(MINTER_ROLE, msg.sender), "Meter: Caller is not a minter");
+        require(hasRole(MINTER_ROLE, msg.sender), "Wrapped Shibuya: Caller is not a minter");
         _mint(to, amount);
     }
 

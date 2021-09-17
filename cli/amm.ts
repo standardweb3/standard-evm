@@ -1,5 +1,7 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants } from "ethers";
+import "./helper"
+import { executeTx } from "./helper";
 
 const assert = (condition, message) => {
     if (condition) return;
@@ -31,19 +33,18 @@ const assert = (condition, message) => {
 
     // Set Fee to
     const tx = await factory.connect(deployer).setFeeTo(deployer.address);
-    console.log(`Set Fee To at tx hash: ${tx.hash}`);
-    console.log("Mining...");
-    await tx.wait();
+    await executeTx(tx, "Execute setFeeTo at")
+
   
     // Deploy router
-    console.log(`Deploying Standard AMM router with the account: ${deployer.address}`);
-  
-    const Router = await ethers.getContractFactory("UniswapV2Router02");
-
     assert(
         ethers.utils.isAddress(weth),
         `WETH address '${weth}' is invalid.`
     );
+    console.log(`Deploying Standard AMM router with the account: ${deployer.address}`);
+  
+    const Router = await ethers.getContractFactory("UniswapV2Router02");
+
     const router = await Router.deploy(factory.address, weth);
 
     console.log("UniswapV2Router02 address:", router.address);
@@ -59,5 +60,5 @@ const assert = (condition, message) => {
     );
 
   });
-  
-  
+
+

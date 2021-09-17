@@ -1,9 +1,14 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants } from "ethers";
 
+const assert = (condition, message) => {
+    if (condition) return;
+    throw new Error(message);
+  };
+
   task("deploy-amm", "Deploy Standard AMM")
   .addParam("weth", "Address of Wrapped ETH")
-  .setAction(async (args, { ethers }) => {
+  .setAction(async ({weth}, { ethers }) => {
     const [deployer] = await ethers.getSigners();
 
     // Get before state
@@ -17,19 +22,34 @@ import { BigNumber, constants } from "ethers";
     console.log(`Deploying Standard AMM factory with the account: ${deployer.address}`);
 
     const Factory = await ethers.getContractFactory("UniswapV2Factory");
-    const factory = await Factory.deploy();
-  
+    const factory = await Factory.deploy(deployer.address);
     console.log("UniswapV2Factory address:", factory.address);
   
     console.log("Mining...");
     await factory.deployed();
+
+
+    // Set Fee to
+    const tx = await factory.connect(deployer).setFeeTo(deployer.address);
+    console.log(`Set Fee To at tx hash: ${tx.hash}`);
+    console.log("Mining...");
+    await tx.wait();
+  
     // Deploy router
     console.log(`Deploying Standard AMM router with the account: ${deployer.address}`);
   
     const Router = await ethers.getContractFactory("UniswapV2Router02");
-    const router = await Router.deploy();
+
+    assert(
+        ethers.utils.isAddress(weth),
+        `WETH address '${weth}' is invalid.`
+    );
+    const router = await Router.deploy(factory.address, weth);
 
     console.log("UniswapV2Router02 address:", router.address);
+
+    console.log("Mining...");
+    await router.deployed();
 
     // Get results
     console.log(

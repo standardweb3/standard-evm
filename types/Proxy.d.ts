@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
@@ -19,22 +18,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface ProxyInterface extends ethers.utils.Interface {
-  functions: {
-    "implementation()": FunctionFragment;
-    "proxyType()": FunctionFragment;
-  };
-
-  encodeFunctionData(
-    functionFragment: "implementation",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "proxyType", values?: undefined): string;
-
-  decodeFunctionResult(
-    functionFragment: "implementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "proxyType", data: BytesLike): Result;
+  functions: {};
 
   events: {};
 }
@@ -82,35 +66,13 @@ export class Proxy extends BaseContract {
 
   interface: ProxyInterface;
 
-  functions: {
-    implementation(overrides?: CallOverrides): Promise<[string]>;
+  functions: {};
 
-    proxyType(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { proxyTypeId: BigNumber }>;
-  };
-
-  implementation(overrides?: CallOverrides): Promise<string>;
-
-  proxyType(overrides?: CallOverrides): Promise<BigNumber>;
-
-  callStatic: {
-    implementation(overrides?: CallOverrides): Promise<string>;
-
-    proxyType(overrides?: CallOverrides): Promise<BigNumber>;
-  };
+  callStatic: {};
 
   filters: {};
 
-  estimateGas: {
-    implementation(overrides?: CallOverrides): Promise<BigNumber>;
+  estimateGas: {};
 
-    proxyType(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    proxyType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+  populateTransaction: {};
 }

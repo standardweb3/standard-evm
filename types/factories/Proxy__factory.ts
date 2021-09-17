@@ -8,30 +8,12 @@ import type { Proxy, ProxyInterface } from "../Proxy";
 
 const _abi = [
   {
-    inputs: [],
-    name: "implementation",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: "payable",
+    type: "fallback",
   },
   {
-    inputs: [],
-    name: "proxyType",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "proxyTypeId",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "pure",
-    type: "function",
+    stateMutability: "payable",
+    type: "receive",
   },
 ];
 

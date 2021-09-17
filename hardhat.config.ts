@@ -305,8 +305,8 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            // For token, set 65866
-            runs: 99999,
+            // For deploying token only, set 65866
+            runs: 65866,
           },
         },
       },

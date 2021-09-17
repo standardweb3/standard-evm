@@ -1,4 +1,5 @@
 import { task, types } from "hardhat/config";
+import { BigNumber, constants } from "ethers";
 
 
 const assert = (condition, message) => {
@@ -6,7 +7,7 @@ const assert = (condition, message) => {
     throw new Error(message);
   };
 
-task("deploy", "Deploy Standard Token").setAction(async () => {
+task("deploy", "Deploy Standard Token").setAction(async function ({ ethers }) {
     const [deployer] = await ethers.getSigners();
   
     console.log(`Deploying Standard Token with the account: ${deployer.address}`);
@@ -36,7 +37,7 @@ task("deploy", "Deploy Standard Token").setAction(async () => {
     .addParam("input", "Address of the input token contract")
     .addParam("starttime", "timestamp when reward starts")
     .setAction(
-      async ({ reward: rewardAddress, input: inputAddress, starttime }) => {
+      async function ({ reward: rewardAddress, input: inputAddress, starttime }, {ethers}) {
         assert(
           ethers.utils.isAddress(rewardAddress),
           `Token address '${rewardAddress}' is invalid.`
@@ -79,7 +80,7 @@ task("deploy", "Deploy Standard Token").setAction(async () => {
       "reward",
       "Total reward amount to rebase for staking in precision of 18 digit"
     )
-    .setAction(async ({ pool: poolAddress, reward }) => {
+    .setAction(async ({ pool: poolAddress, reward }, {ethers}) => {
       assert(
         ethers.utils.isAddress(poolAddress),
         `Pool address '${poolAddress}' is invalid.`
@@ -94,7 +95,7 @@ task("deploy", "Deploy Standard Token").setAction(async () => {
       );
   
       const Pool = await ethers.getContractFactory("WETHSTNDLPTokenSharePool");
-      const pool = await Pool.attach(poolAddress, Pool.interface);
+      const pool = await Pool.attach(poolAddress);
   
       console.log(
         `Notifying total reward amount to rebase to ${poolAddress}. Transaction sender: ${sender.address}`
@@ -123,7 +124,7 @@ task("deploy", "Deploy Standard Token").setAction(async () => {
       "json",
       'Path to the blocked accounts json. Example: ["0x1234", "0x5678", ...]'
     )
-    .setAction(async ({ token: tokenAddress, json, to }) => {
+    .setAction(async ({ token: tokenAddress, json, to }, {ethers}) => {
       assert(
         ethers.utils.isAddress(tokenAddress),
         `Token address '${tokenAddress}' is invalid.`
@@ -139,7 +140,7 @@ task("deploy", "Deploy Standard Token").setAction(async () => {
       const [sender] = await ethers.getSigners();
   
       const Token = await ethers.getContractFactory("Standard");
-      const token = await Token.attach(tokenAddress, Token.interface);
+      const token = await Token.attach(tokenAddress);
   
       console.log(
         `Revoking tokens from blocked accounts to ${to}. Transaction sender: ${sender.address}`

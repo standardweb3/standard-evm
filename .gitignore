@@ -12,4 +12,5 @@ coverage.json
 node_modules
 artifacts
 cache
+tenderly.yaml
 node_modules

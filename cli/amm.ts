@@ -64,7 +64,31 @@ const assert = (condition, message) => {
         constructorArguments: [factory.address, weth],
     })
   });
+  
+  task("callhash-deploy", "Deploy util for getting call hash for pair")
+  .setAction(async (args, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
 
+    // Get before state
+    console.log(
+        `Deployer balance: ${ethers.utils.formatEther(
+          await deployer.getBalance()
+        )} ETH`
+      );
 
+    // Deploy GetCallHash
+    console.log(`Deploying Call Hash Getter with the account: ${deployer.address}`);
+    const CallHash = await ethers.getContractFactory("GetCallHash");
+    const callhash = await CallHash.deploy();
+    await deployContract(callhash, "GetCallHash")
 
-
+  
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+    // Verify Factory
+    await hre.run("verify:verify", {
+        contract: "contracts/utils/GetCallHash.sol:GetCallHash",
+        address: callhash.address,
+        constructorArguments: []
+    })
+  });

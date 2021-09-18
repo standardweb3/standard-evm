@@ -322,8 +322,8 @@ const config: HardhatUserConfig = {
     ],
   },
   tenderly: {
-    project: process.env.TENDERLY_PROJECT || "",
-    username: process.env.TENDERLY_USERNAME || "",
+    project: /*process.env.TENDERLY_PROJECT || */"project",
+    username: /*process.env.TENDERLY_USERNAME || */"hskang9",
   },
   typechain: {
     outDir: "types",

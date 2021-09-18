@@ -50,5 +50,34 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
     })
   });
 
+  task("pool-deposit", "Deploy Standard MasterPool")
+  .addParam("pool", "Address of feePool")
+  .addParam("stnd", "Address of Standard")
+  .addParam("amount", "Amount of tokens to send in 18 decimals")
+  .setAction(async ({pool, stnd, amount}, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
+
+    // Get before state
+    console.log(
+        `Deployer balance: ${ethers.utils.formatEther(
+          await deployer.getBalance()
+        )} ETH`
+      );
+
+    // Send STND to the pool
+    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+    const impl = await TokenImpl.deploy()
+    const tx = await impl.attach(stnd).transfer(pool, amount)
+    await executeTx(tx, "Execute transfer at")
+    
+
+    // Get results
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  });
+
 
 

@@ -6,6 +6,7 @@ import "./token"
 import "./vault"
 import "./synth"
 import "./pool"
+import "./wrapped"
 
 
 

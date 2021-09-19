@@ -24,8 +24,6 @@ contract UChildAdministrableERC20 is
     Rescuable
 {
     
-    bytes32 public constant MINTER = keccak256("MINTER");
-    
     function _msgSender()
         internal
         override(Context, UChildERC20)
@@ -270,17 +268,5 @@ contract UChildAdministrableERC20 is
         bytes32 s
     ) external override whenNotPaused {
         _cancelAuthorization(authorizer, nonce, v, r, s);
-    }
-    
-    function mint(address account, uint256 amount) public {
-        require(hasRole(MINTER, msg.sender));
-        _mint(account, amount);
-    }
-    
-    function burnFrom(address account, uint256 amount) public {
-        uint256 currentAllowance = this.allowance(account, _msgSender());
-        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
-        _approve(account, _msgSender(), currentAllowance - amount);
-        _burn(account, amount);
     }
 }

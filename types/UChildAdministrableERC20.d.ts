@@ -32,7 +32,7 @@ interface UChildAdministrableERC20Interface extends ethers.utils.Interface {
     "EIP712_VERSION()": FunctionFragment;
     "INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
     "META_TRANSACTION_TYPEHASH()": FunctionFragment;
-    "MINTER()": FunctionFragment;
+    "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "PERMIT_TYPEHASH()": FunctionFragment;
     "RESCUER_ROLE()": FunctionFragment;
@@ -125,7 +125,10 @@ interface UChildAdministrableERC20Interface extends ethers.utils.Interface {
     functionFragment: "META_TRANSACTION_TYPEHASH",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "MINTER", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MINTER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "PAUSER_ROLE",
     values?: undefined
@@ -388,7 +391,10 @@ interface UChildAdministrableERC20Interface extends ethers.utils.Interface {
     functionFragment: "META_TRANSACTION_TYPEHASH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "MINTER", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MINTER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "PAUSER_ROLE",
     data: BytesLike
@@ -676,7 +682,7 @@ export class UChildAdministrableERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    MINTER(overrides?: CallOverrides): Promise<[string]>;
+    MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -981,7 +987,7 @@ export class UChildAdministrableERC20 extends BaseContract {
 
   META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  MINTER(overrides?: CallOverrides): Promise<string>;
+  MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1283,7 +1289,7 @@ export class UChildAdministrableERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    MINTER(overrides?: CallOverrides): Promise<string>;
+    MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1749,7 +1755,7 @@ export class UChildAdministrableERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MINTER(overrides?: CallOverrides): Promise<BigNumber>;
+    MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2064,7 +2070,7 @@ export class UChildAdministrableERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    MINTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

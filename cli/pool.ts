@@ -6,7 +6,7 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
   };
 
   // npx hardhat --network rinkeby deploy-amm  --weth 0xdf032bc4b9dc2782bb09352007d4c57b75160b15
-  task("pool-deploy", "Deploy Standard MasterPool")
+  task("masterpool-deploy", "Deploy Standard MasterPool")
   .addParam("stnd", "Address of Standard")
   .addParam("amount", "Amount of tokens to send in 18 decimals")
   .setAction(async ({stnd, amount}, { ethers }) => {
@@ -50,7 +50,7 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
     })
   });
 
-  task("pool-deposit", "Deploy Standard MasterPool")
+  task("masterpool-deposit", "Deposit stnd to Standard MasterPool")
   .addParam("pool", "Address of feePool")
   .addParam("stnd", "Address of Standard")
   .addParam("amount", "Amount of tokens to send in 18 decimals")
@@ -67,7 +67,7 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
     // Send STND to the pool
     const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
     const impl = await TokenImpl.deploy()
-    const tx = await impl.attach(stnd).transfer(pool, amount)
+    const tx = await impl.attach(stnd).transfer(pool, ethers.utils.parseUnits(amount, 18))
     await executeTx(tx, "Execute transfer at")
     
 
@@ -78,6 +78,7 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
       )} ETH`
     );
   });
+
 
 
 

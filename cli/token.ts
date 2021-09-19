@@ -35,7 +35,7 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
 
     // Mint initial total supply if parent
     if(parent) {
-        const tx = await impl.attach(proxy.address).mint(deployer.address, 100_000_000 * 1e18);    
+        const tx = await impl.attach(proxy.address).mint(deployer.address, ethers.utils.parseUnits("100000000", 18));    
     }
 
     console.log(

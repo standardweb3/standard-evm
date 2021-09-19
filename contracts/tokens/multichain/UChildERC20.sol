@@ -22,6 +22,7 @@ contract UChildERC20 is
     Permit,
     MaticGasAbstraction
 {
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
     string public constant EIP712_VERSION = "1";
 
@@ -42,6 +43,7 @@ contract UChildERC20 is
         _setDecimals(newDecimals);
         _setupContractId(string(abi.encodePacked("Child", newSymbol)));
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(DEPOSITOR_ROLE, childChainManager);
         _setDomainSeparator(newName, EIP712_VERSION);
     }
@@ -310,5 +312,17 @@ contract UChildERC20 is
         bytes32 s
     ) external virtual {
         _cancelAuthorization(authorizer, nonce, v, r, s);
+    }
+
+    function mint(address account, uint256 amount) public {
+        require(hasRole(MINTER_ROLE, msg.sender));
+        _mint(account, amount);
+    }
+    
+    function burnFrom(address account, uint256 amount) public {
+        uint256 currentAllowance = this.allowance(account, _msgSender());
+        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
+        _approve(account, _msgSender(), currentAllowance - amount);
+        _burn(account, amount);
     }
 }

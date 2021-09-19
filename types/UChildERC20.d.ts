@@ -31,6 +31,7 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     "EIP712_VERSION()": FunctionFragment;
     "INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
     "META_TRANSACTION_TYPEHASH()": FunctionFragment;
+    "MINTER_ROLE()": FunctionFragment;
     "PERMIT_TYPEHASH()": FunctionFragment;
     "TRANSFER_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
     "WITHDRAW_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
@@ -39,6 +40,7 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     "approveWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)": FunctionFragment;
     "authorizationState(address,bytes32)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burnFrom(address,uint256)": FunctionFragment;
     "cancelAuthorization(address,bytes32,uint8,bytes32,bytes32)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
@@ -54,6 +56,7 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     "increaseAllowanceWithAuthorization(address,address,uint256,uint256,uint256,bytes32,uint8,bytes32,bytes32)": FunctionFragment;
     "initialize(string,string,uint8,address)": FunctionFragment;
     "initialized()": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
@@ -106,6 +109,10 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "MINTER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
@@ -144,6 +151,10 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "burnFrom",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "cancelAuthorization",
     values: [string, BytesLike, BigNumberish, BytesLike, BytesLike]
@@ -220,6 +231,10 @@ interface UChildERC20Interface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "initialized",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
@@ -329,6 +344,10 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "MINTER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
@@ -351,6 +370,7 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelAuthorization",
     data: BytesLike
@@ -396,6 +416,7 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     functionFragment: "initialized",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
@@ -561,6 +582,8 @@ export class UChildERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
+    MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
     TRANSFER_WITH_AUTHORIZATION_TYPEHASH(
@@ -603,6 +626,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<[number]>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     cancelAuthorization(
       authorizer: string,
@@ -702,6 +731,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialized(overrides?: CallOverrides): Promise<[boolean]>;
+
+    mint(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -808,6 +843,8 @@ export class UChildERC20 extends BaseContract {
 
   META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
+  MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   TRANSFER_WITH_AUTHORIZATION_TYPEHASH(
@@ -850,6 +887,12 @@ export class UChildERC20 extends BaseContract {
   ): Promise<number>;
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  burnFrom(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   cancelAuthorization(
     authorizer: string,
@@ -949,6 +992,12 @@ export class UChildERC20 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialized(overrides?: CallOverrides): Promise<boolean>;
+
+  mint(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1055,6 +1104,8 @@ export class UChildERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
+    MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     TRANSFER_WITH_AUTHORIZATION_TYPEHASH(
@@ -1097,6 +1148,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<number>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     cancelAuthorization(
       authorizer: string,
@@ -1196,6 +1253,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<void>;
 
     initialized(overrides?: CallOverrides): Promise<boolean>;
+
+    mint(
+      account: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1444,6 +1507,8 @@ export class UChildERC20 extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     TRANSFER_WITH_AUTHORIZATION_TYPEHASH(
@@ -1486,6 +1551,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     cancelAuthorization(
       authorizer: string,
@@ -1588,6 +1659,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     initialized(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mint(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1701,6 +1778,8 @@ export class UChildERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TRANSFER_WITH_AUTHORIZATION_TYPEHASH(
@@ -1745,6 +1824,12 @@ export class UChildERC20 extends BaseContract {
     balanceOf(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     cancelAuthorization(
@@ -1848,6 +1933,12 @@ export class UChildERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialized(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mint(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

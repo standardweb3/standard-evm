@@ -1,6 +1,5 @@
-import { task, types } from "hardhat/config";
-import { BigNumber, constants, ContractFactory } from "ethers";
-import { executeTx, deployContract } from "./helper";const assert = (condition, message) => {
+import { task } from "hardhat/config";
+import { executeTx, deployContract, ZERO } from "../helper";const assert = (condition, message) => {
     if (condition) return;
     throw new Error(message);
   };
@@ -69,6 +68,35 @@ import { executeTx, deployContract } from "./helper";const assert = (condition, 
     const impl = await TokenImpl.deploy()
     const tx = await impl.attach(stnd).transfer(pool, ethers.utils.parseUnits(amount, 18))
     await executeTx(tx, "Execute transfer at")
+    
+
+    // Get results
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  });
+
+  task("masterpool-add", "Add LP Pool to Standard MasterPool")
+  .addParam("masterpool", "Address of masterpool contract")
+  .addParam("allocpoint", "Allocation point for priority")
+  .addParam("lptoken", "Address of lptoken")
+  .addOptionalParam("rewarder", "Address of extra rewarder address", ZERO)
+  .setAction(async ({masterpool, allocpoint, lptoken, rewarder}, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
+
+    // Get before state
+    console.log(
+        `Deployer balance: ${ethers.utils.formatEther(
+          await deployer.getBalance()
+        )} ETH`
+      );
+
+    // Send STND to the pool
+    const MasterPool = await ethers.getContractFactory("MasterPool")
+    const tx = await MasterPool.attach(masterpool).add(allocpoint, lptoken, rewarder)
+    await executeTx(tx, "Execute add at")
     
 
     // Get results

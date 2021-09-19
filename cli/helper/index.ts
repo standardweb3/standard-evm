@@ -27,3 +27,5 @@ export async function deployContract(deploy: any, contract: string){
     console.log("Mining...");
     await deploy.deployed();
 }
+
+export const ZERO = "0x0000000000000000000000000000000000000000"

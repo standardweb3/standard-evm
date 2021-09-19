@@ -1,8 +1,6 @@
 import { task, types } from "hardhat/config";
-import { BigNumber, constants } from "ethers";
 import "@nomiclabs/hardhat-etherscan";
-import { executeTx, deployContract} from "./helper";
-import { ConstructorFragment } from "@ethersproject/abi";
+import { executeTx, deployContract} from "../helper";
 
 task("weth-deploy", "Deploy Wrapped Ether")
 .addOptionalParam("deposit", "deposit eth amount in ether to get initial weth for testing", "0", types.string)

@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants, ContractFactory } from "ethers";
-import { executeTx, deployContract } from "./helper";
+import { executeTx, deployContract } from "../helper";
 const assert = (condition, message) => {
     if (condition) return;
     throw new Error(message);

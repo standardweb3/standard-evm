@@ -436,7 +436,7 @@ contract MasterPool is BoringOwnable, BoringBatchable {
     /// @dev Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint;
 
-    uint256 private constant MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
+    uint256 private MASTERCHEF_SUSHI_PER_BLOCK;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
@@ -452,7 +452,12 @@ contract MasterPool is BoringOwnable, BoringBatchable {
     constructor(IERC20 _sushi) public {
         //MASTER_CHEF = _MASTER_CHEF;
         SUSHI = _sushi;
+        MASTERCHEF_SUSHI_PER_BLOCK = 1e20;
         //MASTER_PID = _MASTER_PID;
+    }
+
+    function setRewardPerBlock(uint256 reward) public onlyOwner {
+        MASTERCHEF_SUSHI_PER_BLOCK = reward;
     }
 
     /// @notice Deposits a dummy token to `MASTER_CHEF` MCV1. This is required because MCV1 holds the minting rights for SUSHI.

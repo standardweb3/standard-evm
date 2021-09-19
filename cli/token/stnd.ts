@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants } from "ethers";
 import "@nomiclabs/hardhat-etherscan";
-import { executeTx, deployContract} from "./helper";
+import { executeTx, deployContract} from "../helper";
 import "@tenderly/hardhat-tenderly"
 import { ConstructorFragment } from "@ethersproject/abi";
 

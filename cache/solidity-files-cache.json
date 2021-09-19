@@ -1491,8 +1491,8 @@
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/uniswapv2/libraries/UniswapV2Library.sol": {
-      "lastModificationDate": 1631963996912,
-      "contentHash": "3532158f137fdda678024c790af9bd21",
+      "lastModificationDate": 1631966053717,
+      "contentHash": "bb08b5073686d2fe4e05190d3c9e6c59",
       "sourceName": "contracts/uniswapv2/libraries/UniswapV2Library.sol",
       "solcConfig": {
         "version": "0.6.12",
@@ -1786,8 +1786,8 @@
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/utils/GetCallHash.sol": {
-      "lastModificationDate": 1631963105730,
-      "contentHash": "5c152309498dcb901cb587ddaa7114a8",
+      "lastModificationDate": 1631965832467,
+      "contentHash": "79ce6003feef0f68f1cb1cce8e462fce",
       "sourceName": "contracts/utils/GetCallHash.sol",
       "solcConfig": {
         "version": "0.6.12",
@@ -1884,6 +1884,102 @@
         "UniswapV2Factory"
       ]
     },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/ILiquidityProtectionService.sol": {
+      "lastModificationDate": 1631870416174,
+      "contentHash": "b62e9a31892457416c6d4fff3500e2bd",
+      "sourceName": "contracts/ILiquidityProtectionService.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ILiquidityProtectionService"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/UsingLiquidityProtectionService.sol": {
+      "lastModificationDate": 1631870416174,
+      "contentHash": "f3b037e82d93e7224b7ef15481030a85",
+      "sourceName": "contracts/UsingLiquidityProtectionService.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ILiquidityProtectionService.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "UsingLiquidityProtectionService"
+      ]
+    },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/Standard.sol": {
       "lastModificationDate": 1631870416174,
       "contentHash": "935fabdaebf0a055ec39db947b60dc5f",
@@ -1933,244 +2029,6 @@
       ],
       "artifacts": [
         "Standard"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
-      "lastModificationDate": 1631883776680,
-      "contentHash": "4e138d2b21c8844ab1799e37d232fb5e",
-      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Math"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol": {
-      "lastModificationDate": 1631883776682,
-      "contentHash": "5365090efc586b728719e562ebfed0d6",
-      "sourceName": "@openzeppelin/contracts/utils/math/SafeMath.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeMath"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1631883776682,
-      "contentHash": "0eac3e1a83ee62326ca007811285b274",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1631883775039,
-      "contentHash": "c5f6c4e4df069c789e7d84b4c3011913",
-      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Address"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1631883777489,
-      "contentHash": "d37406082a74a9b6b114de522fcb6349",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "../IERC20.sol",
-        "../../../utils/Address.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeERC20"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/access/AccessControlEnumerable.sol": {
@@ -2272,55 +2130,6 @@
       ],
       "artifacts": [
         "ERC20Pausable"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/UsingLiquidityProtectionService.sol": {
-      "lastModificationDate": 1631870416174,
-      "contentHash": "f3b037e82d93e7224b7ef15481030a85",
-      "sourceName": "contracts/UsingLiquidityProtectionService.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "./ILiquidityProtectionService.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "UsingLiquidityProtectionService"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/access/IAccessControlEnumerable.sol": {
@@ -2808,6 +2617,53 @@
         "Pausable"
       ]
     },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1631883776682,
+      "contentHash": "0eac3e1a83ee62326ca007811285b274",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
       "lastModificationDate": 1631883777487,
       "contentHash": "aa1be06992a99bb7393b26a6af3c4dfb",
@@ -2857,10 +2713,114 @@
         "IERC20Metadata"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/ILiquidityProtectionService.sol": {
-      "lastModificationDate": 1631870416174,
-      "contentHash": "b62e9a31892457416c6d4fff3500e2bd",
-      "sourceName": "contracts/ILiquidityProtectionService.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/Meter.sol": {
+      "lastModificationDate": 1631870416176,
+      "contentHash": "2ac0fcef3450da066b79c749aee1fff5",
+      "sourceName": "contracts/tokens/Meter.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/Address.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol",
+        "./IStablecoin.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "BlackList",
+        "MeterToken"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1631883775035,
+      "contentHash": "4fe56b59ced59d87df6b796758f62895",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1631883775039,
+      "contentHash": "c5f6c4e4df069c789e7d84b4c3011913",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -2901,114 +2861,13 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "ILiquidityProtectionService"
+        "Address"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/LPTokenWrapper.sol": {
-      "lastModificationDate": 1631870416175,
-      "contentHash": "774f8a81bf7822195ef0e7256219857e",
-      "sourceName": "contracts/pools/LPTokenWrapper.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "LPTokenWrapper"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/pool/BondedStrategy.sol": {
-      "lastModificationDate": 1631870416179,
-      "contentHash": "598e8db429624d23bf9306c99936f4f3",
-      "sourceName": "contracts/vaults/pool/BondedStrategy.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../../security/MonthGuard.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "BondedStrategy"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/security/MonthGuard.sol": {
-      "lastModificationDate": 1631870416175,
-      "contentHash": "9e79c4502f82bfc53545ec6a06afdcb0",
-      "sourceName": "contracts/security/MonthGuard.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/IStablecoin.sol": {
+      "lastModificationDate": 1631870416176,
+      "contentHash": "5ccbe1a8aa3601e6ef77b63f9f0ad6a2",
+      "sourceName": "contracts/tokens/IStablecoin.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -3049,112 +2908,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "MonthGuard"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/VaultManager.sol": {
-      "lastModificationDate": 1631870416178,
-      "contentHash": "53ce37323439daa7814c90803374a5ec",
-      "sourceName": "contracts/vaults/meter/VaultManager.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../oracle/OracleRegistry.sol",
-        "./Vault.sol",
-        "./interfaces/IVaultManager.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./interfaces/IV1.sol",
-        "./interfaces/IWETH.sol",
-        "./libraries/VaultLibrary.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "VaultManager"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/oracle/OracleRegistry.sol": {
-      "lastModificationDate": 1631870416175,
-      "contentHash": "c68021cd2e14479ade89c0a2a7b2234c",
-      "sourceName": "contracts/oracle/OracleRegistry.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [
-        "../oracle/IPrice.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "OracleRegistry"
+        "IStablecoin"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/Vault.sol": {
@@ -3213,194 +2967,6 @@
       ],
       "artifacts": [
         "Vault"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IVaultManager.sol": {
-      "lastModificationDate": 1631870416179,
-      "contentHash": "07c43b1fbf3612cc7122912780ac198d",
-      "sourceName": "contracts/vaults/meter/interfaces/IVaultManager.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IVaultManager"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IV1.sol": {
-      "lastModificationDate": 1631870416178,
-      "contentHash": "3d4719b9516d3397592ec34f64dac0d8",
-      "sourceName": "contracts/vaults/meter/interfaces/IV1.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IV1"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IWETH.sol": {
-      "lastModificationDate": 1631870416179,
-      "contentHash": "544f01449bed2a6dbe2a5addb8a6815e",
-      "sourceName": "contracts/vaults/meter/interfaces/IWETH.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IWETH"
-      ]
-    },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/libraries/VaultLibrary.sol": {
-      "lastModificationDate": 1631870416179,
-      "contentHash": "dcd172122f4893ffc8bd5c61bafa498a",
-      "sourceName": "contracts/vaults/meter/libraries/VaultLibrary.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "VaultLibrary"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/oracle/IPrice.sol": {
@@ -3546,6 +3112,147 @@
         "IVault"
       ]
     },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IVaultManager.sol": {
+      "lastModificationDate": 1631870416179,
+      "contentHash": "07c43b1fbf3612cc7122912780ac198d",
+      "sourceName": "contracts/vaults/meter/interfaces/IVaultManager.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IVaultManager"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IV1.sol": {
+      "lastModificationDate": 1631870416178,
+      "contentHash": "3d4719b9516d3397592ec34f64dac0d8",
+      "sourceName": "contracts/vaults/meter/interfaces/IV1.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IV1"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IWETH.sol": {
+      "lastModificationDate": 1631870416179,
+      "contentHash": "544f01449bed2a6dbe2a5addb8a6815e",
+      "sourceName": "contracts/vaults/meter/interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/libraries/UniswapV2Library.sol": {
       "lastModificationDate": 1631870416179,
       "contentHash": "d9a11c5d0de43a5e917e2e679b99d478",
@@ -3643,53 +3350,6 @@
         "IUniswapV2Factory"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/IStablecoin.sol": {
-      "lastModificationDate": 1631870416176,
-      "contentHash": "5ccbe1a8aa3601e6ef77b63f9f0ad6a2",
-      "sourceName": "contracts/tokens/IStablecoin.sol",
-      "solcConfig": {
-        "version": "0.8.7",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 99999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": true
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IStablecoin"
-      ]
-    },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/interfaces/IUniswapV2Pair.sol": {
       "lastModificationDate": 1631870416178,
       "contentHash": "f752430d5f09b9f563592f001dafc406",
@@ -3784,10 +3444,10 @@
         "SafeMathUniswap"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/Meter.sol": {
-      "lastModificationDate": 1631870416176,
-      "contentHash": "2ac0fcef3450da066b79c749aee1fff5",
-      "sourceName": "contracts/tokens/Meter.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/VaultManager.sol": {
+      "lastModificationDate": 1631870416178,
+      "contentHash": "53ce37323439daa7814c90803374a5ec",
+      "sourceName": "contracts/vaults/meter/VaultManager.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -3824,25 +3484,25 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/utils/Address.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol",
-        "./IStablecoin.sol"
+        "../../oracle/OracleRegistry.sol",
+        "./Vault.sol",
+        "./interfaces/IVaultManager.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./interfaces/IV1.sol",
+        "./interfaces/IWETH.sol",
+        "./libraries/VaultLibrary.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "BlackList",
-        "MeterToken"
+        "VaultManager"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1631883775035,
-      "contentHash": "4fe56b59ced59d87df6b796758f62895",
-      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/oracle/OracleRegistry.sol": {
+      "lastModificationDate": 1631870416175,
+      "contentHash": "c68021cd2e14479ade89c0a2a7b2234c",
+      "sourceName": "contracts/oracle/OracleRegistry.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -3879,13 +3539,61 @@
         }
       },
       "imports": [
-        "../utils/Context.sol"
+        "../oracle/IPrice.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "Ownable"
+        "OracleRegistry"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/libraries/VaultLibrary.sol": {
+      "lastModificationDate": 1631870416179,
+      "contentHash": "dcd172122f4893ffc8bd5c61bafa498a",
+      "sourceName": "contracts/vaults/meter/libraries/VaultLibrary.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "VaultLibrary"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/meter/V1.sol": {
@@ -4091,10 +3799,10 @@
         "IERC721Metadata"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/IRewardDistributionRecipient.sol": {
-      "lastModificationDate": 1631870416175,
-      "contentHash": "b9a930e98e02f71f3839a36dc8713206",
-      "sourceName": "contracts/pools/IRewardDistributionRecipient.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/WSBY.sol": {
+      "lastModificationDate": 1631890493008,
+      "contentHash": "59bcf0ebdb715813dd5a277277c6e72c",
+      "sourceName": "contracts/tokens/WSBY.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -4131,19 +3839,20 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "IRewardDistributionRecipient"
+        "WSBY0"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/LPRewardPool.sol": {
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/ERC20Mock.sol": {
       "lastModificationDate": 1631870416175,
-      "contentHash": "3f05f4ce0bb553fe9daaf6abf8a93eaf",
-      "sourceName": "contracts/pools/LPRewardPool.sol",
+      "contentHash": "d85c59bd97d7918dd4f3ecb5f050f391",
+      "sourceName": "contracts/tokens/ERC20Mock.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -4180,19 +3889,11 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/utils/math/Math.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/utils/Address.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "./IRewardDistributionRecipient.sol",
-        "./LPTokenWrapper.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
+      "versionPragmas": [],
       "artifacts": [
-        "WETHSTNDLPTokenSharePool"
+        "MockToken"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol": {
@@ -4627,10 +4328,10 @@
       ],
       "artifacts": []
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/WSBY.sol": {
-      "lastModificationDate": 1631890493008,
-      "contentHash": "59bcf0ebdb715813dd5a277277c6e72c",
-      "sourceName": "contracts/tokens/WSBY.sol",
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "lastModificationDate": 1631883777489,
+      "contentHash": "d37406082a74a9b6b114de522fcb6349",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -4667,20 +4368,20 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol"
+        "../IERC20.sol",
+        "../../../utils/Address.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "WSBY0"
+        "SafeERC20"
       ]
     },
-    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/tokens/ERC20Mock.sol": {
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/LPTokenWrapper.sol": {
       "lastModificationDate": 1631870416175,
-      "contentHash": "d85c59bd97d7918dd4f3ecb5f050f391",
-      "sourceName": "contracts/tokens/ERC20Mock.sol",
+      "contentHash": "774f8a81bf7822195ef0e7256219857e",
+      "sourceName": "contracts/pools/LPTokenWrapper.sol",
       "solcConfig": {
         "version": "0.8.7",
         "settings": {
@@ -4717,11 +4418,310 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
       ],
-      "versionPragmas": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
       "artifacts": [
-        "MockToken"
+        "LPTokenWrapper"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol": {
+      "lastModificationDate": 1631883776682,
+      "contentHash": "5365090efc586b728719e562ebfed0d6",
+      "sourceName": "@openzeppelin/contracts/utils/math/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/vaults/pool/BondedStrategy.sol": {
+      "lastModificationDate": 1631870416179,
+      "contentHash": "598e8db429624d23bf9306c99936f4f3",
+      "sourceName": "contracts/vaults/pool/BondedStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../../security/MonthGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "BondedStrategy"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/security/MonthGuard.sol": {
+      "lastModificationDate": 1631870416175,
+      "contentHash": "9e79c4502f82bfc53545ec6a06afdcb0",
+      "sourceName": "contracts/security/MonthGuard.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MonthGuard"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/LPRewardPool.sol": {
+      "lastModificationDate": 1631870416175,
+      "contentHash": "3f05f4ce0bb553fe9daaf6abf8a93eaf",
+      "sourceName": "contracts/pools/LPRewardPool.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/Math.sol",
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/Address.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./IRewardDistributionRecipient.sol",
+        "./LPTokenWrapper.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "WETHSTNDLPTokenSharePool"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
+      "lastModificationDate": 1631883776680,
+      "contentHash": "4e138d2b21c8844ab1799e37d232fb5e",
+      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/pools/IRewardDistributionRecipient.sol": {
+      "lastModificationDate": 1631870416175,
+      "contentHash": "b9a930e98e02f71f3839a36dc8713206",
+      "sourceName": "contracts/pools/IRewardDistributionRecipient.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 99999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x00000000d41867734bbee4c6863d9255b2b06ac1"
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IRewardDistributionRecipient"
       ]
     },
     "/Users/hyungsukkang/digitalnativeinc/standard-evm/contracts/oracle/Price.sol": {

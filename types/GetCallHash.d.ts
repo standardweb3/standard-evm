@@ -21,17 +21,23 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface GetCallHashInterface extends ethers.utils.Interface {
   functions: {
     "getInitHash()": FunctionFragment;
+    "pairFor(address,address,address)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "getInitHash",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "pairFor",
+    values: [string, string, string]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "getInitHash",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pairFor", data: BytesLike): Result;
 
   events: {};
 }
@@ -81,21 +87,56 @@ export class GetCallHash extends BaseContract {
 
   functions: {
     getInitHash(overrides?: CallOverrides): Promise<[string]>;
+
+    pairFor(
+      factory: string,
+      tokenA: string,
+      tokenB: string,
+      overrides?: CallOverrides
+    ): Promise<[string] & { pair: string }>;
   };
 
   getInitHash(overrides?: CallOverrides): Promise<string>;
 
+  pairFor(
+    factory: string,
+    tokenA: string,
+    tokenB: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
     getInitHash(overrides?: CallOverrides): Promise<string>;
+
+    pairFor(
+      factory: string,
+      tokenA: string,
+      tokenB: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
     getInitHash(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pairFor(
+      factory: string,
+      tokenA: string,
+      tokenB: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getInitHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pairFor(
+      factory: string,
+      tokenA: string,
+      tokenB: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

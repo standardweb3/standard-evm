@@ -6,7 +6,7 @@ const assert = (condition, message) => {
     throw new Error(message);
   };
 
-  // npx hardhat --network rinkeby deploy-amm  --weth 0xdf032bc4b9dc2782bb09352007d4c57b75160b15
+  // npx hardhat --network rinkeby amm-deploy --weth 0xc778417E063141139Fce010982780140Aa0cD5Ab
   task("amm-deploy", "Deploy Standard AMM")
   .addParam("weth", "Address of Wrapped ETH")
   .setAction(async ({weth}, { ethers }) => {
@@ -47,6 +47,9 @@ const assert = (condition, message) => {
         await deployer.getBalance()
       )} ETH`
     );
+
+    // print pair code hash for UniswapV2Library to use
+    console.log(`PairCodeHash(For UniswapV2Library pairfor() function): ${await factory.pairCodeHash()}`)
 
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")

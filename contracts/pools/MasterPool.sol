@@ -6,7 +6,7 @@
 
 // Special Thanks to @BoringCrypto for his ideas and patience
 
-pragma solidity 0.6.12;
+pragma solidity =0.6.12;
 pragma experimental ABIEncoderV2;
 
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SignedSafeMath.sol
@@ -435,7 +435,6 @@ contract MasterPool is BoringOwnable, BoringBatchable {
     mapping (uint256 => mapping (address => UserInfo)) public userInfo;
     /// @dev Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint;
-
     uint256 private MASTERCHEF_SUSHI_PER_BLOCK;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
 
@@ -456,8 +455,8 @@ contract MasterPool is BoringOwnable, BoringBatchable {
         //MASTER_PID = _MASTER_PID;
     }
 
-    function setRewardPerBlock(uint256 reward) public onlyOwner {
-        MASTERCHEF_SUSHI_PER_BLOCK = reward;
+    function setRewardPerBlock(uint256 _reward) public onlyOwner {
+        MASTERCHEF_SUSHI_PER_BLOCK = _reward;
     }
 
     /// @notice Deposits a dummy token to `MASTER_CHEF` MCV1. This is required because MCV1 holds the minting rights for SUSHI.
@@ -553,7 +552,7 @@ contract MasterPool is BoringOwnable, BoringBatchable {
     }
 
     /// @notice Calculates and returns the `amount` of SUSHI per block.
-    function sushiPerBlock() public pure returns (uint256 amount) {
+    function sushiPerBlock() public view returns (uint256 amount) {
         amount = uint256(MASTERCHEF_SUSHI_PER_BLOCK);
     }
 

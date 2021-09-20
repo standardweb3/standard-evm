@@ -1,10 +1,11 @@
-const Promise = require('bluebird');
+const Promise = require("bluebird");
 
-const now = async () => (await ethers.provider.getBlock('latest')).timestamp;
-const mine = () => network.provider.send('evm_mine', []);
+const now = async () => (await ethers.provider.getBlock("latest")).timestamp;
+const mine = () => network.provider.send("evm_mine", []);
 const stopMining = () => network.provider.send("evm_setAutomine", [false]);
-const startMining = () => network.provider.send('evm_setAutomine', [true]);
-const setTime = (timestamp) => network.provider.send('evm_setNextBlockTimestamp', [parseInt(timestamp)]);
+const startMining = () => network.provider.send("evm_setAutomine", [true]);
+const setTime = (timestamp) =>
+  network.provider.send("evm_setNextBlockTimestamp", [parseInt(timestamp)]);
 const setTimeAndMine = async (timestamp) => {
   await setTime(timestamp);
   await mine();
@@ -29,22 +30,29 @@ class Ganache {
   }
 
   async revert() {
-    await network.provider.send('evm_revert', [this.snapshotId]);
+    await network.provider.send("evm_revert", [this.snapshotId]);
     return this.snapshot();
   }
 
   async snapshot() {
-    this.snapshotId = await network.provider.send('evm_snapshot', []);
+    this.snapshotId = await network.provider.send("evm_snapshot", []);
   }
 }
 
 const impersonate = async (address) => {
-  await network.provider.send('hardhat_impersonateAccount', [address]);
+  await network.provider.send("hardhat_impersonateAccount", [address]);
   return ethers.provider.getSigner(address);
 };
 
-
 module.exports = {
-  now, mine, setTime, setTimeAndMine, Ganache, impersonate, skipBlocks,
-  startMining, stopMining, addToBlock
+  now,
+  mine,
+  setTime,
+  setTimeAndMine,
+  Ganache,
+  impersonate,
+  skipBlocks,
+  startMining,
+  stopMining,
+  addToBlock,
 };

@@ -1,11 +1,9 @@
-
 pragma solidity ^0.8.0;
 
 import "./AggregatorV3Interface.sol";
 import "./IPrice.sol";
 
 contract PriceConsumerV3 is IPrice {
-
     AggregatorV3Interface internal priceFeed;
 
     string public name;
@@ -18,12 +16,12 @@ contract PriceConsumerV3 is IPrice {
     /**
      * Returns the latest price
      */
-    function getThePrice() external override view returns (int) {
+    function getThePrice() external view override returns (int256) {
         (
-            uint80 roundID, 
-            int price,
-            uint startedAt,
-            uint timeStamp,
+            uint80 roundID,
+            int256 price,
+            uint256 startedAt,
+            uint256 timeStamp,
             uint80 answeredInRound
         ) = priceFeed.latestRoundData();
         return price;

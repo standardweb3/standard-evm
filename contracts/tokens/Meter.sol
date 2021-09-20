@@ -151,7 +151,7 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external {
+    ) external override {
         require(deadline >= block.timestamp, "UniswapV2: EXPIRED");
         bytes32 digest = keccak256(
             abi.encodePacked(

@@ -1,11 +1,10 @@
 pragma solidity ^0.8.0;
 
-
 import "./interfaces/IVaultManager.sol";
 import "./interfaces/IVault.sol";
 import "./libraries/VaultLibrary.sol";
-import "./interfaces/IStablecoin.sol";
 import "./interfaces/IWETH.sol";
+import "../../tokens/IStablecoin.sol";
 
 contract VaultRouter {
 

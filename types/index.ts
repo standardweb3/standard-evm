@@ -84,6 +84,7 @@ export type { CalHash } from "./CalHash";
 export type { V1 } from "./V1";
 export type { Vault } from "./Vault";
 export type { VaultManager } from "./VaultManager";
+export type { VaultRouter } from "./VaultRouter";
 export type { BondedStrategy } from "./BondedStrategy";
 
 export { AccessControl__factory } from "./factories/AccessControl__factory";
@@ -169,4 +170,5 @@ export { CalHash__factory } from "./factories/CalHash__factory";
 export { V1__factory } from "./factories/V1__factory";
 export { Vault__factory } from "./factories/Vault__factory";
 export { VaultManager__factory } from "./factories/VaultManager__factory";
+export { VaultRouter__factory } from "./factories/VaultRouter__factory";
 export { BondedStrategy__factory } from "./factories/BondedStrategy__factory";

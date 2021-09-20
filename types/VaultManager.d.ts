@@ -606,7 +606,7 @@ export class VaultManager extends BaseContract {
       cAmount_: BigNumberish,
       dAmount_: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     createCDPNative(
       dAmount_: BigNumberish,

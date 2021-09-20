@@ -211,7 +211,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return assetValue;
     }
 
-    function vaultCodeHash() external pure returns (bytes32 vaultCode) {
+    function vaultCodeHash() external pure override returns (bytes32 vaultCode) {
         vaultCode = keccak256(type(Vault).creationCode);
     }
 }

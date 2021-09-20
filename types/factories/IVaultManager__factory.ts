@@ -11,6 +11,35 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "collateral_",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "cAmount_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "dAmount_",
+        type: "uint256",
+      },
+    ],
+    name: "createCDP",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "collateral",
         type: "address",
       },
@@ -134,6 +163,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "vaultCodeHash",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
 ];

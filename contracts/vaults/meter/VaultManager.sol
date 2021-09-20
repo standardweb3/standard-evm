@@ -84,7 +84,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return vault;
     }
 
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
+    function createVault(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // get aggregators
         address cAggregator = PriceFeeds[collateral_];
         address dAggregator = PriceFeeds[meter];

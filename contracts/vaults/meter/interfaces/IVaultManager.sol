@@ -8,5 +8,5 @@ interface IVaultManager {
     function getSFR(address collateral) external view returns(uint);
     function getVault(uint vaultId_) external view returns (address);
     function vaultCodeHash() external pure returns (bytes32);
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) external returns (bool success);
+    function createVault(address collateral_, uint cAmount_, uint dAmount_) external returns (bool success);
 }

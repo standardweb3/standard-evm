@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import '../../oracle/OracleRegistry.sol';
-import './Vault.sol';
-import './interfaces/IVaultManager.sol';
+import "../../oracle/OracleRegistry.sol";
+import "./Vault.sol";
+import "./interfaces/IVaultManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
@@ -84,7 +84,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return vault;
     }
 
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) public {
+    function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // get aggregators
         address cAggregator = PriceFeeds[collateral_];
         address dAggregator = PriceFeeds[meter];
@@ -103,6 +103,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         allVaults.push(vlt);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
+        return true;
     }
 
     function createCDPNative(uint dAmount_) payable public {

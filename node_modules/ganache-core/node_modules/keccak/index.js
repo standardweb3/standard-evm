@@ -1,5 +1,1 @@
-try {
-  module.exports = require('./bindings')
-} catch (err) {
-  module.exports = require('./js')
-}
+module.exports = require('./js')

@@ -172,7 +172,7 @@ contract MeterToken is BlackList, AccessControl, IStablecoin {
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(
             recoveredAddress != address(0) && recoveredAddress == owner,
-            "UniswapV2: INVALID_SIGNATURE"
+            "Meter: INVALID_SIGNATURE"
         );
         _approve(owner, spender, value);
     }

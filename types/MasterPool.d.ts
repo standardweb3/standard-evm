@@ -238,6 +238,7 @@ interface MasterPoolInterface extends ethers.utils.Interface {
     "LogPoolAddition(uint256,uint256,address,address)": EventFragment;
     "LogSetPool(uint256,uint256,address,bool)": EventFragment;
     "LogUpdatePool(uint256,uint64,uint256,uint256)": EventFragment;
+    "LogUpdateReward(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Withdraw(address,uint256,uint256,address)": EventFragment;
   };
@@ -249,6 +250,7 @@ interface MasterPoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "LogPoolAddition"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogSetPool"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogUpdatePool"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogUpdateReward"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
@@ -306,6 +308,10 @@ export type LogUpdatePoolEvent = TypedEvent<
     lpSupply: BigNumber;
     accSushiPerShare: BigNumber;
   }
+>;
+
+export type LogUpdateRewardEvent = TypedEvent<
+  [BigNumber] & { reward: BigNumber }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -969,6 +975,14 @@ export class MasterPool extends BaseContract {
         accSushiPerShare: BigNumber;
       }
     >;
+
+    "LogUpdateReward(uint256)"(
+      reward?: null
+    ): TypedEventFilter<[BigNumber], { reward: BigNumber }>;
+
+    LogUpdateReward(
+      reward?: null
+    ): TypedEventFilter<[BigNumber], { reward: BigNumber }>;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,

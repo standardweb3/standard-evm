@@ -21,12 +21,9 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface MeterTokenInterface extends ethers.utils.Interface {
   functions: {
-    "BURNER_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "DOMAIN_SEPARATOR()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
-    "PERMIT_TYPEHASH()": FunctionFragment;
     "addBlackList(address)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -45,16 +42,13 @@ interface MeterTokenInterface extends ethers.utils.Interface {
     "isBlackListed(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "nonces(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "removeBlackList(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setManager(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -65,15 +59,7 @@ interface MeterTokenInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "BURNER_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -82,10 +68,6 @@ interface MeterTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "PAUSER_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -145,22 +127,9 @@ interface MeterTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "permit",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "removeBlackList",
     values: [string]
@@ -177,7 +146,6 @@ interface MeterTokenInterface extends ethers.utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(functionFragment: "setManager", values: [string]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -202,15 +170,7 @@ interface MeterTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "BURNER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -219,10 +179,6 @@ interface MeterTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "PAUSER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -264,11 +220,9 @@ interface MeterTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeBlackList",
     data: BytesLike
@@ -282,7 +236,6 @@ interface MeterTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setManager", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -418,17 +371,11 @@ export class MeterToken extends BaseContract {
   interface: MeterTokenInterface;
 
   functions: {
-    BURNER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
     addBlackList(
       _evilUser: string,
@@ -510,8 +457,6 @@ export class MeterToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    nonces(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
@@ -519,17 +464,6 @@ export class MeterToken extends BaseContract {
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    permit(
-      owner: string,
-      spender: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     removeBlackList(
       _clearedUser: string,
@@ -549,11 +483,6 @@ export class MeterToken extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setManager(
-      manager_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -589,17 +518,11 @@ export class MeterToken extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  BURNER_ROLE(overrides?: CallOverrides): Promise<string>;
-
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   addBlackList(
     _evilUser: string,
@@ -681,8 +604,6 @@ export class MeterToken extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   pause(
@@ -690,17 +611,6 @@ export class MeterToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
-
-  permit(
-    owner: string,
-    spender: string,
-    value: BigNumberish,
-    deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   removeBlackList(
     _clearedUser: string,
@@ -720,11 +630,6 @@ export class MeterToken extends BaseContract {
   revokeRole(
     role: BytesLike,
     account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setManager(
-    manager_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -760,17 +665,11 @@ export class MeterToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    BURNER_ROLE(overrides?: CallOverrides): Promise<string>;
-
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     addBlackList(_evilUser: string, overrides?: CallOverrides): Promise<void>;
 
@@ -846,24 +745,11 @@ export class MeterToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
-
-    permit(
-      owner: string,
-      spender: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     removeBlackList(
       _clearedUser: string,
@@ -883,8 +769,6 @@ export class MeterToken extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    setManager(manager_: string, overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -1067,17 +951,11 @@ export class MeterToken extends BaseContract {
   };
 
   estimateGas: {
-    BURNER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     addBlackList(
       _evilUser: string,
@@ -1162,8 +1040,6 @@ export class MeterToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
@@ -1171,17 +1047,6 @@ export class MeterToken extends BaseContract {
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    permit(
-      owner: string,
-      spender: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     removeBlackList(
       _clearedUser: string,
@@ -1201,11 +1066,6 @@ export class MeterToken extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setManager(
-      manager_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1242,19 +1102,13 @@ export class MeterToken extends BaseContract {
   };
 
   populateTransaction: {
-    BURNER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addBlackList(
       _evilUser: string,
@@ -1345,11 +1199,6 @@ export class MeterToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nonces(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pause(
@@ -1357,17 +1206,6 @@ export class MeterToken extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    permit(
-      owner: string,
-      spender: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     removeBlackList(
       _clearedUser: string,
@@ -1387,11 +1225,6 @@ export class MeterToken extends BaseContract {
     revokeRole(
       role: BytesLike,
       account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setManager(
-      manager_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

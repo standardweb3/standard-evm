@@ -6,7 +6,7 @@ const assert = (condition, message) => {
   throw new Error(message);
 };
 
-// npx hardhat --network rinkeby deploy-amm  --weth 0xdf032bc4b9dc2782bb09352007d4c57b75160b15
+// npx hardhat --network rinkeby masterpool-deploy --stnd 0xccf56fb87850fe6cff0cd16f491933c138b7eadd --amount 1000000
 task("masterpool-deploy", "Deploy Standard MasterPool")
   .addParam("stnd", "Address of Standard")
   .addParam("amount", "Amount of tokens to send in 18 decimals")
@@ -27,7 +27,7 @@ task("masterpool-deploy", "Deploy Standard MasterPool")
     await deployContract(pool, "MasterPool")
 
     // Record address in chainid
-    await recordAddress(ethers, "MasterPool", pool.address)
+    //await recordAddress(ethers, "MasterPool", pool.address)
 
 
     // Send STND to the pool

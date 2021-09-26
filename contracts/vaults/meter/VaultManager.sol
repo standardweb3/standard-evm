@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import '../../oracle/OracleRegistry.sol';
-import './Vault.sol';
-import './interfaces/IVaultManager.sol';
+import "../../oracle/OracleRegistry.sol";
+import "./Vault.sol";
+import "./interfaces/IVaultManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
@@ -18,9 +18,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     // Vaults
     address[] public allVaults;
-    // Vault registry
-    /// key: Borrower address, value: Array of Vault Ids 
-    mapping(address => uint[]) public vaultOf;
 
     // CDP configs
     /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) 
@@ -35,7 +32,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     /// Address of cdp nft registry
     address public v1;
     /// Manager of Vaults
-    address feeSetter;
+    address vaultManager;
     /// Address of meter
     address public meter;
     /// Address of uniswapv2 factory;
@@ -44,32 +41,29 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address public feePool;
     /// Address of Wrapped eth;
     address public WETH;
+    /// Vault init code hash
+    bytes32 vaultCode;
 
-    constructor(address v1_, address meter_, address v2Factory_, address feePool_, address weth_) {
-        v1 = v1_;
-        meter = meter_;
-        v2Factory = v2Factory_;
-        feePool = feePool_;
-        feeSetter = _msgSender();
-        WETH = weth_;
+    constructor() {
+        vaultManager = _msgSender();
     }
 
-    modifier onlyFeeSetter {
-        require(_msgSender() == feeSetter, "VaultManager: Invalid Access");
+    modifier onlyVaultManager {
+        require(_msgSender() == vaultManager, "VaultManager: Invalid Access");
         _;
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public onlyFeeSetter {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public onlyVaultManager {
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_;   
     }
 
-    function setFeeStrategy(address feePool_) public onlyFeeSetter {
+    function setFeeStrategy(address feePool_) public onlyVaultManager {
         feePool=feePool_;
     }
     
-    function migrate(address v1_, address meter_, address v2Factory_, address feePool_, address weth_) public onlyFeeSetter {
+    function initialize(address v1_, address meter_, address v2Factory_, address feePool_, address weth_) public onlyVaultManager {
         v1 = v1_;
         meter = meter_;
         v2Factory = v2Factory_;
@@ -90,7 +84,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return vault;
     }
 
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) public {
+    function createVault(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // get aggregators
         address cAggregator = PriceFeeds[collateral_];
         address dAggregator = PriceFeeds[meter];
@@ -107,9 +101,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // transfer collateral to the vault, manage collateral from there
         require(IERC20(collateral_).transferFrom(_msgSender(), vlt, cAmount_), "VaultManager: TransferFrom failed");
         allVaults.push(vlt);
-        vaultOf[_msgSender()].push(gIndex);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
+        return true;
     }
 
     function createCDPNative(uint dAmount_) payable public {
@@ -132,7 +126,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // then transfer collateral native currency to the vault, manage collateral from there.
         assert(IWETH(WETH).transfer(vlt, weth)); 
         allVaults.push(vlt);
-        vaultOf[_msgSender()].push(gIndex);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
@@ -162,7 +155,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }     
 
     function getVault(uint vaultId_) external view override returns (address) {
-        return VaultLibrary.vaultFor(address(this), vaultId_);
+        return VaultLibrary.vaultFor(address(this), vaultId_, vaultCode);
     }
 
     // Set desirable supply of issuing stablecoin
@@ -216,5 +209,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint256 assetValue = price * amount_;
         assert(assetValue >= amount_); // overflow check
         return assetValue;
+    }
+
+    function vaultCodeHash() external pure override returns (bytes32 vaultCode) {
+        vaultCode = keccak256(type(Vault).creationCode);
     }
 }

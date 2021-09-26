@@ -21,6 +21,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface BondedStrategyInterface extends ethers.utils.Interface {
   functions: {
+    "balanceOf(address)": FunctionFragment;
     "bond(uint256)": FunctionFragment;
     "bonded(address)": FunctionFragment;
     "claim(address)": FunctionFragment;
@@ -29,6 +30,7 @@ interface BondedStrategyInterface extends ethers.utils.Interface {
     "updateSupply(uint256,bool)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "bond", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "bonded", values: [string]): string;
   encodeFunctionData(functionFragment: "claim", values: [string]): string;
@@ -42,6 +44,7 @@ interface BondedStrategyInterface extends ethers.utils.Interface {
     values: [BigNumberish, boolean]
   ): string;
 
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bonded", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
@@ -107,6 +110,8 @@ export class BondedStrategy extends BaseContract {
   interface: BondedStrategyInterface;
 
   functions: {
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
     bond(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -132,6 +137,8 @@ export class BondedStrategy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   bond(
     amount_: BigNumberish,
@@ -159,6 +166,8 @@ export class BondedStrategy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     bond(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     bonded(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -195,6 +204,8 @@ export class BondedStrategy extends BaseContract {
   };
 
   estimateGas: {
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     bond(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -222,6 +233,11 @@ export class BondedStrategy extends BaseContract {
   };
 
   populateTransaction: {
+    balanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     bond(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

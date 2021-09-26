@@ -1,7 +1,17 @@
-const { expect } = require('chai');
-const { now, mine, setTime, setTimeAndMine, Ganache,
-  impersonate, skipBlocks, stopMining, startMining, addToBlock } = require('./helpers');
-const LPS = require('./LiquidityProtectionService.json');
+const { expect } = require("chai");
+const {
+  now,
+  mine,
+  setTime,
+  setTimeAndMine,
+  Ganache,
+  impersonate,
+  skipBlocks,
+  stopMining,
+  startMining,
+  addToBlock,
+} = require("./helpers");
+const LPS = require("./LiquidityProtectionService.json");
 
 const expectArray = (actual, expected) => {
   for (let i = 0; i < actual.length; i++) {
@@ -9,9 +19,8 @@ const expectArray = (actual, expected) => {
   }
 };
 
-
 // Case 1: create vault with two mock tokens
-describe('')
+describe("");
 
 /*
 describe('StandardToken', function() {

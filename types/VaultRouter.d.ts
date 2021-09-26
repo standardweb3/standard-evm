@@ -11,33 +11,19 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  Overrides,
-  CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IUniswapV2CalleeInterface extends ethers.utils.Interface {
-  functions: {
-    "uniswapV2Call(address,uint256,uint256,bytes)": FunctionFragment;
-  };
-
-  encodeFunctionData(
-    functionFragment: "uniswapV2Call",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-
-  decodeFunctionResult(
-    functionFragment: "uniswapV2Call",
-    data: BytesLike
-  ): Result;
+interface VaultRouterInterface extends ethers.utils.Interface {
+  functions: {};
 
   events: {};
 }
 
-export class IUniswapV2Callee extends BaseContract {
+export class VaultRouter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -78,55 +64,15 @@ export class IUniswapV2Callee extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IUniswapV2CalleeInterface;
+  interface: VaultRouterInterface;
 
-  functions: {
-    uniswapV2Call(
-      sender: string,
-      amount0: BigNumberish,
-      amount1: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+  functions: {};
 
-  uniswapV2Call(
-    sender: string,
-    amount0: BigNumberish,
-    amount1: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    uniswapV2Call(
-      sender: string,
-      amount0: BigNumberish,
-      amount1: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  callStatic: {};
 
   filters: {};
 
-  estimateGas: {
-    uniswapV2Call(
-      sender: string,
-      amount0: BigNumberish,
-      amount1: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+  estimateGas: {};
 
-  populateTransaction: {
-    uniswapV2Call(
-      sender: string,
-      amount0: BigNumberish,
-      amount1: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+  populateTransaction: {};
 }

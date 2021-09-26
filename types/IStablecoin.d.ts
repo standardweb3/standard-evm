@@ -24,6 +24,7 @@ interface IStablecoinInterface extends ethers.utils.Interface {
     "burn(uint256)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
+    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
@@ -35,10 +36,23 @@ interface IStablecoinInterface extends ethers.utils.Interface {
     functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "permit",
+    values: [
+      string,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
 
   events: {};
 }
@@ -103,6 +117,17 @@ export class IStablecoin extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   burn(
@@ -122,6 +147,17 @@ export class IStablecoin extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  permit(
+    owner: string,
+    spender: string,
+    value: BigNumberish,
+    deadline: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     burn(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -134,6 +170,17 @@ export class IStablecoin extends BaseContract {
     mint(
       to: string,
       amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -157,6 +204,17 @@ export class IStablecoin extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -174,6 +232,17 @@ export class IStablecoin extends BaseContract {
     mint(
       to: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

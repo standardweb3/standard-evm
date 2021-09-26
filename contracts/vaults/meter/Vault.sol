@@ -17,31 +17,31 @@ contract Vault is IVault {
     /// Vault NFT interface
     IERC721 V1;
     /// uniswap v2 factory interface 
-    address v2Factory;
+    address public override v2Factory;
     /// Vault manager
     IVaultManager vltManager;
     /// Collateral Aggregator contract address to get processed price data
-    address cAggregator;
+    address public override cAggregator;
     /// Debt Aggregator contract address to get processed price data
-    address dAggregator;
+    address public override dAggregator;
     /// Address of a manager
-    address manager;
+    address public override manager;
     /// Address of debt;
-    address debt;
+    address public override debt;
     /// Address of vault ownership registry
-    address v1;
+    address public override v1;
     /// address of a collateral
-    address collateral;
+    address public override collateral;
     /// Vault global identifier
-    uint vaultId;
+    uint public override vaultId;
     /// borrowed amount 
-    uint256 borrow;
+    uint256 public override borrow;
     /// created block timestamp
-    uint256 createdAt;
+    uint256 public override createdAt;
     /// address of fee Pool
-    address feePool;
+    address public override feePool;
     /// address of wrapped eth
-    address WETH;
+    address public override WETH;
 
 
     constructor() public {
@@ -70,7 +70,7 @@ contract Vault is IVault {
     }
 
     /// liquidate
-    function liquidate() public {
+    function liquidate() external override {
         require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
         // check the pair if it exists
         require(IUniswapV2Factory(v2Factory).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
@@ -89,7 +89,7 @@ contract Vault is IVault {
     }
     
     /// Deposit collateral
-    function depositCollateralNative() payable public onlyVaultOwner {
+    function depositCollateralNative() payable external override onlyVaultOwner {
         require(collateral == address(WETH), "Vault: collateral is not a native asset");
         // wrap deposit
         IWETH(WETH).deposit{value: msg.value}(); 
@@ -97,13 +97,13 @@ contract Vault is IVault {
     }
 
     /// Deposit collateral
-    function depositCollateral(uint256 amount_) public onlyVaultOwner {
+    function depositCollateral(uint256 amount_) external override onlyVaultOwner {
         require(IERC20(collateral).transferFrom(msg.sender, address(this), amount_), "Vault: Collateral Deposit failed");
         emit DepositCollateral(vaultId, amount_);        
     }
 
     /// Withdraw collateral as native currency
-    function withdrawCollateralNative(uint256 amount_) payable public onlyVaultOwner {
+    function withdrawCollateralNative(uint256 amount_) payable external override onlyVaultOwner {
         require(collateral == address(WETH), "Vault: collateral is not a native asset");
         if(borrow != 0) {
             require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
@@ -116,7 +116,7 @@ contract Vault is IVault {
     }
 
     /// Withdraw collateral
-    function withdrawCollateral(uint256 amount_) public onlyVaultOwner {
+    function withdrawCollateral(uint256 amount_) external override onlyVaultOwner {
         require(IERC20(collateral).balanceOf(address(this)) >= amount_, "Vault: Not enough collateral");
         if(borrow != 0) {
             require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
@@ -126,7 +126,7 @@ contract Vault is IVault {
     }
 
     /// Payback MTR
-    function payDebt(uint256 amount_) public onlyVaultOwner {
+    function payDebt(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
         uint fee = _calculateFee();
         require(amount_ != 0, "Vault: amount is zero");
@@ -142,7 +142,7 @@ contract Vault is IVault {
     }
 
     /// Close CDP
-    function closeVault(uint256 amount_) public onlyVaultOwner {
+    function closeVault(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
         uint fee = _calculateFee();
         require(fee + borrow == amount_, "Vault: not enough balance to payback");
@@ -214,7 +214,7 @@ contract Vault is IVault {
         return (fee / 100) * duration;
     }
 
-    function getDebt() public returns (uint) {
+    function getDebt() external override returns (uint) {
         return _calculateFee() + borrow;
     }
 }

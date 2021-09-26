@@ -22,21 +22,49 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface VaultInterface extends ethers.utils.Interface {
   functions: {
+    "WETH()": FunctionFragment;
+    "borrow()": FunctionFragment;
+    "cAggregator()": FunctionFragment;
     "closeVault(uint256)": FunctionFragment;
+    "collateral()": FunctionFragment;
+    "createdAt()": FunctionFragment;
+    "dAggregator()": FunctionFragment;
+    "debt()": FunctionFragment;
     "depositCollateral(uint256)": FunctionFragment;
     "depositCollateralNative()": FunctionFragment;
+    "feePool()": FunctionFragment;
     "getDebt()": FunctionFragment;
     "initialize(address,uint256,address,address,address,address,uint256,address,address)": FunctionFragment;
     "liquidate()": FunctionFragment;
+    "manager()": FunctionFragment;
     "payDebt(uint256)": FunctionFragment;
+    "v1()": FunctionFragment;
+    "v2Factory()": FunctionFragment;
+    "vaultId()": FunctionFragment;
     "withdrawCollateral(uint256)": FunctionFragment;
     "withdrawCollateralNative(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
+  encodeFunctionData(functionFragment: "borrow", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "cAggregator",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "closeVault",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "collateral",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "createdAt", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "dAggregator",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "debt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "depositCollateral",
     values: [BigNumberish]
@@ -45,6 +73,7 @@ interface VaultInterface extends ethers.utils.Interface {
     functionFragment: "depositCollateralNative",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "feePool", values?: undefined): string;
   encodeFunctionData(functionFragment: "getDebt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -61,10 +90,14 @@ interface VaultInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "liquidate", values?: undefined): string;
+  encodeFunctionData(functionFragment: "manager", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "payDebt",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "v1", values?: undefined): string;
+  encodeFunctionData(functionFragment: "v2Factory", values?: undefined): string;
+  encodeFunctionData(functionFragment: "vaultId", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdrawCollateral",
     values: [BigNumberish]
@@ -74,7 +107,20 @@ interface VaultInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cAggregator",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "closeVault", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "collateral", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "createdAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "dAggregator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "debt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "depositCollateral",
     data: BytesLike
@@ -83,10 +129,15 @@ interface VaultInterface extends ethers.utils.Interface {
     functionFragment: "depositCollateralNative",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "feePool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getDebt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "manager", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "payDebt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "v1", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "v2Factory", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vaultId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawCollateral",
     data: BytesLike
@@ -193,10 +244,24 @@ export class Vault extends BaseContract {
   interface: VaultInterface;
 
   functions: {
+    WETH(overrides?: CallOverrides): Promise<[string]>;
+
+    borrow(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    cAggregator(overrides?: CallOverrides): Promise<[string]>;
+
     closeVault(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    collateral(overrides?: CallOverrides): Promise<[string]>;
+
+    createdAt(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    dAggregator(overrides?: CallOverrides): Promise<[string]>;
+
+    debt(overrides?: CallOverrides): Promise<[string]>;
 
     depositCollateral(
       amount_: BigNumberish,
@@ -206,6 +271,8 @@ export class Vault extends BaseContract {
     depositCollateralNative(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    feePool(overrides?: CallOverrides): Promise<[string]>;
 
     getDebt(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -228,10 +295,18 @@ export class Vault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    manager(overrides?: CallOverrides): Promise<[string]>;
+
     payDebt(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    v1(overrides?: CallOverrides): Promise<[string]>;
+
+    v2Factory(overrides?: CallOverrides): Promise<[string]>;
+
+    vaultId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     withdrawCollateral(
       amount_: BigNumberish,
@@ -244,10 +319,24 @@ export class Vault extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  WETH(overrides?: CallOverrides): Promise<string>;
+
+  borrow(overrides?: CallOverrides): Promise<BigNumber>;
+
+  cAggregator(overrides?: CallOverrides): Promise<string>;
+
   closeVault(
     amount_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  collateral(overrides?: CallOverrides): Promise<string>;
+
+  createdAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+  dAggregator(overrides?: CallOverrides): Promise<string>;
+
+  debt(overrides?: CallOverrides): Promise<string>;
 
   depositCollateral(
     amount_: BigNumberish,
@@ -257,6 +346,8 @@ export class Vault extends BaseContract {
   depositCollateralNative(
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  feePool(overrides?: CallOverrides): Promise<string>;
 
   getDebt(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -279,10 +370,18 @@ export class Vault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  manager(overrides?: CallOverrides): Promise<string>;
+
   payDebt(
     amount_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  v1(overrides?: CallOverrides): Promise<string>;
+
+  v2Factory(overrides?: CallOverrides): Promise<string>;
+
+  vaultId(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdrawCollateral(
     amount_: BigNumberish,
@@ -295,7 +394,21 @@ export class Vault extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    WETH(overrides?: CallOverrides): Promise<string>;
+
+    borrow(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cAggregator(overrides?: CallOverrides): Promise<string>;
+
     closeVault(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    collateral(overrides?: CallOverrides): Promise<string>;
+
+    createdAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    dAggregator(overrides?: CallOverrides): Promise<string>;
+
+    debt(overrides?: CallOverrides): Promise<string>;
 
     depositCollateral(
       amount_: BigNumberish,
@@ -303,6 +416,8 @@ export class Vault extends BaseContract {
     ): Promise<void>;
 
     depositCollateralNative(overrides?: CallOverrides): Promise<void>;
+
+    feePool(overrides?: CallOverrides): Promise<string>;
 
     getDebt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -321,7 +436,15 @@ export class Vault extends BaseContract {
 
     liquidate(overrides?: CallOverrides): Promise<void>;
 
+    manager(overrides?: CallOverrides): Promise<string>;
+
     payDebt(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    v1(overrides?: CallOverrides): Promise<string>;
+
+    v2Factory(overrides?: CallOverrides): Promise<string>;
+
+    vaultId(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawCollateral(
       amount_: BigNumberish,
@@ -439,10 +562,24 @@ export class Vault extends BaseContract {
   };
 
   estimateGas: {
+    WETH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    borrow(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cAggregator(overrides?: CallOverrides): Promise<BigNumber>;
+
     closeVault(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    collateral(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createdAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    dAggregator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    debt(overrides?: CallOverrides): Promise<BigNumber>;
 
     depositCollateral(
       amount_: BigNumberish,
@@ -452,6 +589,8 @@ export class Vault extends BaseContract {
     depositCollateralNative(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    feePool(overrides?: CallOverrides): Promise<BigNumber>;
 
     getDebt(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -474,10 +613,18 @@ export class Vault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    manager(overrides?: CallOverrides): Promise<BigNumber>;
+
     payDebt(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    v1(overrides?: CallOverrides): Promise<BigNumber>;
+
+    v2Factory(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vaultId(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawCollateral(
       amount_: BigNumberish,
@@ -491,10 +638,24 @@ export class Vault extends BaseContract {
   };
 
   populateTransaction: {
+    WETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    borrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    cAggregator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     closeVault(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    collateral(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    createdAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    dAggregator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    debt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     depositCollateral(
       amount_: BigNumberish,
@@ -504,6 +665,8 @@ export class Vault extends BaseContract {
     depositCollateralNative(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    feePool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getDebt(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -526,10 +689,18 @@ export class Vault extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    manager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     payDebt(
       amount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    v1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    v2Factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    vaultId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdrawCollateral(
       amount_: BigNumberish,

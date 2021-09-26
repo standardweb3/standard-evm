@@ -1,5 +1,6 @@
 import "dotenv/config";
 import "@nomiclabs/hardhat-etherscan";
+import "hardhat-contract-sizer";
 import "@nomiclabs/hardhat-solhint";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";

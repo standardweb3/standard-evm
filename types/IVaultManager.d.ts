@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -20,14 +21,20 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IVaultManagerInterface extends ethers.utils.Interface {
   functions: {
+    "createVault(address,uint256,uint256)": FunctionFragment;
     "getCDPConfig(address)": FunctionFragment;
     "getCDecimal(address)": FunctionFragment;
     "getLFR(address)": FunctionFragment;
     "getMCR(address)": FunctionFragment;
     "getSFR(address)": FunctionFragment;
     "getVault(uint256)": FunctionFragment;
+    "vaultCodeHash()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "createVault",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getCDPConfig",
     values: [string]
@@ -40,7 +47,15 @@ interface IVaultManagerInterface extends ethers.utils.Interface {
     functionFragment: "getVault",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "vaultCodeHash",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "createVault",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getCDPConfig",
     data: BytesLike
@@ -53,6 +68,10 @@ interface IVaultManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "getMCR", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getSFR", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "vaultCodeHash",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -101,6 +120,13 @@ export class IVaultManager extends BaseContract {
   interface: IVaultManagerInterface;
 
   functions: {
+    createVault(
+      collateral_: string,
+      cAmount_: BigNumberish,
+      dAmount_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getCDPConfig(
       collateral: string,
       overrides?: CallOverrides
@@ -121,7 +147,16 @@ export class IVaultManager extends BaseContract {
       vaultId_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    vaultCodeHash(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  createVault(
+    collateral_: string,
+    cAmount_: BigNumberish,
+    dAmount_: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   getCDPConfig(
     collateral: string,
@@ -141,7 +176,16 @@ export class IVaultManager extends BaseContract {
 
   getVault(vaultId_: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  vaultCodeHash(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    createVault(
+      collateral_: string,
+      cAmount_: BigNumberish,
+      dAmount_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     getCDPConfig(
       collateral: string,
       overrides?: CallOverrides
@@ -162,11 +206,20 @@ export class IVaultManager extends BaseContract {
       vaultId_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    vaultCodeHash(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
+    createVault(
+      collateral_: string,
+      cAmount_: BigNumberish,
+      dAmount_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getCDPConfig(
       collateral: string,
       overrides?: CallOverrides
@@ -187,9 +240,18 @@ export class IVaultManager extends BaseContract {
       vaultId_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    vaultCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    createVault(
+      collateral_: string,
+      cAmount_: BigNumberish,
+      dAmount_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getCDPConfig(
       collateral: string,
       overrides?: CallOverrides
@@ -219,5 +281,7 @@ export class IVaultManager extends BaseContract {
       vaultId_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    vaultCodeHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

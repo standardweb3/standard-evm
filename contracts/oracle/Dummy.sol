@@ -3,22 +3,22 @@ pragma solidity ^0.8.0;
 import "./IPrice.sol";
 
 contract Dummy is IPrice {
-    int price;
+    int256 price;
     address operator;
 
-    constructor(int price_) {
+    constructor(int256 price_) {
         price = price_;
         operator = msg.sender;
     }
 
-    function setPrice(int price_) public {
+    function setPrice(int256 price_) public {
         price = price_;
     }
 
     /**
      * Returns the latest price
      */
-    function getThePrice() external override view returns (int) {
+    function getThePrice() external view override returns (int256) {
         return price;
     }
 }

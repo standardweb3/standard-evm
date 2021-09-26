@@ -29,8 +29,8 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     "addOracle(address,address)": FunctionFragment;
     "allVaults(uint256)": FunctionFragment;
     "allVaultsLength()": FunctionFragment;
-    "createCDP(address,uint256,uint256)": FunctionFragment;
     "createCDPNative(uint256)": FunctionFragment;
+    "createVault(address,uint256,uint256)": FunctionFragment;
     "desiredSupply()": FunctionFragment;
     "feePool()": FunctionFragment;
     "getCDPConfig(address)": FunctionFragment;
@@ -42,9 +42,9 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     "getVault(uint256)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "initialize(address,address,address,address,address)": FunctionFragment;
     "initializeCDP(address,uint256,uint256,uint256)": FunctionFragment;
     "meter()": FunctionFragment;
-    "migrate(address,address,address,address,address)": FunctionFragment;
     "rebase()": FunctionFragment;
     "rebaseActive()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
@@ -53,7 +53,7 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "v1()": FunctionFragment;
     "v2Factory()": FunctionFragment;
-    "vaultOf(address,uint256)": FunctionFragment;
+    "vaultCodeHash()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -79,12 +79,12 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "createCDP",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "createCDPNative",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createVault",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "desiredSupply",
@@ -116,14 +116,14 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string, string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initializeCDP",
     values: [string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "meter", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "migrate",
-    values: [string, string, string, string, string]
-  ): string;
   encodeFunctionData(functionFragment: "rebase", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "rebaseActive",
@@ -148,8 +148,8 @@ interface VaultManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "v1", values?: undefined): string;
   encodeFunctionData(functionFragment: "v2Factory", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "vaultOf",
-    values: [string, BigNumberish]
+    functionFragment: "vaultCodeHash",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -168,9 +168,12 @@ interface VaultManagerInterface extends ethers.utils.Interface {
     functionFragment: "allVaultsLength",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "createCDP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createCDPNative",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createVault",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -196,12 +199,12 @@ interface VaultManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializeCDP",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "meter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "migrate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rebase", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rebaseActive",
@@ -222,7 +225,10 @@ interface VaultManagerInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "v1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "v2Factory", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "vaultOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "vaultCodeHash",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AggregatorAdded(address,address)": EventFragment;
@@ -330,16 +336,16 @@ export class VaultManager extends BaseContract {
 
     allVaultsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    createCDP(
+    createCDPNative(
+      dAmount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    createVault(
       collateral_: string,
       cAmount_: BigNumberish,
       dAmount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    createCDPNative(
-      dAmount_: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     desiredSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -397,6 +403,15 @@ export class VaultManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    initialize(
+      v1_: string,
+      meter_: string,
+      v2Factory_: string,
+      feePool_: string,
+      weth_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     initializeCDP(
       collateral_: string,
       MCR_: BigNumberish,
@@ -406,15 +421,6 @@ export class VaultManager extends BaseContract {
     ): Promise<ContractTransaction>;
 
     meter(overrides?: CallOverrides): Promise<[string]>;
-
-    migrate(
-      v1_: string,
-      meter_: string,
-      v2Factory_: string,
-      feePool_: string,
-      weth_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -448,11 +454,9 @@ export class VaultManager extends BaseContract {
 
     v2Factory(overrides?: CallOverrides): Promise<[string]>;
 
-    vaultOf(
-      arg0: string,
-      arg1: BigNumberish,
+    vaultCodeHash(
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[string] & { vaultCode: string }>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -473,16 +477,16 @@ export class VaultManager extends BaseContract {
 
   allVaultsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  createCDP(
+  createCDPNative(
+    dAmount_: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  createVault(
     collateral_: string,
     cAmount_: BigNumberish,
     dAmount_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  createCDPNative(
-    dAmount_: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   desiredSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -528,6 +532,15 @@ export class VaultManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  initialize(
+    v1_: string,
+    meter_: string,
+    v2Factory_: string,
+    feePool_: string,
+    weth_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   initializeCDP(
     collateral_: string,
     MCR_: BigNumberish,
@@ -537,15 +550,6 @@ export class VaultManager extends BaseContract {
   ): Promise<ContractTransaction>;
 
   meter(overrides?: CallOverrides): Promise<string>;
-
-  migrate(
-    v1_: string,
-    meter_: string,
-    v2Factory_: string,
-    feePool_: string,
-    weth_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   rebase(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -579,11 +583,7 @@ export class VaultManager extends BaseContract {
 
   v2Factory(overrides?: CallOverrides): Promise<string>;
 
-  vaultOf(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  vaultCodeHash(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -604,17 +604,17 @@ export class VaultManager extends BaseContract {
 
     allVaultsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    createCDP(
-      collateral_: string,
-      cAmount_: BigNumberish,
-      dAmount_: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     createCDPNative(
       dAmount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    createVault(
+      collateral_: string,
+      cAmount_: BigNumberish,
+      dAmount_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     desiredSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -662,6 +662,15 @@ export class VaultManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    initialize(
+      v1_: string,
+      meter_: string,
+      v2Factory_: string,
+      feePool_: string,
+      weth_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     initializeCDP(
       collateral_: string,
       MCR_: BigNumberish,
@@ -671,15 +680,6 @@ export class VaultManager extends BaseContract {
     ): Promise<void>;
 
     meter(overrides?: CallOverrides): Promise<string>;
-
-    migrate(
-      v1_: string,
-      meter_: string,
-      v2Factory_: string,
-      feePool_: string,
-      weth_: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     rebase(overrides?: CallOverrides): Promise<void>;
 
@@ -708,11 +708,7 @@ export class VaultManager extends BaseContract {
 
     v2Factory(overrides?: CallOverrides): Promise<string>;
 
-    vaultOf(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    vaultCodeHash(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -829,16 +825,16 @@ export class VaultManager extends BaseContract {
 
     allVaultsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    createCDP(
+    createCDPNative(
+      dAmount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    createVault(
       collateral_: string,
       cAmount_: BigNumberish,
       dAmount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    createCDPNative(
-      dAmount_: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     desiredSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -883,6 +879,15 @@ export class VaultManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initialize(
+      v1_: string,
+      meter_: string,
+      v2Factory_: string,
+      feePool_: string,
+      weth_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     initializeCDP(
       collateral_: string,
       MCR_: BigNumberish,
@@ -892,15 +897,6 @@ export class VaultManager extends BaseContract {
     ): Promise<BigNumber>;
 
     meter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    migrate(
-      v1_: string,
-      meter_: string,
-      v2Factory_: string,
-      feePool_: string,
-      weth_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -934,11 +930,7 @@ export class VaultManager extends BaseContract {
 
     v2Factory(overrides?: CallOverrides): Promise<BigNumber>;
 
-    vaultOf(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    vaultCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -970,16 +962,16 @@ export class VaultManager extends BaseContract {
 
     allVaultsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    createCDP(
+    createCDPNative(
+      dAmount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createVault(
       collateral_: string,
       cAmount_: BigNumberish,
       dAmount_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createCDPNative(
-      dAmount_: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     desiredSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1033,6 +1025,15 @@ export class VaultManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    initialize(
+      v1_: string,
+      meter_: string,
+      v2Factory_: string,
+      feePool_: string,
+      weth_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     initializeCDP(
       collateral_: string,
       MCR_: BigNumberish,
@@ -1042,15 +1043,6 @@ export class VaultManager extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     meter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    migrate(
-      v1_: string,
-      meter_: string,
-      v2Factory_: string,
-      feePool_: string,
-      weth_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1084,10 +1076,6 @@ export class VaultManager extends BaseContract {
 
     v2Factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    vaultOf(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    vaultCodeHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

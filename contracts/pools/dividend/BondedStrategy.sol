@@ -6,21 +6,21 @@ import "../../security/MonthGuard.sol";
 contract BondedStrategy is MonthGuard {
 
     address public stnd;
-    address public mtr;
+    uint256 totalSupply;
+    address owner;
     mapping(address => uint256) public bonded;
 
     event DividendClaimed(address claimer, uint256 amount);
     
-    constructor(address stnd_, address meter_) {
+    constructor(address stnd_) {
         stnd = stnd_;
-        mtr = meter_;
     }
 
-    function claim() public onlyPerOneMonth {
+    function claim(address token) public onlyPerOneMonth {
         require(IERC20(stnd).totalSupply() != 0, "FeePool: STND has not been placed yet");
-        uint256 proRataBonded = bonded[msg.sender] * IERC20(mtr).balanceOf(address(this)) / IERC20(stnd).totalSupply();
+        uint256 proRataBonded = bonded[msg.sender] * IERC20(token).balanceOf(address(this)) / IERC20(stnd).totalSupply();
         require(proRataBonded >= 0, "BondedStrategy: Too small Bonded amount");
-        require(IERC20(mtr).transfer(msg.sender, proRataBonded), "FeePool: fee transfer failed");
+        require(IERC20(token).transfer(msg.sender, proRataBonded), "FeePool: fee transfer failed");
         emit DividendClaimed(msg.sender, proRataBonded);
     }
 
@@ -34,4 +34,20 @@ contract BondedStrategy is MonthGuard {
         IERC20(stnd).transfer(msg.sender, amount_);
         bonded[msg.sender] -= amount_;
     }
+
+    function updateSupply(uint256 supply_, bool auto_) public {
+        require(msg.sender == owner, "FeePool: Access Invalid");
+        if (auto_) {
+            totalSupply = IERC20(stnd).totalSupply();
+        }
+        else {
+            totalSupply = supply_;
+        }
+    }
+
+    // Get balance of STND bonded for snapshot integration
+    function balanceOf(address account) public view returns (uint256) {
+        return bonded[account];
+    }
+
 }

@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import '../../oracle/IPrice.sol';
+import "../../oracle/IPrice.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IVault.sol";
@@ -57,7 +57,7 @@ contract Vault is IVault {
 
     // called once by the factory at time of deployment
     function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address v2Factory_, address weth_) external {
-        require(msg.sender == manager, 'Vault: FORBIDDEN'); // sufficient check
+        require(msg.sender == manager, "Vault: FORBIDDEN"); // sufficient check
         collateral = collateral_;
         vaultId = vaultId_;
         cAggregator = cAggregator_;
@@ -185,7 +185,7 @@ contract Vault is IVault {
         uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
-        assert(collateralValueTimes100 >= collateralValue); // overflow check
+        require(collateralValueTimes100 >= collateralValue, "Vault: Overflow"); // overflow check
         return (collateralValue, debtValue);        
     }
 
@@ -197,9 +197,9 @@ contract Vault is IVault {
 
     function _getAssetValue(address aggregator, uint256 amount_) internal returns (uint256) {
         uint price = _getAssetPrice(aggregator);
-        assert(price != 0);
+        require(price != 0, "Vault: ZERO_AMOUNT");
         uint256 assetValue = price * amount_;
-        assert(assetValue >= amount_); // overflow check
+        require(assetValue >= amount_, "Vault: Overflow"); // overflow check
         return assetValue;
     }
 
@@ -207,11 +207,11 @@ contract Vault is IVault {
         uint256 assetValue = _getAssetValue(dAggregator, borrow);
         uint sfr = IVaultManager(manager).getSFR(collateral);
         /// (sfr * assetValue/100) * (duration in months)
-        uint256 fee = sfr * assetValue;
+        uint256 sfrTimesV = sfr * assetValue;
         // get duration in months
         uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30; 
-        assert(fee >= assetValue);
-        return (fee / 100) * duration;
+        require(sfrTimesV >= assetValue, "Vault: overflow"); // overflow check
+        return (sfrTimesV / 100) * duration;
     }
 
     function getDebt() external override returns (uint) {

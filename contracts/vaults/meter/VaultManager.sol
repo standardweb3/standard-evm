@@ -124,7 +124,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IWETH(WETH).deposit{value: address(this).balance}();
         uint256 weth = IERC20(WETH).balanceOf(address(this));
         // then transfer collateral native currency to the vault, manage collateral from there.
-        assert(IWETH(WETH).transfer(vlt, weth)); 
+        require(IWETH(WETH).transfer(vlt, weth), "VaultManager: WETH transfer to Vault failed"); 
         allVaults.push(vlt);
         // mint mtr to the sender
         IStablecoin(meter).mint(_msgSender(), dAmount_);
@@ -193,7 +193,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
-        assert(collateralValueTimes100 >= collateralValue); // overflow check
+        require(collateralValueTimes100 >= collateralValue, "VaultManager: Overflow"); // overflow check
         return (collateralValue, debtValue);        
     }
 
@@ -205,9 +205,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function _getAssetValue(address aggregator, uint256 amount_) internal returns (uint256) {
         uint price = _getAssetPrice(aggregator);
-        assert(price != 0);
+        require(price != 0, "VaultManager: ZERO_AMOUNT");
         uint256 assetValue = price * amount_;
-        assert(assetValue >= amount_); // overflow check
+        require(assetValue >= amount_, "VaultManager: Overflow"); // overflow check
         return assetValue;
     }
 

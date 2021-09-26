@@ -269,7 +269,7 @@ const config: HardhatUserConfig = {
     shibuya: {
         url: "https://rpc.shibuya.astar.network:8545",
         accounts,
-        chainId: 1287,
+        chainId: 81,
         live: true,
         saveDeployments: true,
         tags: ["staging"],

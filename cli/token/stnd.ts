@@ -30,12 +30,13 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
     await deployContract(proxy, "UChildERC20Proxy")
 
     // Initialize proxy with necessary info
-    const tx = await impl.attach(proxy.address).initialize("Standard", "STND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
+    const tx = await TokenImpl.attach(proxy.address).initialize("Standard", "STND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
     await executeTx(tx, "Execute initialize at")
 
     // Mint initial total supply if parent
     if(parent) {
-        const tx = await impl.attach(proxy.address).mint(deployer.address, ethers.utils.parseUnits("100000000", 18));    
+        const mint = await TokenImpl.attach(proxy.address).mint(deployer.address, ethers.utils.parseUnits("100000000", 18));  
+        await executeTx(mint, "Execute Mint at")  
     }
 
     console.log(

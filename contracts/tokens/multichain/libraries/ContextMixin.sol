@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 // File: contracts/lib/ContextMixin.sol
 
 pragma solidity 0.6.12;

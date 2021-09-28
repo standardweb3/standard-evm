@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 // File: @openzeppelin/contracts/utils/EnumerableSet.sol
 
 pragma solidity ^0.6.0;

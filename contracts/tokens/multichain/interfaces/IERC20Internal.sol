@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 // File: contracts/lib/IERC20Internal.sol
 
 pragma solidity 0.6.12;

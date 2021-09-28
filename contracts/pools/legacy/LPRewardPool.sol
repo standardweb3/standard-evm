@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
+
 pragma solidity ^0.8.0;
 /**
  *Submitted for verification at Etherscan.io on 2020-07-17

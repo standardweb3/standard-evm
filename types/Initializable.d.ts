@@ -20,14 +20,23 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface InitializableInterface extends ethers.utils.Interface {
   functions: {
+    "c_0x8ae370ac(bytes32)": FunctionFragment;
     "initialized()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "c_0x8ae370ac",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialized",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "c_0x8ae370ac",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "initialized",
     data: BytesLike
@@ -80,22 +89,47 @@ export class Initializable extends BaseContract {
   interface: InitializableInterface;
 
   functions: {
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     initialized(overrides?: CallOverrides): Promise<[boolean]>;
   };
+
+  c_0x8ae370ac(
+    c__0x8ae370ac: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   initialized(overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     initialized(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialized(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     initialized(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

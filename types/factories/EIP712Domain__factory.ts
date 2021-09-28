@@ -20,6 +20,19 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "c__0xbee145fe",
+        type: "bytes32",
+      },
+    ],
+    name: "c_0xbee145fe",
+    outputs: [],
+    stateMutability: "pure",
+    type: "function",
+  },
 ];
 
 export class EIP712Domain__factory {

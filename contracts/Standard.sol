@@ -1,9 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
-import './UsingLiquidityProtectionService.sol';
+import "./UsingLiquidityProtectionService.sol";
 
 
 /**
@@ -157,14 +158,14 @@ contract Standard is ERC20Pausable, AccessControlEnumerable, UsingLiquidityProte
     }
 
     /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller"s
      * allowance.
      *
      * See {ERC20-_burn} and {ERC20-allowance}.
      *
      * Requirements:
      *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * - the caller must have allowance for ``accounts``"s tokens of at least
      * `amount`.
      * - the caller must have the `BURNER_ROLE`.
      */

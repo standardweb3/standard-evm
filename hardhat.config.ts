@@ -326,6 +326,10 @@ const config: HardhatUserConfig = {
     project: process.env.TENDERLY_PROJECT || "",
     username: process.env.TENDERLY_USERNAME ||"",
   },
+  spdxLicenseIdentifier: {
+    overwrite: true,
+    runOnCompile: true,
+  },
   typechain: {
     outDir: "types",
     target: "ethers-v5",

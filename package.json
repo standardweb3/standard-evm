@@ -26,7 +26,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@ethersproject/address": "^5.4.0",
     "@ethersproject/solidity": "^5.4.0",
@@ -59,10 +59,11 @@
     "hardhat-interface-generator": "^0.0.6",
     "hardhat-log-remover": "^2.0.0",
     "hardhat-preprocessor": "^0.1.0",
-    "hardhat-spdx-license-identifier": "^2.0.0",
+    "hardhat-spdx-license-identifier": "^2.0.3",
     "hardhat-tracer": "^1.0.0-alpha.6",
     "hardhat-watcher": "^2.0.0",
     "husky": "^7.0.0",
+    "inquirer": "^8.1.5",
     "lint-staged": "^11.0.1",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.17",
@@ -73,10 +74,7 @@
     "ts-generator": "^0.1.0",
     "ts-node": "^10.0.0",
     "typechain": "^5.0.0",
-    "typescript": "^4.0.0",
-    "inquirer": "^8.1.5"
+    "typescript": "^4.0.0"
   },
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }

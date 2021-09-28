@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity =0.6.12;
 
@@ -34,11 +34,20 @@ contract UniswapV2Factory is IUniswapV2Factory {
         return keccak256(type(UniswapV2Pair).creationCode);
     }
 
-    function createPair(address tokenA, address tokenB) external override returns (address pair) {
+    function createPair(address tokenA, address tokenB)
+        external
+        override
+        returns (address pair)
+    {
         require(tokenA != tokenB, "UniswapV2: IDENTICAL_ADDRESSES");
-        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+        (address token0, address token1) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
         require(token0 != address(0), "UniswapV2: ZERO_ADDRESS");
-        require(getPair[token0][token1] == address(0), "UniswapV2: PAIR_EXISTS"); // single check is sufficient
+        require(
+            getPair[token0][token1] == address(0),
+            "UniswapV2: PAIR_EXISTS"
+        ); // single check is sufficient
         bytes memory bytecode = type(UniswapV2Pair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {

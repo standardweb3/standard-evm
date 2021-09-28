@@ -21,15 +21,24 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface EIP712Interface extends ethers.utils.Interface {
   functions: {
     "EIP712_DOMAIN_TYPEHASH()": FunctionFragment;
+    "c_0xa8026612(bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "EIP712_DOMAIN_TYPEHASH",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xa8026612",
+    values: [BytesLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "EIP712_DOMAIN_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xa8026612",
     data: BytesLike
   ): Result;
 
@@ -81,22 +90,47 @@ export class EIP712 extends BaseContract {
 
   functions: {
     EIP712_DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+
+    c_0xa8026612(
+      c__0xa8026612: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
   };
 
   EIP712_DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
+  c_0xa8026612(
+    c__0xa8026612: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   callStatic: {
     EIP712_DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    c_0xa8026612(
+      c__0xa8026612: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     EIP712_DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    c_0xa8026612(
+      c__0xa8026612: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     EIP712_DOMAIN_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xa8026612(
+      c__0xa8026612: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

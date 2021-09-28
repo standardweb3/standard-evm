@@ -41,6 +41,20 @@ interface UChildERC20Interface extends ethers.utils.Interface {
     "authorizationState(address,bytes32)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
+    "c_0x04b00737(bytes32)": FunctionFragment;
+    "c_0x13db951c(bytes32)": FunctionFragment;
+    "c_0x220482f4(bytes32)": FunctionFragment;
+    "c_0x33ca6d66(bytes32)": FunctionFragment;
+    "c_0x51b39d97(bytes32)": FunctionFragment;
+    "c_0x7613ac4a(bytes32)": FunctionFragment;
+    "c_0x841212ae(bytes32)": FunctionFragment;
+    "c_0x8ae370ac(bytes32)": FunctionFragment;
+    "c_0xab97e08a(bytes32)": FunctionFragment;
+    "c_0xbee145fe(bytes32)": FunctionFragment;
+    "c_0xcb3c6196(bytes32)": FunctionFragment;
+    "c_0xcb881478(bytes32)": FunctionFragment;
+    "c_0xf9fb325f(bytes32)": FunctionFragment;
+    "c_0xfa242dff(bytes32)": FunctionFragment;
     "cancelAuthorization(address,bytes32,uint8,bytes32,bytes32)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
@@ -154,6 +168,62 @@ interface UChildERC20Interface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "burnFrom",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x04b00737",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x13db951c",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x220482f4",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x33ca6d66",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x51b39d97",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x7613ac4a",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x841212ae",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x8ae370ac",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xab97e08a",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xbee145fe",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xcb3c6196",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xcb881478",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xf9fb325f",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xfa242dff",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelAuthorization",
@@ -371,6 +441,62 @@ interface UChildERC20Interface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x04b00737",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x13db951c",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x220482f4",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x33ca6d66",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x51b39d97",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x7613ac4a",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x841212ae",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x8ae370ac",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xab97e08a",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xbee145fe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xcb3c6196",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xcb881478",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xf9fb325f",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xfa242dff",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "cancelAuthorization",
     data: BytesLike
@@ -633,6 +759,76 @@ export class UChildERC20 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    c_0x04b00737(
+      c__0x04b00737: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x13db951c(
+      c__0x13db951c: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x220482f4(
+      c__0x220482f4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x7613ac4a(
+      c__0x7613ac4a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x841212ae(
+      c__0x841212ae: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xab97e08a(
+      c__0xab97e08a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xcb3c6196(
+      c__0xcb3c6196: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     cancelAuthorization(
       authorizer: string,
       nonce: BytesLike,
@@ -894,6 +1090,76 @@ export class UChildERC20 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  c_0x04b00737(
+    c__0x04b00737: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x13db951c(
+    c__0x13db951c: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x220482f4(
+    c__0x220482f4: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x33ca6d66(
+    c__0x33ca6d66: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x51b39d97(
+    c__0x51b39d97: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x7613ac4a(
+    c__0x7613ac4a: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x841212ae(
+    c__0x841212ae: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0x8ae370ac(
+    c__0x8ae370ac: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xab97e08a(
+    c__0xab97e08a: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xbee145fe(
+    c__0xbee145fe: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xcb3c6196(
+    c__0xcb3c6196: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xcb881478(
+    c__0xcb881478: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xf9fb325f(
+    c__0xf9fb325f: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xfa242dff(
+    c__0xfa242dff: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   cancelAuthorization(
     authorizer: string,
     nonce: BytesLike,
@@ -1152,6 +1418,76 @@ export class UChildERC20 extends BaseContract {
     burnFrom(
       account: string,
       amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x04b00737(
+      c__0x04b00737: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x13db951c(
+      c__0x13db951c: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x220482f4(
+      c__0x220482f4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x7613ac4a(
+      c__0x7613ac4a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x841212ae(
+      c__0x841212ae: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xab97e08a(
+      c__0xab97e08a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xcb3c6196(
+      c__0xcb3c6196: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1558,6 +1894,76 @@ export class UChildERC20 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    c_0x04b00737(
+      c__0x04b00737: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x13db951c(
+      c__0x13db951c: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x220482f4(
+      c__0x220482f4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x7613ac4a(
+      c__0x7613ac4a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x841212ae(
+      c__0x841212ae: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xab97e08a(
+      c__0xab97e08a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xcb3c6196(
+      c__0xcb3c6196: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     cancelAuthorization(
       authorizer: string,
       nonce: BytesLike,
@@ -1830,6 +2236,76 @@ export class UChildERC20 extends BaseContract {
       account: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    c_0x04b00737(
+      c__0x04b00737: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x13db951c(
+      c__0x13db951c: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x220482f4(
+      c__0x220482f4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x7613ac4a(
+      c__0x7613ac4a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x841212ae(
+      c__0x841212ae: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x8ae370ac(
+      c__0x8ae370ac: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xab97e08a(
+      c__0xab97e08a: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xcb3c6196(
+      c__0xcb3c6196: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     cancelAuthorization(

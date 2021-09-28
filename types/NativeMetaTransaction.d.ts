@@ -23,6 +23,9 @@ interface NativeMetaTransactionInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "META_TRANSACTION_TYPEHASH()": FunctionFragment;
+    "c_0x51b39d97(bytes32)": FunctionFragment;
+    "c_0xbee145fe(bytes32)": FunctionFragment;
+    "c_0xf9fb325f(bytes32)": FunctionFragment;
     "executeMetaTransaction(address,bytes,bytes32,bytes32,uint8)": FunctionFragment;
     "nonces(address)": FunctionFragment;
   };
@@ -36,6 +39,18 @@ interface NativeMetaTransactionInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "c_0x51b39d97",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xbee145fe",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xf9fb325f",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "executeMetaTransaction",
     values: [string, BytesLike, BytesLike, BytesLike, BigNumberish]
   ): string;
@@ -47,6 +62,18 @@ interface NativeMetaTransactionInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "META_TRANSACTION_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x51b39d97",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xbee145fe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xf9fb325f",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -118,6 +145,21 @@ export class NativeMetaTransaction extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     executeMetaTransaction(
       userAddress: string,
       functionSignature: BytesLike,
@@ -134,6 +176,21 @@ export class NativeMetaTransaction extends BaseContract {
 
   META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
+  c_0x51b39d97(
+    c__0x51b39d97: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xbee145fe(
+    c__0xbee145fe: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xf9fb325f(
+    c__0xf9fb325f: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   executeMetaTransaction(
     userAddress: string,
     functionSignature: BytesLike,
@@ -149,6 +206,21 @@ export class NativeMetaTransaction extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     executeMetaTransaction(
       userAddress: string,
@@ -187,6 +259,21 @@ export class NativeMetaTransaction extends BaseContract {
 
     META_TRANSACTION_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     executeMetaTransaction(
       userAddress: string,
       functionSignature: BytesLike,
@@ -203,6 +290,21 @@ export class NativeMetaTransaction extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     META_TRANSACTION_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x51b39d97(
+      c__0x51b39d97: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xf9fb325f(
+      c__0xf9fb325f: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

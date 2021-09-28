@@ -28,6 +28,10 @@ interface MaticGasAbstractionInterface extends ethers.utils.Interface {
     "TRANSFER_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
     "WITHDRAW_WITH_AUTHORIZATION_TYPEHASH()": FunctionFragment;
     "authorizationState(address,bytes32)": FunctionFragment;
+    "c_0x33ca6d66(bytes32)": FunctionFragment;
+    "c_0xbee145fe(bytes32)": FunctionFragment;
+    "c_0xcb881478(bytes32)": FunctionFragment;
+    "c_0xfa242dff(bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -62,6 +66,22 @@ interface MaticGasAbstractionInterface extends ethers.utils.Interface {
     functionFragment: "authorizationState",
     values: [string, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "c_0x33ca6d66",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xbee145fe",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xcb881478",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "c_0xfa242dff",
+    values: [BytesLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "APPROVE_WITH_AUTHORIZATION_TYPEHASH",
@@ -93,6 +113,22 @@ interface MaticGasAbstractionInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "authorizationState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0x33ca6d66",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xbee145fe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xcb881478",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "c_0xfa242dff",
     data: BytesLike
   ): Result;
 
@@ -186,6 +222,26 @@ export class MaticGasAbstraction extends BaseContract {
       nonce: BytesLike,
       overrides?: CallOverrides
     ): Promise<[number]>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
   };
 
   APPROVE_WITH_AUTHORIZATION_TYPEHASH(
@@ -218,6 +274,26 @@ export class MaticGasAbstraction extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
+  c_0x33ca6d66(
+    c__0x33ca6d66: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xbee145fe(
+    c__0xbee145fe: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xcb881478(
+    c__0xcb881478: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  c_0xfa242dff(
+    c__0xfa242dff: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   callStatic: {
     APPROVE_WITH_AUTHORIZATION_TYPEHASH(
       overrides?: CallOverrides
@@ -248,6 +324,26 @@ export class MaticGasAbstraction extends BaseContract {
       nonce: BytesLike,
       overrides?: CallOverrides
     ): Promise<number>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -316,6 +412,26 @@ export class MaticGasAbstraction extends BaseContract {
       nonce: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -348,6 +464,26 @@ export class MaticGasAbstraction extends BaseContract {
     authorizationState(
       authorizer: string,
       nonce: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0x33ca6d66(
+      c__0x33ca6d66: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xbee145fe(
+      c__0xbee145fe: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xcb881478(
+      c__0xcb881478: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    c_0xfa242dff(
+      c__0xfa242dff: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

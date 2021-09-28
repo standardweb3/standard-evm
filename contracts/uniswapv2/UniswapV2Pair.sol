@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity =0.6.12;
 
@@ -137,23 +137,22 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         feeOn = feeTo != address(0);
         bool poolOn = poolTo != address(0);
         bool treasuryOn = treasuryTo != address(0);
-        uint _kLast = kLast; // gas savings
+        uint256 _kLast = kLast; // gas savings
         if (feeOn) {
             if (_kLast != 0) {
                 uint256 rootK = Math.sqrt(uint256(_reserve0).mul(_reserve1));
                 uint256 rootKLast = Math.sqrt(_kLast);
                 if (rootK > rootKLast) {
-                    uint numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    uint denominator = rootK.mul(5).add(rootKLast);
-                    uint liquidity = numerator / denominator;
+                    uint256 numerator = totalSupply.mul(rootK.sub(rootKLast));
+                    uint256 denominator = rootK.mul(5).add(rootKLast);
+                    uint256 liquidity = numerator / denominator;
                     if (liquidity > 0) {
                         if (poolOn) {
-                            uint half = liquidity/2;
+                            uint256 half = liquidity / 2;
                             _mint(poolTo, half);
                             _mint(feeTo, half);
-                        } 
-                        else if(poolOn && treasuryOn) {
-                            uint third = liquidity / 3;
+                        } else if (poolOn && treasuryOn) {
+                            uint256 third = liquidity / 3;
                             _mint(poolTo, third);
                             _mint(feeTo, third);
                             _mint(treasuryTo, third);

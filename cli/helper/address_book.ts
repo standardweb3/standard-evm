@@ -1,28 +1,88 @@
-var path = require('path');
-var fs = require('fs');
+/// Exporting directly due to function build error
+import fs from "fs/promises"
+import inquirer from "inquirer"
+import "dotenv/config";
 
-export async function recordAddress(ethers: any, contractFactory: string, address: string) {
-    const chainId = (await ethers.provider.getNetwork()).chainId
-    var addressBook = {}
-    // Record Address book
-    if(addressBook[contractFactory] === undefined) {
-        addressBook[contractFactory] = {}
+export async function recordAddress(name, chain, address) {
+    const filename = 'address-book.json'
+    const exists = await fileExists(filename)
+    if (exists) {
+        // find out whether info is already written
+        var content = await loadAddresses()
+        if (contractExists(content, name, chain, address)) {
+            const overwrite = await confirmOverwrite(filename, name, chain, address)
+            if (!overwrite) {
+                return false
+            }
+        }
+        content[name][chain] = address
+    } else {
+        console.log(`Writing deployment info to ${filename}`)
+        content  = {}
+        content[name] = {}
+        content[name][chain] = address
     }
-    addressBook[contractFactory][chainId] = address
-    // Save address book in cwds
-    const data = JSON.stringify(addressBook)
-    fs.writeFileSync(path.resolve(__dirname, "./address_book.json"), data, (err) => {
-        if (err) {
-            throw err;
-        }
-        console.log(`address is saved at ${process.cwd()}/address_book.json`);
-    })
+
+    const json = JSON.stringify(content, null, 2)
+    await fs.writeFile(filename, json, { encoding: 'utf-8' })
+    return true
 }
-export function getContractInChain(chainId: number, contractFactory: string) {
-    var addressBook = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./address_book.json"), 'utf8', (err) => {
-        if (err) {
-            throw err;
+
+export async function loadAddresses() {
+    let deploymentConfigFile  = process.env.ADDRESS_BOOK
+    if (!deploymentConfigFile) {
+        console.log('no deploymentConfigFile field found in standard deployment config. attempting to read from default path "./minty-deployment.json"')
+        deploymentConfigFile = 'address-book.json'
+    }
+    const content = await fs.readFile(deploymentConfigFile, { encoding: 'utf8' })
+    const deployInfo = JSON.parse(content)
+    try {
+        validateDeploymentInfo(deployInfo)
+    } catch (err) {
+        throw new Error(`error reading deploy info from ${deploymentConfigFile}: ${err}`)
+    }
+    return deployInfo
+}
+
+export function validateDeploymentInfo(deployInfo) {
+    
+    if (Object.keys(deployInfo).length == 0) {
+        throw new Error('loaded address book has no contract info registered')
+    }
+    const chainRequired = arg => {
+        if (!deployInfo.name.hasOwnProperty(arg)) {
+            throw new Error(`required field "contractName.${arg}" not found`)
         }
-    }));
-    return addressBook[contractFactory][chainId]
+    }
+
+    //chainRequired('chain')
+}
+
+export async function fileExists(path) {
+    try {
+        await fs.access(path)
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
+export function contractExists(content, name, chain, address) {
+    try {
+        return content[name][chain] !== undefined
+    } catch (e) {
+        return false
+    }
+}
+
+export async function confirmOverwrite(filename, name, chain, address) {
+    const answers = await inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'overwrite',
+            message: `File ${filename} exists and there is same contract ${name} on ${chain} at ${address}. Overwrite it? (file will be overwritten as default)`,
+            default: true,
+        }
+    ])
+    return answers.overwrite
 }

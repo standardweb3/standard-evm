@@ -8,9 +8,9 @@ const assert = (condition, message) => {
 
 
 // npx hardhat --network rinkeby masterpool-deploy --stnd 0xccf56fb87850fe6cff0cd16f491933c138b7eadd --amount 1000000
-task("dividend-deploy", "Deploy Standard MasterPool")
+task("dividend-deploy", "Deploy Standard DividendPool")
     .addParam("stnd", "Address of Standard")
-    .setAction(async ({ stnd, amount }, { ethers }) => {
+    .setAction(async ({ stnd }, { ethers }) => {
         const [deployer] = await ethers.getSigners();
         // Get before state
         console.log(
@@ -19,11 +19,14 @@ task("dividend-deploy", "Deploy Standard MasterPool")
             )} ETH`
         );
 
-        // Deploy MasterPool
-        console.log(`Deploying Standard DividendPool with the account: ${deployer.address}`);
+        // Deploy Dividend Pool
+        console.log(`Deploying Standard Dividend Strategy Pool with the account: ${deployer.address}`);
         const Pool = await ethers.getContractFactory("BondedStrategy");
         const pool = await Pool.deploy(stnd);
         await deployContract(pool, "BondedStrategy")
+
+        // Save contract info
+        recordAddress("BondedStrategy", await ethers.provider.getNetwork(), pool.address)
 
         // Get results
         console.log(
@@ -31,7 +34,7 @@ task("dividend-deploy", "Deploy Standard MasterPool")
                 await deployer.getBalance()
             )} ETH`
         );
-
+        
         // INFO: hre can only be imported inside task
         const hre = require("hardhat")
         // Verify MasterPool

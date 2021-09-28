@@ -20,7 +20,7 @@ const expectArray = (actual, expected) => {
 };
 
 // Case 1: create vault with two mock tokens
-describe("");
+//describe("");
 
 /*
 describe('StandardToken', function() {

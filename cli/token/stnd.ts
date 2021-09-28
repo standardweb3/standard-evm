@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 import { BigNumber, constants } from "ethers";
 import "@nomiclabs/hardhat-etherscan";
-import { executeTx, deployContract, ZERO, MINTER_ROLE } from "../helper";
+import { executeTx, deployContract, ZERO, MINTER_ROLE, recordAddress } from "../helper";
 import "@tenderly/hardhat-tenderly"
 import { ConstructorFragment } from "@ethersproject/abi";
 
@@ -11,6 +11,9 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
   .setAction(async ({ proxy, parent }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
+    const chainId = (await ethers.provider.getNetwork()).chainId;
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
 
     console.log(
       `Deployer balance: ${ethers.utils.formatEther(
@@ -31,13 +34,12 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       const proxy = await Proxy.deploy(impl.address)
       await deployContract(proxy, "UChildERC20Proxy")
 
-      // log current info
-      console.log(`Proxy Admin: ${await proxy.admin()}`)
-      console.log(`Proxy Implementation: ${await proxy.implementation()}`)
-      
-      // Setup implementation
-      //const upgrade = await proxy.upgradeTo(impl.address)
-      //await executeTx(upgrade, "Execute upgradeTo at")
+      // Verify proxy
+      await hre.run("verify:verify", {
+        contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
+        address: proxy.address,
+        constructorArguments: [impl.address]
+      })
 
       // Initialize proxy with necessary info
       const tx = await TokenImpl.attach(proxy.address).initialize("Standard", "STND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
@@ -57,6 +59,8 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
         const mint = await TokenImpl.attach(impl.address).mint(deployer.address, ethers.utils.parseUnits("100000000", 18));
         await executeTx(mint, "Execute Mint at")
       }
+
+
     }
 
 
@@ -66,8 +70,7 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       )} ETH`
     );
 
-    // INFO: hre can only be imported inside task
-    const hre = require("hardhat")
+
     // Verify Impl
     await hre.run("verify:verify", {
       contract: "contracts/tokens/multichain/stnd_multichain_impl.sol:UChildAdministrableERC20",
@@ -75,13 +78,6 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       constructorArguments: []
     })
 
-    // Verify proxy
-    console.log(impl.address)
-    await hre.run("verify:verify", {
-      contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
-      address: proxy.address,
-      constructorArguments: [impl.address]
-    })
 
     const contracts = [
       {

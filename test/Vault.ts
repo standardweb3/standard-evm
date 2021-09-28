@@ -23,7 +23,7 @@ const expectArray = (actual, expected) => {
 
 describe("Vault", function () {
   it("VaultManager can add Oracle", async function () {
-    const [owner, addr1, addr2] = await ethers.getSigners();
+    const [deployer] = await ethers.getSigners();
     const Mock = ethers.getContractFactory("MockToken");
     const Dummy = ethers.getContractFactory("Dummy");
     const VaultManager = ethers.getContractFactory("VaultManager");
@@ -36,7 +36,7 @@ describe("Vault", function () {
   });
 
   it("Vault should generate new vault contract with predictable hash", async function () {
-    const [owner] = await ethers.getSigners();
+    const [deployer] = await ethers.getSigners();
     const MTR = await ethers.getContractFactory("MeterToken");
     const V1 = await ethers.getContractFactory("V1");
     const VaultManager = ethers.getContractFactory("VaultManager");

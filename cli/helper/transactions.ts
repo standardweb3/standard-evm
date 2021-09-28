@@ -1,10 +1,14 @@
-import "./address_book"
+
 /// executes txs without race conditions in production environment
 /// example
 /// const tx = await factory.connect(deployer).setFeeTo(deployer.address);
 /// await executeTx(tx, "Execute setFeeTo at")
 /// logs 
 /// Executes setFeeTo at: 0xf81ded9ca5936a06f9a4ee53db8a568eb84ffd39095ff6dfe0ff5aa60bb98058
+
+import { ethers } from "ethers";
+import { ChainId, recordAddress } from ".";
+
 /// Mining...
 export async function executeTx(tx: any, event: string) {
     console.log(`${event}: ${tx.hash}`);
@@ -21,10 +25,14 @@ export async function executeTx(tx: any, event: string) {
 /// logs 
 /// UniswapV2Router02 address: 0x4633C1F0F633Cc42FD0Ba394762283606C88ae52
 /// Mining...
-export async function deployContract(deploy: any, contract: string){
-    console.log(`${contract} address:`, deploy.address);
+export async function deployContract(deploy: ethers.Contract, contract: string){
+    const chainId = (await deploy.provider.getNetwork()).chainId;
+    // Get network from chain ID
+    let chain = ChainId[chainId]
+    console.log(`${contract} address at Chain Id of ${chain}:`, deploy.address);
     console.log("Mining...");
     await deploy.deployed();
+    await recordAddress(contract, chain, deploy.address)
 }
 export async function executeFrom(ethers: any, deployer: any, func: any) {
     // Get before state

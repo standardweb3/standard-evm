@@ -8,6 +8,7 @@ import "./UniswapV2Pair.sol";
 contract UniswapV2Factory is IUniswapV2Factory {
     address public override feeTo;
     address public override poolTo;
+    address public override treasuryTo;
     address public override feeToSetter;
     address public override migrator;
 
@@ -56,6 +57,11 @@ contract UniswapV2Factory is IUniswapV2Factory {
     }
 
     function setPoolTo(address _poolTo) external override {
+        require(msg.sender == feeToSetter, "UniswapV2: FORBIDDEN");
+        poolTo = _poolTo;
+    }
+
+    function setTreasuryTo(address _poolTo) external override {
         require(msg.sender == feeToSetter, "UniswapV2: FORBIDDEN");
         poolTo = _poolTo;
     }

@@ -33,6 +33,8 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
     "setFeeToSetter(address)": FunctionFragment;
     "setMigrator(address)": FunctionFragment;
     "setPoolTo(address)": FunctionFragment;
+    "setTreasuryTo(address)": FunctionFragment;
+    "treasuryTo()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -65,6 +67,14 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setMigrator", values: [string]): string;
   encodeFunctionData(functionFragment: "setPoolTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setTreasuryTo",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "treasuryTo",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "allPairs", data: BytesLike): Result;
   decodeFunctionResult(
@@ -90,6 +100,11 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPoolTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setTreasuryTo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "treasuryTo", data: BytesLike): Result;
 
   events: {
     "PairCreated(address,address,address,uint256)": EventFragment;
@@ -197,6 +212,13 @@ export class IUniswapV2Factory extends BaseContract {
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    setTreasuryTo(
+      arg0: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    treasuryTo(overrides?: CallOverrides): Promise<[string]>;
   };
 
   allPairs(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -243,6 +265,13 @@ export class IUniswapV2Factory extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setTreasuryTo(
+    arg0: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  treasuryTo(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     allPairs(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -275,6 +304,10 @@ export class IUniswapV2Factory extends BaseContract {
     setMigrator(arg0: string, overrides?: CallOverrides): Promise<void>;
 
     setPoolTo(arg0: string, overrides?: CallOverrides): Promise<void>;
+
+    setTreasuryTo(arg0: string, overrides?: CallOverrides): Promise<void>;
+
+    treasuryTo(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -343,6 +376,13 @@ export class IUniswapV2Factory extends BaseContract {
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    setTreasuryTo(
+      arg0: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    treasuryTo(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -392,5 +432,12 @@ export class IUniswapV2Factory extends BaseContract {
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    setTreasuryTo(
+      arg0: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    treasuryTo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

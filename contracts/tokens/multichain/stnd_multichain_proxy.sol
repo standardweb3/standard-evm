@@ -70,9 +70,9 @@ contract UpgradableProxy is Proxy {
     event ProxyOwnerUpdate(address _new, address _old);
 
     bytes32 public constant IMPLEMENTATION_SLOT = keccak256(
-        "matic.network.proxy.implementation"
+        "multichain.network.proxy.implementation"
     );
-    bytes32 public constant OWNER_SLOT = keccak256("matic.network.proxy.owner");
+    bytes32 public constant OWNER_SLOT = keccak256("multichain.network.proxy.owner");
 
     constructor(address _proxyTo) public {
         setProxyOwner(msg.sender);

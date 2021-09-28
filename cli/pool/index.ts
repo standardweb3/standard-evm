@@ -1,1 +1,2 @@
 import "./masterpool"
+import "./dividend"

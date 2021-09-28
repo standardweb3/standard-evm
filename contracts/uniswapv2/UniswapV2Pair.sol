@@ -133,8 +133,10 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     {
         address feeTo = IUniswapV2Factory(factory).feeTo();
         address poolTo = IUniswapV2Factory(factory).poolTo();
+        address treasuryTo = IUniswapV2Factory(factory).treasuryTo();
         feeOn = feeTo != address(0);
         bool poolOn = poolTo != address(0);
+        bool treasuryOn = treasuryTo != address(0);
         uint _kLast = kLast; // gas savings
         if (feeOn) {
             if (_kLast != 0) {
@@ -149,6 +151,12 @@ contract UniswapV2Pair is UniswapV2ERC20 {
                             uint half = liquidity/2;
                             _mint(poolTo, half);
                             _mint(feeTo, half);
+                        } 
+                        else if(poolOn && treasuryOn) {
+                            uint third = liquidity / 3;
+                            _mint(poolTo, third);
+                            _mint(feeTo, third);
+                            _mint(treasuryTo, third);
                         } else {
                             _mint(feeTo, liquidity);
                         }

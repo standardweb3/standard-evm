@@ -188,7 +188,7 @@ contract Vault is IVault {
         uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
         require(collateralValueTimes100 >= collateralValue, "Vault: Overflow"); // overflow check
-        return (collateralValue, debtValue);        
+        return (collateralValueTimes100, debtValue);        
     }
 
     /// Get collateral value in 8 decimal */USD

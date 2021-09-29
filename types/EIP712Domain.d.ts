@@ -21,24 +21,15 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface EIP712DomainInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "c_0xbee145fe(bytes32)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xbee145fe",
-    values: [BytesLike]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xbee145fe",
     data: BytesLike
   ): Result;
 
@@ -90,46 +81,21 @@ export class EIP712Domain extends BaseContract {
 
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-  c_0xbee145fe(
-    c__0xbee145fe: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
   };
 }

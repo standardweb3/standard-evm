@@ -23,10 +23,6 @@ interface RescuableInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "RESCUER_ROLE()": FunctionFragment;
-    "c_0x13db951c(bytes32)": FunctionFragment;
-    "c_0x7613ac4a(bytes32)": FunctionFragment;
-    "c_0x841212ae(bytes32)": FunctionFragment;
-    "c_0x879e06bb(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -45,22 +41,6 @@ interface RescuableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "RESCUER_ROLE",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x13db951c",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x7613ac4a",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x841212ae",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x879e06bb",
-    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -102,22 +82,6 @@ interface RescuableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "RESCUER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x13db951c",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x7613ac4a",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x841212ae",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x879e06bb",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -224,26 +188,6 @@ export class Rescuable extends BaseContract {
 
     RESCUER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x879e06bb(
-      c__0x879e06bb: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getRoleMember(
@@ -295,26 +239,6 @@ export class Rescuable extends BaseContract {
 
   RESCUER_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  c_0x13db951c(
-    c__0x13db951c: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x7613ac4a(
-    c__0x7613ac4a: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x841212ae(
-    c__0x841212ae: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x879e06bb(
-    c__0x879e06bb: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getRoleMember(
@@ -365,26 +289,6 @@ export class Rescuable extends BaseContract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     RESCUER_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x879e06bb(
-      c__0x879e06bb: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -502,26 +406,6 @@ export class Rescuable extends BaseContract {
 
     RESCUER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x879e06bb(
-      c__0x879e06bb: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -578,26 +462,6 @@ export class Rescuable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     RESCUER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x879e06bb(
-      c__0x879e06bb: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,

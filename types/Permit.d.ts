@@ -22,10 +22,6 @@ interface PermitInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "PERMIT_TYPEHASH()": FunctionFragment;
-    "c_0xab97e08a(bytes32)": FunctionFragment;
-    "c_0xbee145fe(bytes32)": FunctionFragment;
-    "c_0xf9fb325f(bytes32)": FunctionFragment;
-    "c_0xfa242dff(bytes32)": FunctionFragment;
     "nonces(address)": FunctionFragment;
   };
 
@@ -37,22 +33,6 @@ interface PermitInterface extends ethers.utils.Interface {
     functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xab97e08a",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xbee145fe",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xf9fb325f",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xfa242dff",
-    values: [BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
 
   decodeFunctionResult(
@@ -61,22 +41,6 @@ interface PermitInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "PERMIT_TYPEHASH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xab97e08a",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xbee145fe",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xf9fb325f",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xfa242dff",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
@@ -132,26 +96,6 @@ export class Permit extends BaseContract {
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    c_0xab97e08a(
-      c__0xab97e08a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0xfa242dff(
-      c__0xfa242dff: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
@@ -159,52 +103,12 @@ export class Permit extends BaseContract {
 
   PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  c_0xab97e08a(
-    c__0xab97e08a: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0xbee145fe(
-    c__0xbee145fe: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0xf9fb325f(
-    c__0xf9fb325f: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0xfa242dff(
-    c__0xfa242dff: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
-
-    c_0xab97e08a(
-      c__0xab97e08a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0xfa242dff(
-      c__0xfa242dff: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -216,26 +120,6 @@ export class Permit extends BaseContract {
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    c_0xab97e08a(
-      c__0xab97e08a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0xfa242dff(
-      c__0xfa242dff: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -243,26 +127,6 @@ export class Permit extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    c_0xab97e08a(
-      c__0xab97e08a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0xbee145fe(
-      c__0xbee145fe: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0xfa242dff(
-      c__0xfa242dff: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     nonces(
       owner: string,

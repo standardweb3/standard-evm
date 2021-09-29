@@ -163,58 +163,6 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "c__0x33ca6d66",
-        type: "bytes32",
-      },
-    ],
-    name: "c_0x33ca6d66",
-    outputs: [],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "c__0xbee145fe",
-        type: "bytes32",
-      },
-    ],
-    name: "c_0xbee145fe",
-    outputs: [],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "c__0xcb881478",
-        type: "bytes32",
-      },
-    ],
-    name: "c_0xcb881478",
-    outputs: [],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "c__0xfa242dff",
-        type: "bytes32",
-      },
-    ],
-    name: "c_0xfa242dff",
-    outputs: [],
-    stateMutability: "pure",
-    type: "function",
-  },
 ];
 
 export class MaticGasAbstraction__factory {

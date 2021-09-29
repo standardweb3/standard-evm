@@ -22,9 +22,6 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface AccessControlMixinInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "c_0x13db951c(bytes32)": FunctionFragment;
-    "c_0x7613ac4a(bytes32)": FunctionFragment;
-    "c_0x841212ae(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -37,18 +34,6 @@ interface AccessControlMixinInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x13db951c",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x7613ac4a",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x841212ae",
-    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -81,18 +66,6 @@ interface AccessControlMixinInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x13db951c",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x7613ac4a",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x841212ae",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -188,21 +161,6 @@ export class AccessControlMixin extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getRoleMember(
@@ -243,21 +201,6 @@ export class AccessControlMixin extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  c_0x13db951c(
-    c__0x13db951c: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x7613ac4a(
-    c__0x7613ac4a: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x841212ae(
-    c__0x841212ae: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getRoleMember(
@@ -297,21 +240,6 @@ export class AccessControlMixin extends BaseContract {
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -410,21 +338,6 @@ export class AccessControlMixin extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -468,21 +381,6 @@ export class AccessControlMixin extends BaseContract {
 
   populateTransaction: {
     DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

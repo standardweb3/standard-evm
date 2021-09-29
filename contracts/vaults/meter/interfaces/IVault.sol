@@ -10,10 +10,6 @@ interface IVault {
     event CloseVault(address vault, uint256 amount, uint256 closingFee);
     event Liquidated(address vault, address collateral, uint256 amount);
     /// Getters
-    /// Collateral Aggregator contract address to get processed price data
-    function  cAggregator() external view returns (address);
-    /// Debt Aggregator contract address to get processed price data
-    function  dAggregator() external view returns (address);
     /// Address of a manager
     function  manager() external view returns (address);
     /// Address of debt;
@@ -28,8 +24,6 @@ interface IVault {
     function borrow() external view returns (uint256);
     /// created block timestamp
     function createdAt() external view returns (uint256);
-    /// address of fee Pool
-    function  feePool() external view returns (address);
     /// address of wrapped eth
     function  WETH() external view returns (address);
     /// Total debt amount with interest

@@ -20,20 +20,11 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface NoncesInterface extends ethers.utils.Interface {
   functions: {
-    "c_0xf9fb325f(bytes32)": FunctionFragment;
     "nonces(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "c_0xf9fb325f",
-    values: [BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
 
-  decodeFunctionResult(
-    functionFragment: "c_0xf9fb325f",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
 
   events: {};
@@ -83,47 +74,22 @@ export class Nonces extends BaseContract {
   interface: NoncesInterface;
 
   functions: {
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
-
-  c_0xf9fb325f(
-    c__0xf9fb325f: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
 
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    c_0xf9fb325f(
-      c__0xf9fb325f: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     nonces(
       owner: string,
       overrides?: CallOverrides

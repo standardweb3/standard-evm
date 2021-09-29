@@ -24,8 +24,6 @@ interface UpgradableProxyInterface extends ethers.utils.Interface {
   functions: {
     "IMPLEMENTATION_SLOT()": FunctionFragment;
     "OWNER_SLOT()": FunctionFragment;
-    "c_0xd989e6af(bytes32)": FunctionFragment;
-    "c_0xf2d9f644(bytes32)": FunctionFragment;
     "implementation()": FunctionFragment;
     "proxyOwner()": FunctionFragment;
     "proxyType()": FunctionFragment;
@@ -41,14 +39,6 @@ interface UpgradableProxyInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "OWNER_SLOT",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xd989e6af",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xf2d9f644",
-    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "implementation",
@@ -77,14 +67,6 @@ interface UpgradableProxyInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "OWNER_SLOT", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xd989e6af",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xf2d9f644",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "implementation",
     data: BytesLike
@@ -169,16 +151,6 @@ export class UpgradableProxy extends BaseContract {
 
     OWNER_SLOT(overrides?: CallOverrides): Promise<[string]>;
 
-    c_0xd989e6af(
-      c__0xd989e6af: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0xf2d9f644(
-      c__0xf2d9f644: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     implementation(overrides?: CallOverrides): Promise<[string]>;
 
     proxyOwner(overrides?: CallOverrides): Promise<[string]>;
@@ -208,16 +180,6 @@ export class UpgradableProxy extends BaseContract {
 
   OWNER_SLOT(overrides?: CallOverrides): Promise<string>;
 
-  c_0xd989e6af(
-    c__0xd989e6af: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0xf2d9f644(
-    c__0xf2d9f644: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   implementation(overrides?: CallOverrides): Promise<string>;
 
   proxyOwner(overrides?: CallOverrides): Promise<string>;
@@ -244,16 +206,6 @@ export class UpgradableProxy extends BaseContract {
     IMPLEMENTATION_SLOT(overrides?: CallOverrides): Promise<string>;
 
     OWNER_SLOT(overrides?: CallOverrides): Promise<string>;
-
-    c_0xd989e6af(
-      c__0xd989e6af: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0xf2d9f644(
-      c__0xf2d9f644: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     implementation(overrides?: CallOverrides): Promise<string>;
 
@@ -305,16 +257,6 @@ export class UpgradableProxy extends BaseContract {
 
     OWNER_SLOT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    c_0xd989e6af(
-      c__0xd989e6af: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0xf2d9f644(
-      c__0xf2d9f644: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     implementation(overrides?: CallOverrides): Promise<BigNumber>;
 
     proxyOwner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -344,16 +286,6 @@ export class UpgradableProxy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     OWNER_SLOT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    c_0xd989e6af(
-      c__0xd989e6af: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0xf2d9f644(
-      c__0xf2d9f644: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

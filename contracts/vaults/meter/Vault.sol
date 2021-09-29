@@ -2,70 +2,65 @@
 
 pragma solidity ^0.8.0;
 
-import "../../oracle/IPrice.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./interfaces/IERC20Minimal.sol";
+import "./libraries/TransferHelper.sol";
 import "./interfaces/IVault.sol";
 import "./interfaces/IVaultManager.sol";
+import "./interfaces/IERC721Minimal.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
 import "./libraries/UniswapV2Library.sol";
-import "./interfaces/IUniswapV2Factory.sol";
+import "./interfaces/IUniswapV2FactoryMinimal.sol";
 import "../../tokens/IStablecoin.sol";
 
 contract Vault is IVault {
-    /// Price Feed Interface
-    IPrice feed;
-    /// Vault NFT interface
-    IERC721 V1;
-    /// uniswap v2 factory interface 
+    /// Uniswap v2 factory interface
     address public override v2Factory;
-    /// Vault manager
-    IVaultManager vltManager;
-    /// Collateral Aggregator contract address to get processed price data
-    address public override cAggregator;
-    /// Debt Aggregator contract address to get processed price data
-    address public override dAggregator;
     /// Address of a manager
     address public override manager;
     /// Address of debt;
     address public override debt;
     /// Address of vault ownership registry
     address public override v1;
-    /// address of a collateral
+    /// Address of a collateral
     address public override collateral;
     /// Vault global identifier
-    uint public override vaultId;
-    /// borrowed amount 
+    uint256 public override vaultId;
+    /// Borrowed amount
     uint256 public override borrow;
-    /// created block timestamp
+    /// Created block timestamp
     uint256 public override createdAt;
-    /// address of fee Pool
-    address public override feePool;
-    /// address of wrapped eth
+    /// Address of wrapped eth
     address public override WETH;
-
 
     constructor() public {
         manager = msg.sender;
         createdAt = block.timestamp;
     }
 
-    modifier onlyVaultOwner {
-        V1 = IERC721(v1);
-        require(V1.ownerOf(vaultId) == msg.sender, "Vault: Vault is not owned by you");
+    modifier onlyVaultOwner() {
+        require(
+            IERC721Minimal(v1).ownerOf(vaultId) == msg.sender,
+            "Vault: Vault is not owned by you"
+        );
         _;
     }
 
     // called once by the factory at time of deployment
-    function initialize(address collateral_, uint vaultId_, address cAggregator_, address dAggregator_, address v1_, address debt_, uint256 amount_, address v2Factory_, address weth_) external {
+    function initialize(
+        uint256 vaultId_,
+        address collateral_,
+        address debt_,
+        address v1_,
+        uint256 amount_,
+        address v2Factory_,
+        address weth_
+    ) external {
         require(msg.sender == manager, "Vault: FORBIDDEN"); // sufficient check
-        collateral = collateral_;
         vaultId = vaultId_;
-        cAggregator = cAggregator_;
-        dAggregator = dAggregator_;
-        v1 = v1_;
+        collateral = collateral_;
         debt = debt_;
+        v1 = v1_;
         borrow = amount_;
         v2Factory = v2Factory_;
         WETH = weth_;
@@ -73,42 +68,82 @@ contract Vault is IVault {
 
     /// liquidate
     function liquidate() external override {
-        require(!isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)), IERC20(debt).balanceOf(address(this))), "Vault: Position is still safe");
+        require(
+            !IVaultManager(manager).isValidCDP(
+                collateral,
+                debt,
+                IERC20Minimal(collateral).balanceOf(address(this)),
+                IERC20Minimal(debt).balanceOf(address(this))
+            ),
+            "Vault: Position is still safe"
+        );
         // check the pair if it exists
-        require(IUniswapV2Factory(v2Factory).getPair(collateral, debt) != address(0), "Vault: Liquidating pair not supported");
+        require(
+            IUniswapV2FactoryMinimal(v2Factory).getPair(collateral, debt) !=
+                address(0),
+            "Vault: Liquidating pair not supported"
+        );
         address pair = UniswapV2Library.pairFor(v2Factory, collateral, debt);
-        uint256 balance = IERC20(collateral).balanceOf(address(this));
+        uint256 balance = IERC20Minimal(collateral).balanceOf(address(this));
         uint256 lfr = IVaultManager(manager).getLFR(collateral);
-        uint256 liquidationFee = lfr*balance/100;
+        uint256 liquidationFee = (lfr * balance) / 100;
+        uint256 left = _sendFee(collateral, balance, liquidationFee);
         // Distribute collaterals
-        require(IERC20(collateral).transfer(msg.sender, liquidationFee), "Vault: liquidation fee transfer with collateral token failed");
-        require(IERC20(collateral).transfer(pair, balance - liquidationFee), "Vault: liquidation with collateral token failed");
+        TransferHelper.safeTransfer(collateral, pair, left);
         // burn vault nft
         _burnV1FromVault();
         emit Liquidated(address(this), collateral, balance);
         // self destruct the contract, send remaining balance if collateral is native currency
         selfdestruct(payable(msg.sender));
     }
-    
+
     /// Deposit collateral
-    function depositCollateralNative() payable external override onlyVaultOwner {
-        require(collateral == address(WETH), "Vault: collateral is not a native asset");
+    function depositCollateralNative()
+        external
+        payable
+        override
+        onlyVaultOwner
+    {
+        require(collateral == WETH, "Vault: collateral is not a native asset");
         // wrap deposit
-        IWETH(WETH).deposit{value: msg.value}(); 
-        emit DepositCollateral(vaultId, msg.value);        
+        IWETH(WETH).deposit{value: msg.value}();
+        emit DepositCollateral(vaultId, msg.value);
     }
 
     /// Deposit collateral
-    function depositCollateral(uint256 amount_) external override onlyVaultOwner {
-        require(IERC20(collateral).transferFrom(msg.sender, address(this), amount_), "Vault: Collateral Deposit failed");
-        emit DepositCollateral(vaultId, amount_);        
+    function depositCollateral(uint256 amount_)
+        external
+        override
+        onlyVaultOwner
+    {
+        TransferHelper.safeTransferFrom(
+            collateral,
+            msg.sender,
+            address(this),
+            amount_
+        );
+        emit DepositCollateral(vaultId, amount_);
     }
 
     /// Withdraw collateral as native currency
-    function withdrawCollateralNative(uint256 amount_) payable external override onlyVaultOwner {
-        require(collateral == address(WETH), "Vault: collateral is not a native asset");
-        if(borrow != 0) {
-            require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
+    function withdrawCollateralNative(uint256 amount_)
+        external
+        payable
+        override
+        onlyVaultOwner
+    {
+        require(collateral == WETH, "Vault: collateral is not a native asset");
+        if (borrow != 0) {
+            require(
+                IVaultManager(manager).isValidCDP(
+                    collateral,
+                    debt,
+                    IERC20Minimal(collateral).balanceOf(address(this)) -
+                        amount_,
+                    borrow
+                ),
+                "Withdrawal would put vault below minimum collateral ratio"
+            );
         }
         // unwrap collateral
         IWETH(WETH).withdraw(amount_);
@@ -118,45 +153,71 @@ contract Vault is IVault {
     }
 
     /// Withdraw collateral
-    function withdrawCollateral(uint256 amount_) external override onlyVaultOwner {
-        require(IERC20(collateral).balanceOf(address(this)) >= amount_, "Vault: Not enough collateral");
-        if(borrow != 0) {
-            require(isValidCDP(cAggregator, dAggregator, IERC20(collateral).balanceOf(address(this)) - amount_, borrow), "Withdrawal would put vault below minimum collateral ratio");
+    function withdrawCollateral(uint256 amount_)
+        external
+        override
+        onlyVaultOwner
+    {
+        require(
+            IERC20Minimal(collateral).balanceOf(address(this)) >= amount_,
+            "Vault: Not enough collateral"
+        );
+        if (borrow != 0) {
+            require(
+                IVaultManager(manager).isValidCDP(
+                    collateral,
+                    debt,
+                    IERC20Minimal(collateral).balanceOf(address(this)) -
+                        amount_,
+                    borrow
+                ),
+                "Withdrawal would put vault below minimum collateral ratio"
+            );
         }
-        require(IERC20(collateral).transfer(msg.sender, amount_), "Vault: Transferring collateral withdrawal failed");
+        TransferHelper.safeTransfer(collateral, msg.sender, amount_);
         emit WithdrawCollateral(vaultId, amount_);
     }
 
     /// Payback MTR
     function payDebt(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
-        uint fee = _calculateFee();
+        uint256 fee = _calculateFee();
         require(amount_ != 0, "Vault: amount is zero");
         // send MTR to the vault
-        require(IERC20(debt).transferFrom(msg.sender, address(this), amount_), "Vault: MTR transfer from sender to vault failed");
-        // send fee to the pool
-        require(IERC20(debt).transfer(feePool, fee), "Vault: Fee transfer from vault to pool failed");
-        // burn mtr debt
-        uint256 burn = amount_ - fee;
-        _burnMTRFromVault(burn);
-        borrow -=  burn;
+        TransferHelper.safeTransferFrom(
+            debt,
+            msg.sender,
+            address(this),
+            amount_
+        );
+        uint256 left = _sendFee(debt, amount_, fee);
+        _burnMTRFromVault(left);
+        borrow -= left;
         emit PayBack(vaultId, borrow, fee);
     }
 
     /// Close CDP
     function closeVault(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
-        uint fee = _calculateFee();
-        require(fee + borrow == amount_, "Vault: not enough balance to payback");
+        uint256 fee = _calculateFee();
+        require(
+            fee + borrow == amount_,
+            "Vault: not enough balance to payback"
+        );
         // send MTR to the vault
-        require(IERC20(debt).transferFrom(msg.sender, address(this), amount_), "Vault: MTR transfer from sender to vault failed");
+        TransferHelper.safeTransferFrom(
+            debt,
+            msg.sender,
+            address(this),
+            amount_
+        );
         // send fee to the pool
-        require(IERC20(debt).transfer(feePool, fee), "Vault: Fee transfer from vault to pool failed");
+        uint256 left = _sendFee(debt, amount_, fee);
         // burn mtr debt with interest
-        _burnMTRFromVault(amount_ - fee);
+        _burnMTRFromVault(left);
         // burn vault nft
         _burnV1FromVault();
-        emit CloseVault(address(this), amount_, fee); 
+        emit CloseVault(address(this), amount_, fee);
         // self destruct the contract, send remaining balance if collateral is native currency
         selfdestruct(payable(msg.sender));
     }
@@ -171,52 +232,46 @@ contract Vault is IVault {
         IStablecoin(debt).burnFrom(msg.sender, amount_);
     }
 
-    function isValidCDP(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(cAggregator_, dAggregator_, cAmount_, dAmount_);
-
-        uint mcr = IVaultManager(manager).getMCR(collateral);
-        uint cDecimals = IVaultManager(manager).getCDecimal(collateral);
-
-        uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
-
-        // if the debt become obsolete
-        return debtValueAdjusted == 0 ? true : collateralValueTimes100 / debtValueAdjusted >= mcr;
-    }
-
-    function _calculateValues(address cAggregator_, address dAggregator_, uint256 cAmount_, uint256 dAmount_) private returns (uint256, uint256) {
-        uint256 collateralValue = _getAssetValue(cAggregator_, cAmount_);
-        uint256 debtValue = _getAssetValue(dAggregator_, dAmount_);
-        uint256 collateralValueTimes100 = collateralValue * 100;
-        require(collateralValueTimes100 >= collateralValue, "Vault: Overflow"); // overflow check
-        return (collateralValueTimes100, debtValue);        
-    }
-
-    /// Get collateral value in 8 decimal */USD
-    function _getAssetPrice(address aggregator_) internal returns(uint) {
-        feed = IPrice(aggregator_);
-        return uint(feed.getThePrice());
-    }
-
-    function _getAssetValue(address aggregator, uint256 amount_) internal returns (uint256) {
-        uint price = _getAssetPrice(aggregator);
-        require(price != 0, "Vault: ZERO_AMOUNT");
-        uint256 assetValue = price * amount_;
-        require(assetValue >= amount_, "Vault: Overflow"); // overflow check
-        return assetValue;
-    }
-
-    function _calculateFee() internal returns (uint) {
-        uint256 assetValue = _getAssetValue(dAggregator, borrow);
-        uint sfr = IVaultManager(manager).getSFR(collateral);
+    function _calculateFee() internal returns (uint256) {
+        uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
+        uint256 sfr = IVaultManager(manager).getSFR(collateral);
         /// (sfr * assetValue/100) * (duration in months)
         uint256 sfrTimesV = sfr * assetValue;
         // get duration in months
-        uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30; 
+        uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30;
         require(sfrTimesV >= assetValue, "Vault: overflow"); // overflow check
         return (sfrTimesV / 100) * duration;
     }
 
-    function getDebt() external override returns (uint) {
+    function getDebt() external override returns (uint256) {
         return _calculateFee() + borrow;
+    }
+
+    function _sendFee(address asset, uint256 amount_, uint256 fee_)
+        internal
+        returns (uint256 left)
+    {
+        address dividend = IVaultManager(manager).dividend();
+        address feeTo = IVaultManager(manager).feeTo();
+        address treasury = IVaultManager(manager).treasury();
+        bool feeOn = feeTo != address(0);
+        bool treasuryOn = treasury != address(0);
+        bool dividendOn = dividend != address(0);
+        // send fee to the pool
+        if (feeOn) {
+            if (dividendOn) {
+                uint256 half = fee_ / 2;
+                TransferHelper.safeTransfer(collateral, dividend, half);
+                TransferHelper.safeTransfer(collateral, feeTo, half);
+            } else if (dividendOn && treasuryOn) {
+                uint256 third = fee_ / 3;
+                TransferHelper.safeTransfer(collateral, dividend, third);
+                TransferHelper.safeTransfer(collateral, feeTo, third);
+                TransferHelper.safeTransfer(collateral, treasury, third);
+            } else {
+                TransferHelper.safeTransfer(collateral, feeTo, fee_);
+            }
+        }
+        return amount_ - fee_;
     }
 }

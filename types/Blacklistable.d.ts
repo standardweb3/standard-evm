@@ -25,10 +25,6 @@ interface BlacklistableInterface extends ethers.utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "blacklist(address)": FunctionFragment;
     "blacklisters()": FunctionFragment;
-    "c_0x13db951c(bytes32)": FunctionFragment;
-    "c_0x7613ac4a(bytes32)": FunctionFragment;
-    "c_0x841212ae(bytes32)": FunctionFragment;
-    "c_0xec31b7fc(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -52,22 +48,6 @@ interface BlacklistableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "blacklisters",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x13db951c",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x7613ac4a",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0x841212ae",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "c_0xec31b7fc",
-    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -114,22 +94,6 @@ interface BlacklistableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "blacklist", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "blacklisters",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x13db951c",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x7613ac4a",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0x841212ae",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "c_0xec31b7fc",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -250,26 +214,6 @@ export class Blacklistable extends BaseContract {
 
     blacklisters(overrides?: CallOverrides): Promise<[string[]]>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    c_0xec31b7fc(
-      c__0xec31b7fc: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getRoleMember(
@@ -329,26 +273,6 @@ export class Blacklistable extends BaseContract {
 
   blacklisters(overrides?: CallOverrides): Promise<string[]>;
 
-  c_0x13db951c(
-    c__0x13db951c: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x7613ac4a(
-    c__0x7613ac4a: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0x841212ae(
-    c__0x841212ae: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  c_0xec31b7fc(
-    c__0xec31b7fc: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getRoleMember(
@@ -401,26 +325,6 @@ export class Blacklistable extends BaseContract {
     blacklist(account: string, overrides?: CallOverrides): Promise<void>;
 
     blacklisters(overrides?: CallOverrides): Promise<string[]>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    c_0xec31b7fc(
-      c__0xec31b7fc: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -548,26 +452,6 @@ export class Blacklistable extends BaseContract {
 
     blacklisters(overrides?: CallOverrides): Promise<BigNumber>;
 
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    c_0xec31b7fc(
-      c__0xec31b7fc: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -632,26 +516,6 @@ export class Blacklistable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     blacklisters(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    c_0x13db951c(
-      c__0x13db951c: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x7613ac4a(
-      c__0x7613ac4a: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0x841212ae(
-      c__0x841212ae: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    c_0xec31b7fc(
-      c__0xec31b7fc: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,

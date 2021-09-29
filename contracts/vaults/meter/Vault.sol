@@ -247,7 +247,7 @@ contract Vault is IVault {
         return _calculateFee() + borrow;
     }
 
-    function _sendFee(address asset, uint256 amount_, uint256 fee_)
+    function _sendFee(address asset_, uint256 amount_, uint256 fee_)
         internal
         returns (uint256 left)
     {
@@ -261,15 +261,15 @@ contract Vault is IVault {
         if (feeOn) {
             if (dividendOn) {
                 uint256 half = fee_ / 2;
-                TransferHelper.safeTransfer(collateral, dividend, half);
-                TransferHelper.safeTransfer(collateral, feeTo, half);
+                TransferHelper.safeTransfer(asset_, dividend, half);
+                TransferHelper.safeTransfer(asset_, feeTo, half);
             } else if (dividendOn && treasuryOn) {
                 uint256 third = fee_ / 3;
-                TransferHelper.safeTransfer(collateral, dividend, third);
-                TransferHelper.safeTransfer(collateral, feeTo, third);
-                TransferHelper.safeTransfer(collateral, treasury, third);
+                TransferHelper.safeTransfer(asset_, dividend, third);
+                TransferHelper.safeTransfer(asset_, feeTo, third);
+                TransferHelper.safeTransfer(asset_, treasury, third);
             } else {
-                TransferHelper.safeTransfer(collateral, feeTo, fee_);
+                TransferHelper.safeTransfer(asset_, feeTo, fee_);
             }
         }
         return amount_ - fee_;

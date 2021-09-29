@@ -167,7 +167,7 @@ contract WETHSTNDLPTokenSharePool is
     }
 
     function getReward() public updateReward(msg.sender) checkStart {
-        uint256 reward = earned(msg.sender);
+        uint256 reward = rewards[msg.sender];
         if (reward > 0) {
             rewards[msg.sender] = 0;
             stnd.safeTransfer(msg.sender, reward);
@@ -175,7 +175,7 @@ contract WETHSTNDLPTokenSharePool is
         }
     }
 
-    function withdrawReward(uint256 amount) public {
+    function emergencyWithdraw(uint256 amount) public {
         require(msg.sender == operator, "Not the operator of the pool");
         stnd.safeTransfer(msg.sender, amount);
     }

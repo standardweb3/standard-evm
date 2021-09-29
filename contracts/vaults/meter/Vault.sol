@@ -142,7 +142,7 @@ contract Vault is IVault {
                         amount_,
                     borrow
                 ),
-                "Withdrawal would put vault below minimum collateral ratio"
+                "Vault: below MCR"
             );
         }
         // unwrap collateral
@@ -171,7 +171,7 @@ contract Vault is IVault {
                         amount_,
                     borrow
                 ),
-                "Withdrawal would put vault below minimum collateral ratio"
+                "Vault: below MCR"
             );
         }
         TransferHelper.safeTransfer(collateral, msg.sender, amount_);
@@ -239,7 +239,7 @@ contract Vault is IVault {
         uint256 sfrTimesV = sfr * assetValue;
         // get duration in months
         uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30;
-        require(sfrTimesV >= assetValue, "Vault: overflow"); // overflow check
+        require(sfrTimesV >= assetValue); // overflow check
         return (sfrTimesV / 100) * duration;
     }
 

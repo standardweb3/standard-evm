@@ -41,34 +41,32 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address public override treasury;
     /// Address of Wrapped eth;
     address public override WETH;
-    /// Vault init code hash
-    bytes32 vaultCode;
 
     constructor() {
         feeToSetter = _msgSender();
     }
 
     function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public {
-        require(_msgSender() == feeToSetter, "VaultManager: IA");
+        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_;   
     }
 
     function setRebaseActive(bool set_) public {
-        require(_msgSender() == feeToSetter, "VaultManager: IA");
+        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
         rebaseActive = set_;
     }
 
     function setFees(address feeTo_, address dividend_, address treasury_) public {
-        require(_msgSender() == feeToSetter, "VaultManager: IA");
+        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
         feeTo = feeTo_;
         dividend = dividend_;
         treasury = treasury_;
     }
     
     function initialize(address v1_, address meter_, address v2Factory_, address weth_) public {
-        require(_msgSender() == feeToSetter, "VaultManager: IA");
+        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
         v1 = v1_;
         meter = meter_;
         v2Factory = v2Factory_;
@@ -91,9 +89,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // get aggregators
         // check position
         require(this.isValidCDP(collateral_, meter, cAmount_, dAmount_)
-        , "VaultManager: IP");
+        , "IP"); // Invalid Position
         // check rebased supply of meter
-        require(isValidSupply(dAmount_), "VaultManager: Rebase");
+        require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
         uint256 gIndex = this.allVaultsLength();
@@ -110,9 +108,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function createCDPNative(uint dAmount_) payable public {
         // check tests
         require(this.isValidCDP(WETH, meter, msg.value, dAmount_)
-        , "VaultManager: IP");
+        , "IP"); // Invalid Position
         // check rebased supply of meter
-        require(isValidSupply(dAmount_), "VaultManager: Rebase");
+        require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
         uint256 gIndex = this.allVaultsLength();
@@ -200,18 +198,18 @@ contract VaultManager is OracleRegistry, IVaultManager {
         address aggregator = PriceFeeds[asset_];
         feed = IPrice(aggregator);
         uint price = uint(feed.getThePrice());
-        require(price > 0);
+        require(price > 0); // price is zero
         return price;
     }
 
     function getAssetValue(address asset_, uint256 amount_) external override returns (uint256) {
         uint price = this.getAssetPrice(asset_);
         uint256 value = price * amount_;
-        require(value >= amount_);
+        require(value >= amount_); // overflow
         return value;
     }
 
     function vaultCodeHash() external pure override returns (bytes32 vaultCode) {
-        vaultCode = keccak256(type(Vault).creationCode);
+        return keccak256(type(Vault).creationCode);
     }
 }

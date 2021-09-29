@@ -160,6 +160,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return VaultLibrary.vaultFor(address(this), vaultId_, vaultCode);
     }
 
+    function setRebaseActive(bool set_) {
+        rebaseActive = set_;
+    }
+
     // Set desirable supply of issuing stablecoin
     function rebase() public {
         uint256 totalSupply = IERC20(meter).totalSupply(); 

@@ -13,10 +13,15 @@ export async function recordAddress(name, chain, address) {
             const overwrite = await confirmOverwrite(filename, name, chain, address)
             if (!overwrite) {
                 return false
+            } else {
+                content[name][chain] = address
             }
+        } else {
+            if (Object.keys(content[name]).length == 0) {
+                content[name] = {}
+            }
+            content[name][chain] = address
         }
-        content[name] = {}
-        content[name][chain] = address
     } else {
         console.log(`Writing deployment info to ${filename}`)
         content  = {}
@@ -70,7 +75,7 @@ export async function fileExists(path) {
 
 export function contractExists(content, name, chain, address) {
     try {
-        return content[name][chain] !== undefined
+        return content[name] !== undefined && content[name][chain] !== address
     } catch (e) {
         return false
     }

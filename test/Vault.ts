@@ -27,12 +27,12 @@ describe("Vault", function () {
     const Mock = ethers.getContractFactory("MockToken");
     const Dummy = ethers.getContractFactory("Dummy");
     const VaultManager = ethers.getContractFactory("VaultManager");
-    const collateral = (await Mock).deploy("Collateral", "clt");
-    const stable = (await Mock).deploy("Stable", "stc");
+    const collateral = await Mock.deploy("Collateral", "clt");
+    const stable = await Mock.deploy("Stable", "stc");
     const quantity = 1000e18;
-    const dummy = (await Dummy).deploy("1000000000");
-    const vltmgr = (await VaultManager).deploy();
-    (await vltmgr).addOracle(stable, dummy);
+    const dummy = await Dummy.deploy("1000000000");
+    const vltmgr = await VaultManager.deploy();
+    await vltmgr.addOracle(stable, dummy);
   });
 
   it("Vault should generate new vault contract with predictable hash", async function () {

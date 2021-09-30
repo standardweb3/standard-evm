@@ -34,13 +34,6 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       const proxy = await Proxy.deploy(impl.address)
       await deployContract(proxy, "UChildERC20Proxy")
 
-      // Verify proxy
-      await hre.run("verify:verify", {
-        contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
-        address: proxy.address,
-        constructorArguments: [impl.address]
-      })
-
       // Initialize proxy with necessary info
       const tx = await TokenImpl.attach(proxy.address).initialize("Standard", "STND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
       await executeTx(tx, "Execute initialize at")
@@ -49,6 +42,13 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       if (parent) {
         const mint = await TokenImpl.attach(proxy.address).mint(deployer.address, ethers.utils.parseUnits("100000000", 18));
         await executeTx(mint, "Execute Mint at")
+
+        // Verify proxy
+        await hre.run("verify:verify", {
+          contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
+          address: proxy.address,
+          constructorArguments: [impl.address]
+        })
       }
     } else {
       // Initialize impl with necessary info
@@ -68,14 +68,12 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
       )} ETH`
     );
 
-
     // Verify Impl
     await hre.run("verify:verify", {
       contract: "contracts/tokens/multichain/stnd_multichain_impl.sol:UChildAdministrableERC20",
       address: impl.address,
       constructorArguments: []
     })
-
 
     const contracts = [
       {

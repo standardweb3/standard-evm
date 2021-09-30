@@ -75,7 +75,7 @@ export async function fileExists(path) {
 
 export function contractExists(content, name, chain, address) {
     try {
-        return content[name] !== undefined && content[name][chain] !== address
+        return content[name] !== undefined && content[name][chain] !== undefined && content[name][chain] !== address
     } catch (e) {
         return false
     }

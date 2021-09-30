@@ -275,6 +275,14 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
     },
+    shiden: {
+      url: "https://rpc.shiden.astar.network:8545",
+      accounts,
+      chainId: 336,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
     substrate: {
       url: "http://localhost:8545",
       chainId: 336,

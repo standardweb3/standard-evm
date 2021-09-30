@@ -88,3 +88,52 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
     await hre.tenderly.verify(...contracts)
   });
 
+task("stnd-add-handler", "Add bridge handler of stnd")
+  .addParam("handler", "Address of handler contract")
+  .addParam("stnd", "Address of Standard Token contract")
+  .setAction(async ({ handler, stnd }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Grant role to handler
+    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+    const tx = await TokenImpl.attach(stnd).grantRole(MINTER_ROLE, handler);
+    await executeTx(tx, "Execute initialize at")
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  })
+
+  task("bridgeToken-add-handler", "Add bridge handler of token")
+  .addParam("handler", "Address of handler contract")
+  .addParam("token", "Address of Bridge Token contract")
+  .setAction(async ({ handler, stnd }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Grant role to handler
+    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+    const tx = await TokenImpl.attach(stnd).grantRole(MINTER_ROLE, handler);
+    await executeTx(tx, "Execute initialize at")
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  })

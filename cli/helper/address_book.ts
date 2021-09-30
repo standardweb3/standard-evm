@@ -15,6 +15,7 @@ export async function recordAddress(name, chain, address) {
                 return false
             }
         }
+        content[name] = {}
         content[name][chain] = address
     } else {
         console.log(`Writing deployment info to ${filename}`)

@@ -1,0 +1,8 @@
+{
+  "UChildAdministrableERC20": {
+    "RINKEBY": "0x86eaC348e6C73F7200E6072904782994C66CbC26"
+  },
+  "UChildERC20Proxy": {
+    "RINKEBY": "0x445482CFC854EfF6a7Fa24db88d895a5d7809Ac9"
+  }
+}

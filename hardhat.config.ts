@@ -18,6 +18,7 @@ import "./cli";
 
 import { HardhatUserConfig } from "hardhat/config";
 import { removeConsoleLog } from "hardhat-preprocessor";
+import { ChainId } from "./cli/helper";
 
 // const accounts = [process.env.DEPLOYER_KEY || "0x00"];
 const accounts = {
@@ -259,20 +260,26 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
     },
     moonbase: {
-        url: "https://rpc.testnet.moonbeam.network",
-        accounts,
-        chainId: 1287,
-        live: true,
-        saveDeployments: true,
-        tags: ["staging"],
+      url: "https://rpc.testnet.moonbeam.network",
+      accounts,
+      chainId: 1287,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
     },
     shibuya: {
-        url: "https://rpc.shibuya.astar.network:8545",
-        accounts,
-        chainId: 81,
-        live: true,
-        saveDeployments: true,
-        tags: ["staging"],
+      url: "https://rpc.shibuya.astar.network:8545",
+      accounts,
+      chainId: 81,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+    substrate: {
+      url: "http://localhost:8545",
+      chainId: 336,
+      saveDeployments: true,
+      tags: ["staging"]
     }
   },
   paths: {
@@ -324,7 +331,7 @@ const config: HardhatUserConfig = {
   },
   tenderly: {
     project: process.env.TENDERLY_PROJECT || "",
-    username: process.env.TENDERLY_USERNAME ||"",
+    username: process.env.TENDERLY_USERNAME || "",
   },
   spdxLicenseIdentifier: {
     overwrite: true,

@@ -17,7 +17,7 @@ export async function recordAddress(name, chain, address) {
                 content[name][chain] = address
             }
         } else {
-            if (Object.keys(content[name]).length == 0) {
+            if (!(name in content)) {
                 content[name] = {}
             }
             content[name][chain] = address

@@ -70,6 +70,15 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["local"],
     },
+    mainnet: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts,
+      chainId: 1,
+      live: true,
+      saveDeployments: true,
+      gasPrice: "auto",
+      tags: ["staging"],
+    },
     hardhat: {
       forking: {
         enabled: process.env.FORKING === "true",

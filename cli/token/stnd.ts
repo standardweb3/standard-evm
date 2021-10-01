@@ -104,7 +104,7 @@ task("stnd-add-handler", "Add bridge handler of stnd")
     // Grant role to handler
     const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
     const tx = await TokenImpl.attach(stnd).grantRole(MINTER_ROLE, handler);
-    await executeTx(tx, "Execute initialize at")
+    await executeTx(tx, "Execute grantRole at")
 
     console.log(
       `Deployer balance: ${ethers.utils.formatEther(
@@ -113,12 +113,52 @@ task("stnd-add-handler", "Add bridge handler of stnd")
     );
   })
 
-  task("bridgeToken-add-handler", "Add bridge handler of token")
-  .addParam("handler", "Address of handler contract")
-  .addParam("token", "Address of Bridge Token contract")
-  .setAction(async ({ handler, stnd }, { ethers }) => {
+task("bridgeToken-deploy", "Deploy Bridge Token")
+  .addParam("name", "Name of Bridge Token")
+  .addParam("symbol", "Symbol of Bridge Token")
+  .addOptionalParam("handler", "Address of Bridge handler contract", "none", types.string)
+  .setAction(async ({ name, symbol, handler }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
+    console.log(name)
+    console.log(symbol)
+
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+    // Deploy BridgeToken
+    console.log(`Deploying BridgeToken with the account: ${deployer.address}`);
+    const BridgeToken = await ethers.getContractFactory("BridgeToken")
+    const bridgeToken = await BridgeToken.deploy(name, symbol)
+    await deployContract(bridgeToken, `BridgeToken:${name}`)
+
+    // Add handler if given
+    if (handler !== "none") {
+      // Grant role to handler
+      const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+      const tx = await BridgeToken.attach(bridgeToken.address).grantRole(MINTER_ROLE, handler);
+      await executeTx(tx, "Execute grantRole at")
+    }
+
+    /*
+    // Verify Impl
+    await hre.run("verify:verify", {
+      contract: "contracts/tokens/BridgeToken.sol:BridgeToken",
+      address: bridgeToken.address,
+      constructorArguments: [name, symbol]
+    })
+    */
+  })
+
+
+task("bridgeToken-add-handler", "Add bridge handler of token")
+  .addParam("handler", "Address of handler contract")
+  .addParam("token", "Address of Bridge Token contract")
+  .setAction(async ({ handler, token }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+
 
     console.log(
       `Deployer balance: ${ethers.utils.formatEther(
@@ -127,9 +167,9 @@ task("stnd-add-handler", "Add bridge handler of stnd")
     );
 
     // Grant role to handler
-    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
-    const tx = await TokenImpl.attach(stnd).grantRole(MINTER_ROLE, handler);
-    await executeTx(tx, "Execute initialize at")
+    const BridgeToken = await ethers.getContractFactory("BridgeToken")
+    const tx = await BridgeToken.attach(token).grantRole(MINTER_ROLE, handler);
+    await executeTx(tx, "Execute grantRole at")
 
     console.log(
       `Deployer balance: ${ethers.utils.formatEther(

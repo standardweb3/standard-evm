@@ -43,9 +43,6 @@ task("amm-factory-deploy", "Deploy Standard AMM")
       )} ETH`
     );
 
-    // print pair code hash for UniswapV2Library to use
-    console.log(`PairCodeHash(For UniswapV2Library pairfor() function): ${await factory.pairCodeHash()}`)
-    console.log(`Change UniswapV2Library pairFor() with the creation hash above`)
 
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
@@ -55,6 +52,11 @@ task("amm-factory-deploy", "Deploy Standard AMM")
       address: factory.address,
       constructorArguments: [deployer.address],
     })
+
+    // print pair code hash for UniswapV2Library to use
+    console.log(`PairCodeHash(For UniswapV2Library pairfor() function): ${await factory.pairCodeHash()}`)
+    console.log(`Change UniswapV2Library pairFor() with the creation hash above then recompile`)
+    
   });
 
 task("amm-router-deploy", "Deploy Standard AMM")

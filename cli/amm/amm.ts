@@ -59,6 +59,21 @@ task("amm-factory-deploy", "Deploy Standard AMM")
     
   });
 
+// npx hardhat --network rinkeby amm-factory-deploy --dividend 0xc778417E063141139Fce010982780140Aa0cD5Ab
+task("amm-factory-set-dividend", "Set dividend of dex")
+  .addParam("factory", "Address of UniswapV2Factory contract")
+  .addParam("dividend", "Address of dividend pool contract")
+  .setAction(async ({ factory, dividend }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    const Factory = await ethers.getContractFactory("UniswapV2Factory");
+    if (dividend !== ZERO) {
+      // Set Fee Pool to
+      const pool = await Factory.attach(factory).setPoolTo(dividend)
+      await executeTx(pool, "Execute setPoolTo at")
+    }
+  })
+
 task("amm-router-deploy", "Deploy Standard AMM")
   .addParam("factory", "Address of factory")
   .addParam("weth", "Address of Wrapped ETH")
@@ -95,7 +110,7 @@ task("amm-router-deploy", "Deploy Standard AMM")
     await hre.run("verify:verify", {
       contract: "contracts/uniswapv2/UniswapV2Router02.sol:UniswapV2Router02",
       address: router.address,
-      constructorArguments: [factory.address, weth],
+      constructorArguments: [factory, weth],
     })
   })
 

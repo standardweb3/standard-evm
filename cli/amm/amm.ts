@@ -43,6 +43,9 @@ task("amm-factory-deploy", "Deploy Standard AMM")
       )} ETH`
     );
 
+    // print pair code hash for UniswapV2Library to use
+    console.log(`PairCodeHash(For UniswapV2Library pairfor() function): ${await factory.pairCodeHash()}`)
+    console.log(`Change UniswapV2Library pairFor() with the creation hash above then recompile after verification`)
 
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
@@ -52,11 +55,6 @@ task("amm-factory-deploy", "Deploy Standard AMM")
       address: factory.address,
       constructorArguments: [deployer.address],
     })
-
-    // print pair code hash for UniswapV2Library to use
-    console.log(`PairCodeHash(For UniswapV2Library pairfor() function): ${await factory.pairCodeHash()}`)
-    console.log(`Change UniswapV2Library pairFor() with the creation hash above then recompile`)
-    
   });
 
 // npx hardhat --network rinkeby amm-factory-deploy --dividend 0xc778417E063141139Fce010982780140Aa0cD5Ab

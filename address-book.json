@@ -6,5 +6,8 @@
   },
   "UChildERC20Proxy": {
     "RINKEBY": "0xE5A8D7194485222466DF0DDA5dcD97422F5346d2"
+  },
+  "UniswapV2Factory": {
+    "RINKEBY": "0x8bB67Cea3a3ff5614d0d6b0D5bBBf2bd4E879521"
   }
 }

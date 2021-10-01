@@ -6,7 +6,7 @@ library VaultLibrary {
     // calculates the CREATE2 address for a vault without making any external calls
     function vaultFor(address manager, uint256 vaultId, bytes32 code) internal pure returns (address vault) {
         vault = address(uint160(uint(keccak256(abi.encodePacked(
-                hex'ff',
+                hex"ff",
                 manager,
                 keccak256(abi.encodePacked(vaultId)),
                 code // init code hash

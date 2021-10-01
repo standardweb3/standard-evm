@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import './ILiquidityProtectionService.sol';
+import "./ILiquidityProtectionService.sol";
 
 abstract contract UsingLiquidityProtectionService {
     bool private protected = true;
@@ -63,34 +63,34 @@ abstract contract UsingLiquidityProtectionService {
                 return;
             }
             require(FirstBlockTrap_skip() || lps().FirstBlockTrap_preValidateTransfer(
-                _from, _to, _amount, counterToken()), 'FirstBlockTrap: blocked');
+                _from, _to, _amount, counterToken()), "FirstBlockTrap: blocked");
             require(LiquidityAmountTrap_skip() || lps().LiquidityAmountTrap_preValidateTransfer(
                 _from,
                 _to,
                 _amount,
                 counterToken(),
                 LiquidityAmountTrap_blocks(),
-                LiquidityAmountTrap_amount()), 'LiquidityAmountTrap: blocked');
+                LiquidityAmountTrap_amount()), "LiquidityAmountTrap: blocked");
             require(LiquidityPercentTrap_skip() || lps().LiquidityPercentTrap_preValidateTransfer(
                 _from,
                 _to,
                 _amount,
                 counterToken(),
                 LiquidityPercentTrap_blocks(),
-                LiquidityPercentTrap_percent()), 'LiquidityPercentTrap: blocked');
+                LiquidityPercentTrap_percent()), "LiquidityPercentTrap: blocked");
             require(LiquidityActivityTrap_skip() || lps().LiquidityActivityTrap_preValidateTransfer(
                 _from,
                 _to,
                 _amount,
                 counterToken(),
                 LiquidityActivityTrap_blocks(),
-                LiquidityActivityTrap_count()), 'LiquidityActivityTrap: blocked');
+                LiquidityActivityTrap_count()), "LiquidityActivityTrap: blocked");
         }
     }
 
     function revokeBlocked(address[] calldata _holders, address _revokeTo) external {
-        require(LPS_isAdmin(), 'UsingLiquidityProtectionService: not admin');
-        require(protectionChecker(), 'UsingLiquidityProtectionService: protection removed');
+        require(LPS_isAdmin(), "UsingLiquidityProtectionService: not admin");
+        require(protectionChecker(), "UsingLiquidityProtectionService: protection removed");
         protected = false;
         for (uint i = 0; i < _holders.length; i++) {
             address holder = _holders[i];
@@ -102,7 +102,7 @@ abstract contract UsingLiquidityProtectionService {
     }
 
     function disableProtection() external {
-        require(LPS_isAdmin(), 'UsingLiquidityProtectionService: not admin');
+        require(LPS_isAdmin(), "UsingLiquidityProtectionService: not admin");
         protected = false;
     }
 

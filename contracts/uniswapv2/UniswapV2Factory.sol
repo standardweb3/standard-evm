@@ -10,6 +10,7 @@ contract UniswapV2Factory is IUniswapV2Factory {
     address public override poolTo;
     address public override treasuryTo;
     address public override feeToSetter;
+    address public override migrator;
 
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
@@ -43,10 +44,7 @@ contract UniswapV2Factory is IUniswapV2Factory {
             ? (tokenA, tokenB)
             : (tokenB, tokenA);
         require(token0 != address(0), "Liter: ZERO_ADDRESS");
-        require(
-            getPair[token0][token1] == address(0),
-            "Liter: PAIR_EXISTS"
-        ); // single check is sufficient
+        require(getPair[token0][token1] == address(0), "Liter: PAIR_EXISTS"); // single check is sufficient
         bytes memory bytecode = type(UniswapV2Pair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
@@ -77,5 +75,10 @@ contract UniswapV2Factory is IUniswapV2Factory {
     function setFeeToSetter(address _feeToSetter) external override {
         require(msg.sender == feeToSetter, "Liter: FORBIDDEN");
         feeToSetter = _feeToSetter;
+    }
+
+    function setMigrator(address _migrator) external override {
+        require(msg.sender == feeToSetter, "Liter: FORBIDDEN");
+        migrator = _migrator;
     }
 }

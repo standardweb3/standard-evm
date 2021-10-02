@@ -149,6 +149,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "migrator",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "poolTo",
     outputs: [
       {
@@ -182,6 +195,19 @@ const _abi = [
       },
     ],
     name: "setFeeToSetter",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "setMigrator",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

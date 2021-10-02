@@ -27,11 +27,9 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
     "feeTo()": FunctionFragment;
     "feeToSetter()": FunctionFragment;
     "getPair(address,address)": FunctionFragment;
-    "migrator()": FunctionFragment;
     "poolTo()": FunctionFragment;
     "setFeeTo(address)": FunctionFragment;
     "setFeeToSetter(address)": FunctionFragment;
-    "setMigrator(address)": FunctionFragment;
     "setPoolTo(address)": FunctionFragment;
     "setTreasuryTo(address)": FunctionFragment;
     "treasuryTo()": FunctionFragment;
@@ -58,14 +56,12 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
     functionFragment: "getPair",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "migrator", values?: undefined): string;
   encodeFunctionData(functionFragment: "poolTo", values?: undefined): string;
   encodeFunctionData(functionFragment: "setFeeTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setFeeToSetter",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "setMigrator", values: [string]): string;
   encodeFunctionData(functionFragment: "setPoolTo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setTreasuryTo",
@@ -88,15 +84,10 @@ interface IUniswapV2FactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPair", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "migrator", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "poolTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFeeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setFeeToSetter",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMigrator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPoolTo", data: BytesLike): Result;
@@ -189,8 +180,6 @@ export class IUniswapV2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { pair: string }>;
 
-    migrator(overrides?: CallOverrides): Promise<[string]>;
-
     poolTo(overrides?: CallOverrides): Promise<[string]>;
 
     setFeeTo(
@@ -199,11 +188,6 @@ export class IUniswapV2Factory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setFeeToSetter(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMigrator(
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -241,8 +225,6 @@ export class IUniswapV2Factory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  migrator(overrides?: CallOverrides): Promise<string>;
-
   poolTo(overrides?: CallOverrides): Promise<string>;
 
   setFeeTo(
@@ -251,11 +233,6 @@ export class IUniswapV2Factory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setFeeToSetter(
-    arg0: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMigrator(
     arg0: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -293,15 +270,11 @@ export class IUniswapV2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    migrator(overrides?: CallOverrides): Promise<string>;
-
     poolTo(overrides?: CallOverrides): Promise<string>;
 
     setFeeTo(arg0: string, overrides?: CallOverrides): Promise<void>;
 
     setFeeToSetter(arg0: string, overrides?: CallOverrides): Promise<void>;
-
-    setMigrator(arg0: string, overrides?: CallOverrides): Promise<void>;
 
     setPoolTo(arg0: string, overrides?: CallOverrides): Promise<void>;
 
@@ -353,8 +326,6 @@ export class IUniswapV2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    migrator(overrides?: CallOverrides): Promise<BigNumber>;
-
     poolTo(overrides?: CallOverrides): Promise<BigNumber>;
 
     setFeeTo(
@@ -363,11 +334,6 @@ export class IUniswapV2Factory extends BaseContract {
     ): Promise<BigNumber>;
 
     setFeeToSetter(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMigrator(
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -409,8 +375,6 @@ export class IUniswapV2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    migrator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     poolTo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setFeeTo(
@@ -419,11 +383,6 @@ export class IUniswapV2Factory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setFeeToSetter(
-      arg0: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMigrator(
       arg0: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

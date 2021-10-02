@@ -330,7 +330,8 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            // For deploying token only, set 65866
+            // For deploying token only, set 65866 
+            // For deploying contracts in shiden/shibuya, set 0
             runs: 99999,
           },
         },

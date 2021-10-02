@@ -10,7 +10,7 @@ export async function recordAddress(name, chain, address) {
         // find out whether info is already written
         var content = await loadAddresses()
         if (contractExists(content, name, chain, address)) {
-            const overwrite = await confirmOverwrite(filename, name, chain, address)
+            const overwrite = await confirmOverwrite(filename, name, chain, content[name][chain])
             if (!overwrite) {
                 return false
             } else {

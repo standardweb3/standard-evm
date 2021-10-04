@@ -69,7 +69,7 @@ contract UniswapV2Factory is IUniswapV2Factory {
 
     function setTreasuryTo(address _treasuryTo) external override {
         require(msg.sender == feeToSetter, "Liter: FORBIDDEN");
-        poolTo = _treasuryTo;
+        treasuryTo = _treasuryTo;
     }
 
     function setFeeToSetter(address _feeToSetter) external override {

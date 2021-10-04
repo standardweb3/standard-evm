@@ -162,14 +162,16 @@ contract UniswapV2Pair is UniswapV2ERC20 {
                     uint256 liquidity = numerator / denominator;
                     if (liquidity > 0) {
                         if (poolOn) {
-                            uint256 half = liquidity / 2;
-                            _mint(poolTo, half);
-                            _mint(feeTo, half);
-                        } else if (poolOn && treasuryOn) {
-                            uint256 third = liquidity / 3;
-                            _mint(poolTo, third);
-                            _mint(feeTo, third);
-                            _mint(treasuryTo, third);
+                            if (treasuryOn) {
+                                uint256 third = liquidity / 3;
+                                _mint(poolTo, third);
+                                _mint(feeTo, third);
+                                _mint(treasuryTo, third);
+                            } else {
+                                uint256 half = liquidity / 2;
+                                _mint(poolTo, half);
+                                _mint(feeTo, half);
+                            }
                         } else {
                             _mint(feeTo, liquidity);
                         }

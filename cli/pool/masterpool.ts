@@ -166,13 +166,13 @@ task("masterpool-massupdate", "Add LP Pool to Standard MasterPool")
 
   task("masterpool-setReward", "Set STND reward per block in Standard MasterPool")
   .addParam("masterpool", "Address of masterpool contract")
-  .addParam("stndperblock", "STND per Block")
+  .addParam("stndperblock", "STND per Block in decimal of 10")
   .setAction(async ({ masterpool, stndperblock }, { ethers }) => {
     const [deployer] = await ethers.getSigners();
     await executeFrom(ethers, deployer, async () => {
       // Set STND per block
       const MasterPool = await ethers.getContractFactory("MasterPool")
-      const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 18))
+      const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 10))
       await executeTx(tx, "Execute setRewardPerBlock at")
     })
   });

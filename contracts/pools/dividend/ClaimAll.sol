@@ -20,10 +20,14 @@ contract ClaimAll {
         }  
     } 
 
-    function massClaim(address[] memory claims) public {
+    function massClaim(address[] memory claims) external {
         uint256 len = claims.length;
         for (uint256 i = 0; i < len; ++i) {
             require(IBondedStrategy(dividend).claim(claims[i]), "ClaimAll: claim failed");
         }  
+    }
+
+    function addClaim(address claim) external {
+        allClaims.push(claim);
     }
 }

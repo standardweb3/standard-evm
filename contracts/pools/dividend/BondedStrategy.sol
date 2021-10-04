@@ -33,6 +33,7 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
         bonded[msg.sender] += amount_;
         totalSupply += amount_;
         lastBonded[msg.sender] = block.timestamp;
+        emit Bonded(msg.sender, amount_);
     }
 
     function unbond(uint256 amount_) external unBondingPeriod {
@@ -44,6 +45,7 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
         IERC20(stnd).transfer(msg.sender, amount_);
         bonded[msg.sender] -= amount_;
         totalSupply -= amount_;
+        emit UnBonded(msg.sender, amount_);
     }
 
     function updateSupply(uint256 supply_, bool auto_) external {

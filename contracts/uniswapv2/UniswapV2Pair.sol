@@ -25,8 +25,8 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     address public factory;
     address public token0;
     address public token1;
-    bool treasury;
-    bool pool;
+    bool public treasury;
+    bool public pool;
 
     uint112 private reserve0; // uses single storage slot, accessible via getReserves
     uint112 private reserve1; // uses single storage slot, accessible via getReserves

@@ -331,9 +331,9 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            // For deploying token only, set 65866 
+            // For deploying token/masterpool only, set 65866 
             // For deploying contracts in shiden/shibuya different evm behavior from optimizer or size limit is detected, set optimizer 500 
-            runs: 99999,
+            runs: 65866,
           },
         },
       },

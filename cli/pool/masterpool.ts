@@ -48,7 +48,7 @@ task("masterpool-deploy", "Deploy Standard MasterPool")
     const hre = require("hardhat")
     // Verify MasterPool
     await hre.run("verify:verify", {
-      contract: "contracts/pools/MasterPool.sol:MasterPool",
+      contract: "contracts/pools/loss/MasterPool.sol:MasterPool",
       address: pool.address,
       constructorArguments: [deployer.address],
     })

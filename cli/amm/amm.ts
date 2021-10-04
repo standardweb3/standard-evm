@@ -66,9 +66,28 @@ task("amm-factory-set-dividend", "Set dividend of dex")
     const [deployer] = await ethers.getSigners();
     const Factory = await ethers.getContractFactory("UniswapV2Factory");
     if (dividend !== ZERO) {
+      // Get previous dividend
+      console.log("Previous dividend: ", await Factory.attach(factory).poolTo())
       // Set Fee Pool to
       const pool = await Factory.attach(factory).setPoolTo(dividend)
       await executeTx(pool, "Execute setPoolTo at")
+    }
+  })
+
+// npx hardhat --network rinkeby amm-factory-deploy --dividend 0xc778417E063141139Fce010982780140Aa0cD5Ab
+task("amm-factory-set-treasury", "Set treasury of dex")
+  .addParam("factory", "Address of UniswapV2Factory contract")
+  .addParam("treasury", "Address of dividend pool contract")
+  .setAction(async ({ factory, treasury }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    const Factory = await ethers.getContractFactory("UniswapV2Factory");
+    if (treasury !== ZERO) {
+      // Get previous dividend
+      console.log("Previous treasury: ", await Factory.attach(factory).treasuryTo())
+      // Set Fee Pool to
+      const pool = await Factory.attach(factory).setTreasuryTo(treasury)
+      await executeTx(pool, "Execute setTreasuryTo at")
     }
   })
 
@@ -155,9 +174,15 @@ task("amm-pair-switch-fees", "Set dividend of dex")
       )} ETH`
     );
 
-    // Switch fees 
+    // Check fee recipients
     const Pair = await ethers.getContractFactory("UniswapV2Pair")
-    const tx = await Pair.attach(pair).switchFees(treasury, dividend);
+    //const feeOn = await Pair.attach(pair).dividend();
+    //const treasuryOn =   await Pair.attach(pair).treasury();
+    //const dividendOn = await Pair.attach(pair).dividend();
+    //console.log(feeOn, treasuryOn, dividendOn)
+
+    // Switch fees 
+    const tx = await Pair.attach(pair).switchFees(true, true);
     await executeTx(tx, "Execute switchFees at")
 
     // Get before state

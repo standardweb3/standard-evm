@@ -5,40 +5,48 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../security/MonthGuard.sol";
 import "../../security/BondedGuard.sol";
+import "./interfaces/IBondedStrategy.sol";
 
-contract BondedStrategy is MonthGuard, BondedGuard {
+contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
 
-    address public stnd;
-    uint256 totalSupply;
+    address public override stnd;
+    uint256 public override totalSupply;
     address owner;
-    mapping(address => uint256) public bonded;
-
-    event DividendClaimed(address claimer, uint256 amount);
+    mapping(address => uint256) public override bonded;
+    mapping(address => uint256) public override lastBonded;
     
     constructor(address stnd_) {
         stnd = stnd_;
     }
 
-    function claim(address token) public onlyPerOneMonth(token) {
+    function claim(address token) external override onlyPerOneMonth(token) returns (bool success) {
         require(IERC20(stnd).totalSupply() != 0, "BondedStrategy: STND has not been placed yet");
-        uint256 proRataBonded = bonded[msg.sender] * IERC20(token).balanceOf(address(this)) / IERC20(stnd).totalSupply();
+        uint256 proRataBonded = bonded[msg.sender] * IERC20(token).balanceOf(address(this)) / totalSupply;
         require(proRataBonded >= 0, "BondedStrategy: Too small Bonded amount");
         require(IERC20(token).transfer(msg.sender, proRataBonded), "BondedStrategy: fee transfer failed");
         emit DividendClaimed(msg.sender, proRataBonded);
+        return true;
     }
 
-    function bond(uint256 amount_) public {
+    function bond(uint256 amount_) external {
         require(IERC20(stnd).transferFrom(msg.sender, address(this), amount_), "BondedStrategy: Not enough allowance to move with given amount");
         bonded[msg.sender] += amount_;
+        totalSupply += amount_;
+        lastBonded[msg.sender] = block.timestamp;
     }
 
-    function unbond(uint256 amount_) public unBondingPeriod {
+    function unbond(uint256 amount_) external unBondingPeriod {
         require(bonded[msg.sender] >= amount_, "BondedStrategy: Not enough bonded STND");
+        require(
+            block.timestamp - lastBonded[msg.sender] >= 30 days,
+            "BondedGuard: A month has not passed from the last bonded tx"
+        );
         IERC20(stnd).transfer(msg.sender, amount_);
         bonded[msg.sender] -= amount_;
+        totalSupply -= amount_;
     }
 
-    function updateSupply(uint256 supply_, bool auto_) public {
+    function updateSupply(uint256 supply_, bool auto_) external {
         require(msg.sender == owner, "BondedStrategy: Access Invalid");
         if (auto_) {
             totalSupply = IERC20(stnd).totalSupply();
@@ -49,7 +57,7 @@ contract BondedStrategy is MonthGuard, BondedGuard {
     }
 
     // Get balance of STND bonded for snapshot integration
-    function balanceOf(address account) public view returns (uint256) {
+    function balanceOf(address account) external view returns (uint256) {
         return bonded[account];
     }
 

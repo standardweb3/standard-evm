@@ -88,13 +88,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // get aggregators
         // check position
-        require(this.isValidCDP(collateral_, meter, cAmount_, dAmount_)
+        require(isValidCDP(collateral_, meter, cAmount_, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of meter
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
-        uint256 gIndex = this.allVaultsLength();
+        uint256 gIndex = allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
         address vlt = _createVault(gIndex, collateral_, meter, dAmount_);
         // transfer collateral to the vault, manage collateral from there
@@ -107,13 +107,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function createCDPNative(uint dAmount_) payable public {
         // check tests
-        require(this.isValidCDP(WETH, meter, msg.value, dAmount_)
+        require(isValidCDP(WETH, meter, msg.value, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of meter
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
-        uint256 gIndex = this.allVaultsLength();
+        uint256 gIndex = allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
         address vlt = _createVault(gIndex, WETH, meter, dAmount_);
         // wrap native currency
@@ -126,7 +126,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         IStablecoin(meter).mint(_msgSender(), dAmount_);
     }
     
-    function allVaultsLength() external view returns (uint) {
+    function allVaultsLength() public view returns (uint) {
         return allVaults.length;
     }
 
@@ -134,7 +134,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], CDecimals[collateral_]);
     }
 
-    function getMCR(address collateral_) external view override returns (uint) {
+    function getMCR(address collateral_) public view override returns (uint) {
         return MCRConfig[collateral_];
     }
 
@@ -142,11 +142,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return LFRConfig[collateral_];
     }
 
-    function getSFR(address collateral_) external view override returns (uint) {
+    function getSFR(address collateral_) public view override returns (uint) {
         return SFRConfig[collateral_];
     } 
     
-    function getCDecimal(address collateral_) external view override returns (uint) {
+    function getCDecimal(address collateral_) public view override returns (uint) {
         return CDecimals[collateral_];
     }     
 
@@ -165,11 +165,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
     }
 
-    function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) external override returns (bool) {
+    function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public override returns (bool) {
         (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
 
-        uint mcr = this.getMCR(collateral_);
-        uint cDecimals = this.getCDecimal(collateral_);
+        uint mcr = getMCR(collateral_);
+        uint cDecimals = getCDecimal(collateral_);
 
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
@@ -186,15 +186,15 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function _calculateValues(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) internal returns (uint256, uint256) {
-        uint256 collateralValue = this.getAssetValue(collateral_, cAmount_);
-        uint256 debtValue = this.getAssetValue(debt_, dAmount_);
+        uint256 collateralValue = getAssetValue(collateral_, cAmount_);
+        uint256 debtValue = getAssetValue(debt_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
         require(collateralValueTimes100 >= collateralValue); // overflow check
         return (collateralValueTimes100, debtValue);        
     }
 
 
-    function getAssetPrice(address asset_) external override returns (uint) {
+    function getAssetPrice(address asset_) public override returns (uint) {
         address aggregator = PriceFeeds[asset_];
         feed = IPrice(aggregator);
         uint price = uint(feed.getThePrice());
@@ -202,8 +202,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return price;
     }
 
-    function getAssetValue(address asset_, uint256 amount_) external override returns (uint256) {
-        uint price = this.getAssetPrice(asset_);
+    function getAssetValue(address asset_, uint256 amount_) public override returns (uint256) {
+        uint price = getAssetPrice(asset_);
         uint256 value = price * amount_;
         require(value >= amount_); // overflow
         return value;

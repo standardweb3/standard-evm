@@ -332,8 +332,8 @@ const config: HardhatUserConfig = {
           optimizer: {
             enabled: true,
             // For deploying token only, set 65866 
-            // For deploying contracts in shiden/shibuya, set 0
-            runs: 99999,
+            // For deploying contracts in shiden/shibuya different evm behavior from optimizer or size limit is detected, set optimizer 500 
+            runs: 65866,
           },
         },
       },

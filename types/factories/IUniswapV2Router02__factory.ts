@@ -20,7 +20,7 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -151,7 +151,7 @@ const _abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "pure",
     type: "function",
   },
   {

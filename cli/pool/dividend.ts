@@ -25,9 +25,6 @@ task("dividend-deploy", "Deploy Standard DividendPool")
         const pool = await Pool.deploy(stnd);
         await deployContract(pool, "BondedStrategy")
 
-        // Save contract info
-        recordAddress("BondedStrategy", await ethers.provider.getNetwork(), pool.address)
-
         // Get results
         console.log(
             `Deployer balance: ${ethers.utils.formatEther(

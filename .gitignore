@@ -17,3 +17,4 @@ tenderly.yaml
 node_modules
 scripts
 address-book.json
+types

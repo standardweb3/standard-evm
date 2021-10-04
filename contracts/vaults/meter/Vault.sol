@@ -9,7 +9,6 @@ import "./interfaces/IVaultManager.sol";
 import "./interfaces/IERC721Minimal.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
-import "./libraries/UniswapV2Library.sol";
 import "./interfaces/IUniswapV2FactoryMinimal.sol";
 import "../../tokens/IStablecoin.sol";
 
@@ -78,12 +77,11 @@ contract Vault is IVault {
             "Vault: Position is still safe"
         );
         // check the pair if it exists
-        require(
-            IUniswapV2FactoryMinimal(v2Factory).getPair(collateral, debt) !=
-                address(0),
-            "Vault: Liquidating pair not supported"
+        address pair = IUniswapV2FactoryMinimal(v2Factory).getPair(
+            collateral,
+            debt
         );
-        address pair = UniswapV2Library.pairFor(v2Factory, collateral, debt);
+        require(pair != address(0), "Vault: Liquidating pair not supported");
         uint256 balance = IERC20Minimal(collateral).balanceOf(address(this));
         uint256 lfr = IVaultManager(manager).getLFR(collateral);
         uint256 liquidationFee = (lfr * balance) / 100;
@@ -247,10 +245,11 @@ contract Vault is IVault {
         return _calculateFee() + borrow;
     }
 
-    function _sendFee(address asset_, uint256 amount_, uint256 fee_)
-        internal
-        returns (uint256 left)
-    {
+    function _sendFee(
+        address asset_,
+        uint256 amount_,
+        uint256 fee_
+    ) internal returns (uint256 left) {
         address dividend = IVaultManager(manager).dividend();
         address feeTo = IVaultManager(manager).feeTo();
         address treasury = IVaultManager(manager).treasury();

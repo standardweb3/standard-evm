@@ -139,3 +139,31 @@ task("callhash-deploy", "Deploy util for getting call hash for pair")
       constructorArguments: []
     })
   });
+
+
+task("amm-pair-switch-fees", "Set dividend of dex")
+  .addParam("pair", "Address of UniswapV2Factory contract")
+  .addParam("treasury", "Set treasury distribution to")
+  .addParam("dividend", "Set dividend distribution to")
+  .setAction(async ({ pair, treasury, dividend }, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
+
+    // Get before state
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Switch fees 
+    const Pair = await ethers.getContractFactory("UniswapV2Pair")
+    const tx = await Pair.attach(pair).switchFees(treasury, dividend);
+    await executeTx(tx, "Execute switchFees at")
+
+    // Get before state
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  })

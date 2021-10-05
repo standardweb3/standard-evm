@@ -563,6 +563,7 @@ contract MasterPool is BoringOwnable, BoringBatchable {
 
     function setRewardPerBlock(uint256 _reward) public onlyOwner {
         MASTERCHEF_SUSHI_PER_BLOCK = _reward;
+        emit LogUpdateReward(MASTERCHEF_SUSHI_PER_BLOCK);
     }
 
     /// @notice Deposits a dummy token to `MASTER_CHEF` MCV1. This is required because MCV1 holds the minting rights for SUSHI.

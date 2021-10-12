@@ -11,7 +11,6 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
   .setAction(async ({ proxy, parent }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
-    const chainId = (await ethers.provider.getNetwork()).chainId;
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
 
@@ -176,4 +175,32 @@ task("bridgeToken-add-handler", "Add bridge handler of token")
         await deployer.getBalance()
       )} ETH`
     );
+  })
+
+
+  task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatible with Anyswap")
+  .addOptionalParam("vault", "Address of Anyswap Vault", "none", types.string)
+  .setAction(async ({ vault }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Deploy AnyswapV5ERC20
+    console.log(`Deploying Standard Multichain Token Impl with the account: ${deployer.address}`);
+    const TokenImpl = await ethers.getContractFactory("AnyswapV5ERC20")
+    const impl = await TokenImpl.deploy("Standard", "STND", 18, ZERO, deployer)
+    await deployContract(impl, "AnyswapV5ERC20")
+
+    // Init vault
+    if (vault !== "none") {
+      const tx = await impl.initVault(vault)
+      await executeTx(tx, "Execute initVault at")
+    }
   })

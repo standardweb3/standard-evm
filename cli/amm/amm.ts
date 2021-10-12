@@ -70,7 +70,7 @@ task("amm-factory-deploy", "Deploy Standard AMM")
 
 // npx hardhat --network rinkeby amm-factory-deploy --dividend 0xc778417E063141139Fce010982780140Aa0cD5Ab
 
-task("amm-factory-set-feeTo", "Set feeTo of dex")
+task("amm-factory-set-feeto", "Set feeTo of dex")
   .addParam("factory", "Address of UniswapV2Factory contract")
   .addParam("feeto", "Address of dividend pool contract")
   .setAction(async ({ factory, feeto }, { ethers }) => {

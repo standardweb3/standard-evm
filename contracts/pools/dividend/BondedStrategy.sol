@@ -11,7 +11,6 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
 
     address public override stnd;
     uint256 public override totalSupply;
-    address owner;
     mapping(address => uint256) public override bonded;
     mapping(address => uint256) public override lastBonded;
     
@@ -46,16 +45,6 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
         bonded[msg.sender] -= amount_;
         totalSupply -= amount_;
         emit UnBonded(msg.sender, amount_);
-    }
-
-    function updateSupply(uint256 supply_, bool auto_) external {
-        require(msg.sender == owner, "BondedStrategy: Access Invalid");
-        if (auto_) {
-            totalSupply = IERC20(stnd).totalSupply();
-        }
-        else {
-            totalSupply = supply_;
-        }
     }
 
     // Get balance of STND bonded for snapshot integration

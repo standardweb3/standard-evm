@@ -178,7 +178,7 @@ task("bridgeToken-add-handler", "Add bridge handler of token")
   })
 
 
-  task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatible with Anyswap")
+task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatible with Anyswap")
   .addOptionalParam("vault", "Address of Anyswap Vault", "none", types.string)
   .setAction(async ({ vault }, { ethers }) => {
 
@@ -193,9 +193,9 @@ task("bridgeToken-add-handler", "Add bridge handler of token")
     );
 
     // Deploy AnyswapV5ERC20
-    console.log(`Deploying Standard Multichain Token Impl with the account: ${deployer.address}`);
+    console.log(`Deploying Standard Anyswap Multichain Token Impl with the account: ${deployer.address}`);
     const TokenImpl = await ethers.getContractFactory("AnyswapV5ERC20")
-    const impl = await TokenImpl.deploy("Standard", "STND", 18, ZERO, deployer)
+    const impl = await TokenImpl.deploy("Standard", "STND", 18, ZERO, deployer.address)
     await deployContract(impl, "AnyswapV5ERC20")
 
     // Init vault
@@ -203,4 +203,11 @@ task("bridgeToken-add-handler", "Add bridge handler of token")
       const tx = await impl.initVault(vault)
       await executeTx(tx, "Execute initVault at")
     }
+
+    // Verify Impl
+    await hre.run("verify:verify", {
+      contract: "contracts/tokens/BridgeToken.sol:BridgeToken",
+      address: impl.address,
+      constructorArguments: ["Standard", "STND", 18, ZERO, deployer]
+    })
   })

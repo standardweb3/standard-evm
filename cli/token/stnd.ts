@@ -11,6 +11,7 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
   .setAction(async ({ proxy, parent }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
+    console.log(await ethers.getSigners())
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
 

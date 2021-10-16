@@ -295,7 +295,8 @@ const config: HardhatUserConfig = {
     // ./astar-collator --dev --rpc-external --rpc-port 8545
     substrate: {
       url: "http://localhost:8545",
-      chainId: 4369,
+      accounts,
+      chainId: 42,
       saveDeployments: true,
       tags: ["staging"]
     }

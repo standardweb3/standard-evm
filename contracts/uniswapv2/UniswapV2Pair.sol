@@ -88,6 +88,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         address indexed to
     );
     event Sync(uint112 reserve0, uint112 reserve1);
+    event SwitchFees(bool treasuryOn, bool poolOn);
 
     constructor() public {
         factory = msg.sender;
@@ -103,6 +104,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         );
         treasury = _treasuryOn;
         pool = _poolOn;
+        emit SwitchFees(treasury, pool);
     }
 
     // called once by the factory at time of deployment

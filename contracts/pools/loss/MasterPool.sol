@@ -252,6 +252,30 @@ interface IERC20 {
         bytes32 r,
         bytes32 s
     ) external;
+
+    /**
+     * @dev Moves `amount` tokens from `sender` to `recipient` using the
+     * allowance mechanism. `amount` is then deducted from the caller's
+     * allowance.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
+
+        /**
+     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transfer(address recipient, uint256 amount) external returns (bool);
 }
 
 library BoringERC20 {
@@ -323,13 +347,19 @@ library BoringERC20 {
         address to,
         uint256 amount
     ) internal {
+        (bool success) = token.transfer(to, amount);
+        /*
         (bool success, bytes memory data) = address(token).call(
             abi.encodeWithSelector(SIG_TRANSFER, to, amount)
         );
+        */
+        require(success, "IERC20: transfer failed");
+        /*
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "BoringERC20: Transfer failed"
         );
+        */
     }
 
     /// @notice Provides a safe ERC20.transferFrom version for different ERC-20 implementations.
@@ -344,13 +374,19 @@ library BoringERC20 {
         address to,
         uint256 amount
     ) internal {
+        (bool success) = token.transfer(to, amount);
+        /*
         (bool success, bytes memory data) = address(token).call(
             abi.encodeWithSelector(SIG_TRANSFER_FROM, from, to, amount)
         );
+        */
+        require(success, "IERC20: transfer failed");
+        /*
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "BoringERC20: TransferFrom failed"
         );
+        */
     }
 }
 

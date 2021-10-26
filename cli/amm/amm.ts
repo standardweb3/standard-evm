@@ -206,10 +206,13 @@ task("amm-pair-switch-fees", "Set dividend of dex")
     const Pair = await ethers.getContractFactory("UniswapV2Pair")
     const treasuryOn =   await Pair.attach(pair).treasury();
     const dividendOn = await Pair.attach(pair).pool();
-    console.log(treasuryOn, dividendOn)
+    console.log("Before: ", "[treasuryOn]", treasuryOn, "[dividendOn]", dividendOn)
 
     const tx = await Pair.attach(pair).switchFees((treasury === 'true'), (dividend === 'true'));
     await executeTx(tx, "Execute switchFees at")
+    const treasuryOnAfter =   await Pair.attach(pair).treasury();
+    const dividendOnAfter = await Pair.attach(pair).pool();
+    console.log("After: ", "[treasuryOn]", treasuryOnAfter,  "[dividendOn]", dividendOnAfter)
 
     // Get before state
     console.log(

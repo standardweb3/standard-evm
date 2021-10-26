@@ -30,7 +30,7 @@ export async function deployContract(deploy: ethers.Contract, contract: string){
     // Get network from chain ID
     let chain = ChainId[chainId]
     console.log(`${contract} address at Chain Id of ${chain}:`, deploy.address);
-    console.log("Mining...");
+    console.log(`Mining at ${deploy.hash}...`);
     await deploy.deployed();
     await recordAddress(contract, chain, deploy.address)
 }

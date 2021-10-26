@@ -8,153 +8,14 @@
 
 // Special Thanks to @BoringCrypto for his ideas and patience
 
-pragma solidity =0.6.12;
+pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-// https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SignedSafeMath.sol
-library SignedSafeMath {
-    int256 private constant _INT256_MIN = -2**255;
+import "./libraries/SignedSafeMath.sol";
+import "./libraries/BoringMath.sol";
+import "./libraries/BoringMath128.sol";
+import "./interfaces/IERC20.sol";
 
-    /**
-     * @dev Returns the multiplication of two signed integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     *
-     * - Multiplication cannot overflow.
-     */
-    function mul(int256 a, int256 b) internal pure returns (int256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) {
-            return 0;
-        }
-
-        require(
-            !(a == -1 && b == _INT256_MIN),
-            "SignedSafeMath: multiplication overflow"
-        );
-
-        int256 c = a * b;
-        require(c / a == b, "SignedSafeMath: multiplication overflow");
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the integer division of two signed integers. Reverts on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(int256 a, int256 b) internal pure returns (int256) {
-        require(b != 0, "SignedSafeMath: division by zero");
-        require(
-            !(b == -1 && a == _INT256_MIN),
-            "SignedSafeMath: division overflow"
-        );
-
-        int256 c = a / b;
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the subtraction of two signed integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(int256 a, int256 b) internal pure returns (int256) {
-        int256 c = a - b;
-        require(
-            (b >= 0 && c <= a) || (b < 0 && c > a),
-            "SignedSafeMath: subtraction overflow"
-        );
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the addition of two signed integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     *
-     * - Addition cannot overflow.
-     */
-    function add(int256 a, int256 b) internal pure returns (int256) {
-        int256 c = a + b;
-        require(
-            (b >= 0 && c >= a) || (b < 0 && c < a),
-            "SignedSafeMath: addition overflow"
-        );
-
-        return c;
-    }
-
-    function toUInt256(int256 a) internal pure returns (uint256) {
-        require(a >= 0, "Integer < 0");
-        return uint256(a);
-    }
-}
-
-/// @notice A library for performing overflow-/underflow-safe math,
-/// updated with awesomeness from of DappHub (https://github.com/dapphub/ds-math).
-library BoringMath {
-    function add(uint256 a, uint256 b) internal pure returns (uint256 c) {
-        require((c = a + b) >= b, "BoringMath: Add Overflow");
-    }
-
-    function sub(uint256 a, uint256 b) internal pure returns (uint256 c) {
-        require((c = a - b) <= a, "BoringMath: Underflow");
-    }
-
-    function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {
-        require(b == 0 || (c = a * b) / b == a, "BoringMath: Mul Overflow");
-    }
-
-    function to128(uint256 a) internal pure returns (uint128 c) {
-        require(a <= uint128(-1), "BoringMath: uint128 Overflow");
-        c = uint128(a);
-    }
-
-    function to64(uint256 a) internal pure returns (uint64 c) {
-        require(a <= uint64(-1), "BoringMath: uint64 Overflow");
-        c = uint64(a);
-    }
-
-    function to32(uint256 a) internal pure returns (uint32 c) {
-        require(a <= uint32(-1), "BoringMath: uint32 Overflow");
-        c = uint32(a);
-    }
-}
-
-/// @notice A library for performing overflow-/underflow-safe addition and subtraction on uint128.
-library BoringMath128 {
-    function add(uint128 a, uint128 b) internal pure returns (uint128 c) {
-        require((c = a + b) >= b, "BoringMath: Add Overflow");
-    }
-
-    function sub(uint128 a, uint128 b) internal pure returns (uint128 c) {
-        require((c = a - b) <= a, "BoringMath: Underflow");
-    }
-}
 
 contract BoringOwnableData {
     address public owner;
@@ -223,66 +84,64 @@ contract BoringOwnable is BoringOwnableData {
     }
 }
 
-interface IERC20 {
-    function totalSupply() external view returns (uint256);
-
-    function balanceOf(address account) external view returns (uint256);
-
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
-
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
-
-    /// @notice EIP 2612
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external;
-
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-        /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-}
-
 library BoringERC20 {
+    bytes4 private constant SIG_SYMBOL = 0x95d89b41; // symbol()
+    bytes4 private constant SIG_NAME = 0x06fdde03; // name()
+    bytes4 private constant SIG_DECIMALS = 0x313ce567; // decimals()
+    bytes4 private constant SIG_TRANSFER = 0xa9059cbb; // transfer(address,uint256)
+    bytes4 private constant SIG_TRANSFER_FROM = 0x23b872dd; // transferFrom(address,address,uint256)
 
+    function returnDataToString(bytes memory data)
+        internal
+        pure
+        returns (string memory)
+    {
+        if (data.length >= 64) {
+            return abi.decode(data, (string));
+        } else if (data.length == 32) {
+            uint8 i = 0;
+            while (i < 32 && data[i] != 0) {
+                i++;
+            }
+            bytes memory bytesArray = new bytes(i);
+            for (i = 0; i < 32 && data[i] != 0; i++) {
+                bytesArray[i] = data[i];
+            }
+            return string(bytesArray);
+        } else {
+            return "???";
+        }
+    }
 
-    
+    /// @notice Provides a safe ERC20.symbol version which returns '???' as fallback string.
+    /// @param token The address of the ERC-20 token contract.
+    /// @return (string) Token symbol.
+    function safeSymbol(IERC20 token) internal view returns (string memory) {
+        (bool success, bytes memory data) = address(token).staticcall(
+            abi.encodeWithSelector(SIG_SYMBOL)
+        );
+        return success ? returnDataToString(data) : "???";
+    }
 
+    /// @notice Provides a safe ERC20.name version which returns '???' as fallback string.
+    /// @param token The address of the ERC-20 token contract.
+    /// @return (string) Token name.
+    function safeName(IERC20 token) internal view returns (string memory) {
+        (bool success, bytes memory data) = address(token).staticcall(
+            abi.encodeWithSelector(SIG_NAME)
+        );
+        return success ? returnDataToString(data) : "???";
+    }
+
+    /// @notice Provides a safe ERC20.decimals version which returns '18' as fallback value.
+    /// @param token The address of the ERC-20 token contract.
+    /// @return (uint8) Token decimals.
+    function safeDecimals(IERC20 token) internal view returns (uint8) {
+        (bool success, bytes memory data) = address(token).staticcall(
+            abi.encodeWithSelector(SIG_DECIMALS)
+        );
+        return success && data.length == 32 ? abi.decode(data, (uint8)) : 18;
+    }
 
     /// @notice Provides a safe ERC20.transfer version for different ERC-20 implementations.
     /// Reverts on a failed transfer.
@@ -294,19 +153,19 @@ library BoringERC20 {
         address to,
         uint256 amount
     ) internal {
-        (bool success) = token.transfer(to, amount);
-        /*
+        //(bool success) = token.transfer(to, amount);
+        
         (bool success, bytes memory data) = address(token).call(
             abi.encodeWithSelector(SIG_TRANSFER, to, amount)
         );
-        */
-        require(success, "IERC20: transfer failed");
-        /*
+        
+        //require(success, "IERC20: transfer failed");
+        
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "BoringERC20: Transfer failed"
         );
-        */
+        
     }
 
     /// @notice Provides a safe ERC20.transferFrom version for different ERC-20 implementations.
@@ -321,19 +180,19 @@ library BoringERC20 {
         address to,
         uint256 amount
     ) internal {
-        (bool success) = token.transfer(to, amount);
-        /*
+        //(bool success) = token.transfer(to, amount);
+        
         (bool success, bytes memory data) = address(token).call(
             abi.encodeWithSelector(SIG_TRANSFER_FROM, from, to, amount)
         );
-        */
-        require(success, "IERC20: transfer failed");
-        /*
+        
+        //require(success, "IERC20: transfer failed");
+        
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "BoringERC20: TransferFrom failed"
         );
-        */
+        
     }
 }
 

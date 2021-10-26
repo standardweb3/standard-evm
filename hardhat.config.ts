@@ -18,13 +18,11 @@ import "./cli";
 
 import { HardhatUserConfig } from "hardhat/config";
 import { removeConsoleLog } from "hardhat-preprocessor";
-import { ChainId } from "./cli/helper";
 
 // const accounts = [process.env.DEPLOYER_KEY || "0x00"];
 const accounts = {
   mnemonic:
-    process.env.MNEMONIC ||
-    "test test test test test test test test test test test junk",
+    process.env.MNEMONIC 
 };
 
 const config: HardhatUserConfig = {

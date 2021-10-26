@@ -34,3 +34,11 @@ For any concerns with the protocol, open an issue or visit us on [Discord](https
 For security concerns, please email [contact@standard.tech](mailto:contact@standard.tech).
 
 _© Copyright 2020, Digital Native_
+
+License
+---------
+
+There are some codes with licenses that are limited to certain organization in some modules
+* [vault-meter](https://github.com/digitalnativeinc/standard-evm/tree/main/contracts/vaults/meter)
+
+Rest of them are licensed as Apache2.0

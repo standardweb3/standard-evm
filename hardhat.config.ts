@@ -283,7 +283,7 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
     shiden: {
-      url: `https://shiden.api.onfinality.io/rpc?apikey=${process.env.ONFINALITY_API_KEY}`,
+      url: `https://rpc.shiden.astar.network:8545`,
       accounts,
       chainId: 336,
       live: true,

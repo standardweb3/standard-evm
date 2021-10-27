@@ -9,7 +9,7 @@ interface IBondedStrategy {
     function stnd() external view returns (address);
     function claim(address token) external returns (bool success);
 
-    event DividendClaimed(address claimer, uint256 amount);
+    event DividendClaimed(address claimer, address claimingWith, uint256 amount);
     event Bonded(address holder, uint256 amount);
     event UnBonded(address holder, uint256 amount);
 }

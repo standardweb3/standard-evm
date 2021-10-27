@@ -23,7 +23,7 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
         uint256 proRataBonded = bonded[msg.sender] * IERC20(token).balanceOf(address(this)) / totalSupply;
         require(proRataBonded >= 0, "BondedStrategy: Too small Bonded amount");
         require(IERC20(token).transfer(msg.sender, proRataBonded), "BondedStrategy: fee transfer failed");
-        emit DividendClaimed(msg.sender, proRataBonded);
+        emit DividendClaimed(msg.sender, token, proRataBonded);
         return true;
     }
 

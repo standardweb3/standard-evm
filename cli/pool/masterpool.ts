@@ -164,7 +164,7 @@ task("masterpool-massupdate", "Add LP Pool to Standard MasterPool")
   });
 
 
-  task("masterpool-setReward", "Set STND reward per block in Standard MasterPool")
+  task("masterpool-setreward", "Set STND reward per block in Standard MasterPool")
   .addParam("masterpool", "Address of masterpool contract")
   .addParam("stndperblock", "STND per Block in decimal of 10")
   .setAction(async ({ masterpool, stndperblock }, { ethers }) => {
@@ -172,8 +172,27 @@ task("masterpool-massupdate", "Add LP Pool to Standard MasterPool")
     await executeFrom(ethers, deployer, async () => {
       // Set STND per block
       const MasterPool = await ethers.getContractFactory("MasterPool")
-      const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 10))
+      const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 16))
       await executeTx(tx, "Execute setRewardPerBlock at")
+      const stndPerBlock = await MasterPool.attach(masterpool).sushiPerBlock();
+      console.log("Current STNDPerBlock: ", stndPerBlock.toString())
     })
   });
 
+  task("masterpool-set", "Set Existing pool address of a pool id")
+  .addParam("masterpool", "Address of masterpool contract")
+  .addParam("pid", "pool id")
+  .addParam("allocpoint", "allocation point")
+  .addParam("newpool", "new pool address to set")
+  .addParam("overwrite", "overwrite on already set pool")
+  .setAction(async ({ masterpool, pid, allocpoint, newpool, overwrite }, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
+    await executeFrom(ethers, deployer, async () => {
+      // Set STND per block
+      const MasterPool = await ethers.getContractFactory("MasterPool")
+      const tx = await MasterPool.attach(masterpool).set(pid, allocpoint, ZERO, true);
+      await executeTx(tx, "Execute setRewardPerBlock at")
+      const stndPerBlock = await MasterPool.attach(masterpool).sushiPerBlock();
+      console.log("Current STNDPerBlock: ", stndPerBlock.toString())
+    })
+  });

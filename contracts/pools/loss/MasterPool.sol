@@ -544,6 +544,10 @@ contract MasterPool is BoringOwnable, BoringBatchable {
         IRewarder indexed rewarder,
         bool overwrite
     );
+    event LogSetPoolAddress(
+        uint256 indexed pid,
+        IERC20 indexed lpToken
+    );
     event LogUpdatePool(
         uint256 indexed pid,
         uint64 lastRewardBlock,
@@ -636,6 +640,21 @@ contract MasterPool is BoringOwnable, BoringBatchable {
             _allocPoint,
             overwrite ? _rewarder : rewarder[_pid],
             overwrite
+        );
+    }
+
+
+    /// @notice Update the given pool's SUSHI allocation point and `IRewarder` contract. Can only be called by the owner.
+    /// @param _pid The index of the pool. See `poolInfo`.
+    /// @param _pool New pool to set
+    function setPoolAddr(
+        uint256 _pid,
+        IERC20 _pool
+    ) public onlyOwner {
+        lpToken[_pid] = _pool;
+        emit LogSetPoolAddress(
+            _pid,
+            _pool
         );
     }
 

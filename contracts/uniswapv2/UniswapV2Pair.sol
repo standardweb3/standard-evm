@@ -34,6 +34,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
 
     uint256 public price0CumulativeLast;
     uint256 public price1CumulativeLast;
+    uint256 public lastUpdate; // Block number where last price update occurred, used for flashswap guard
     uint256 public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
 
     uint256 private unlocked = 1;
@@ -314,6 +315,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         }
 
         _update(balance0, balance1, _reserve0, _reserve1);
+        lastUpdate = block.number;
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
     }
 

@@ -99,6 +99,7 @@ task("amm-factory-set-dividend", "Set dividend of dex")
       // Set Fee Pool to
       const pool = await Factory.attach(factory).setPoolTo(dividend)
       await executeTx(pool, "Execute setPoolTo at")
+      console.log("Current dividend: ", await Factory.attach(factory).poolTo())
     }
   })
 
@@ -116,6 +117,7 @@ task("amm-factory-set-treasury", "Set treasury of dex")
       // Set Fee Pool to
       const pool = await Factory.attach(factory).setTreasuryTo(treasury)
       await executeTx(pool, "Execute setTreasuryTo at")
+      console.log("Current treasury: ", await Factory.attach(factory).treasuryTo())
     }
   })
 

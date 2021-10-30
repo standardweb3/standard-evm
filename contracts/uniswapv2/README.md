@@ -7,6 +7,7 @@ The organization clarifies differences as below:
 
 1. Change `UniswapV2ERC20.sol` to LTR token
 2. Add fee share pool
+3. Add flash swap guard
 To see all diffs:
 
 ```

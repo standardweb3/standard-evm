@@ -20,6 +20,7 @@ contract BondedStrategy is MonthGuard, BondedGuard, IBondedStrategy {
 
     function claim(address token) external override onlyPerOneMonth(token) returns (bool success) {
         require(IERC20(stnd).totalSupply() != 0, "BondedStrategy: STND has not been placed yet");
+        require(token != stnd, "BondedStrategy: Invalid");
         uint256 proRataBonded = bonded[msg.sender] * IERC20(token).balanceOf(address(this)) / totalSupply;
         require(proRataBonded >= 0, "BondedStrategy: Too small Bonded amount");
         require(IERC20(token).transfer(msg.sender, proRataBonded), "BondedStrategy: fee transfer failed");

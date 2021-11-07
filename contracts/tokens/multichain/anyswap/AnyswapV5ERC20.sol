@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-pragma solidity ^0.8.2;
+pragma solidity 0.8.2;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -113,15 +112,13 @@ library SafeERC20 {
     }
 }
 
-contract AnyswapV5ERC20 is IAnyswapV3ERC20, AccessControl {
+contract AnyswapV5ERC20 is IAnyswapV3ERC20 {
     using SafeERC20 for IERC20;
     string public name;
     string public symbol;
     uint8  public immutable override decimals;
 
     address public immutable underlying;
-
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     bytes32 public constant TRANSFER_TYPEHASH = keccak256("Transfer(address owner,address to,uint256 value,uint256 nonce,uint256 deadline)");
@@ -159,7 +156,7 @@ contract AnyswapV5ERC20 is IAnyswapV3ERC20, AccessControl {
 
 
     modifier onlyAuth() {
-        require(isMinter[msg.sender] || hasRole(MINTER_ROLE, msg.sender), "AnyswapV4ERC20: FORBIDDEN");
+        require(isMinter[msg.sender], "AnyswapV4ERC20: FORBIDDEN");
         _;
     }
 
@@ -287,9 +284,6 @@ contract AnyswapV5ERC20 is IAnyswapV3ERC20, AccessControl {
             require(_decimals == IERC20(_underlying).decimals());
         }
 
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _setupRole(MINTER_ROLE, _msgSender());
-
         // Use init to allow for CREATE2 accross all chains
         _init = true;
 
@@ -415,18 +409,11 @@ contract AnyswapV5ERC20 is IAnyswapV3ERC20, AccessControl {
     /// Emits {Approval} event.
     /// Returns boolean value indicating whether operation succeeded.
     function approve(address spender, uint256 value) external override returns (bool) {
-        _approve(msg.sender, spender, value);
+        // _approve(msg.sender, spender, value);
+        allowance[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+
         return true;
-    }
-
-    function _approve(
-        address from,
-        address spender,
-        uint256 amount
-    ) internal virtual {
-
-        allowance[from][spender] = amount;
-        emit Approval(from, spender, amount);
     }
 
     /// @dev Sets `value` as allowance of `spender` account over caller account's AnyswapV3ERC20 token,
@@ -587,13 +574,5 @@ contract AnyswapV5ERC20 is IAnyswapV3ERC20, AccessControl {
         emit Transfer(msg.sender, to, value);
 
         return ITransferReceiver(to).onTokenTransfer(msg.sender, value, data);
-    }
-
-    // chainbridge functions    
-    function burnFrom(address account, uint256 amount) public {
-        uint256 currentAllowance = this.allowance(account, _msgSender());
-        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
-        _approve(account, _msgSender(), currentAllowance - amount);
-        _burn(account, amount);
     }
 }

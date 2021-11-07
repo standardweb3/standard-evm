@@ -22,7 +22,7 @@ task("dividend-deploy", "Deploy Standard DividendPool")
         // Deploy Dividend Pool
         console.log(`Deploying Standard Dividend Strategy Pool with the account: ${deployer.address}`);
         const Pool = await ethers.getContractFactory("BondedStrategy");
-        const pool = await Pool.deploy(stnd);
+        const pool = await Pool.deploy("Bonded Standard", "bondSTND", stnd);
         await deployContract(pool, "BondedStrategy")
 
         // Get results

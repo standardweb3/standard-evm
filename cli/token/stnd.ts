@@ -212,3 +212,5 @@ task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatibl
       constructorArguments: ["Standard", "STND", 18, ZERO, deployer]
     })
   })
+
+  

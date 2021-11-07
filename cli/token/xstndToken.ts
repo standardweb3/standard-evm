@@ -87,3 +87,24 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
 
     await hre.tenderly.verify(...contracts)
   });
+
+
+
+task("xstnd-verify", "verify StandardDividend Multichain Token")
+.addParam("proxy", "Add proxy pattern to the contract for upgradability")
+.addParam("impl", "Add impl to the contract for upgradability")
+.setAction(async ({ proxy, impl }, { ethers }) => {
+      const hre = require("hardhat")
+      // Verify Impl
+      await hre.run("verify:verify", {
+        contract: "contracts/tokens/multichain/stnd_multichain_impl.sol:UChildAdministrableERC20",
+        address: impl,
+        constructorArguments: []
+      })
+        // Verify proxy
+        await hre.run("verify:verify", {
+          contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
+          address: proxy,
+          constructorArguments: [impl]
+        })
+})

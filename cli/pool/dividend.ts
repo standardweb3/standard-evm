@@ -9,7 +9,7 @@ const assert = (condition, message) => {
 
 // npx hardhat --network rinkeby masterpool-deploy --stnd 0xccf56fb87850fe6cff0cd16f491933c138b7eadd --amount 1000000
 task("dividend-deploy", "Deploy Standard DividendPool")
-    .addParam("stnd", "Address of Standard")
+    .addParam("xstnd", "Address of Standard")
     .setAction(async ({ stnd }, { ethers }) => {
         const [deployer] = await ethers.getSigners();
         // Get before state

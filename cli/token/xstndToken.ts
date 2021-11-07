@@ -12,7 +12,6 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
   .setAction(async ({ proxy, parent }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
-    console.log(await ethers.getSigners())
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
 
@@ -33,7 +32,7 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
       console.log(`Deploying Standard Multichain Token Proxy with the account: ${deployer.address}`);
       const Proxy = await ethers.getContractFactory("UChildERC20Proxy")
       const proxy = await Proxy.deploy(impl.address)
-      await deployContract(proxy, "xSTNDProxy")
+      await deployContract(proxy, "xSTNDToken")
 
       // Initialize proxy with necessary info
       const tx = await TokenImpl.attach(proxy.address).initialize("StandardDividend", "xSTND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
@@ -53,7 +52,7 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
       }
     } else {
       // Initialize impl with necessary info
-      const tx = await TokenImpl.attach(impl.address).initialize("Standard", "STND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
+      const tx = await TokenImpl.attach(impl.address).initialize("StandardDividend", "xSTND", 18, "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
       await executeTx(tx, "Execute initialize at")
       // Mint initial total supply if parent
       if (parent) {

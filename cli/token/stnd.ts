@@ -11,7 +11,6 @@ task("stnd-deploy", "Deploy Standard Multichain Token")
   .setAction(async ({ proxy, parent }, { ethers }) => {
 
     const [deployer] = await ethers.getSigners();
-    console.log(await ethers.getSigners())
     // INFO: hre can only be imported inside task
     const hre = require("hardhat")
 
@@ -213,4 +212,48 @@ task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatibl
     })
   })
 
-  
+  task("stnd-mint", "Deploy Standard Multichain token which is compatible with Anyswap")
+  .addParam("stnd", "Standard token address")
+  .addParam("account", "account to mint")
+  .addParam("amount", "Amount to mint to address")
+  .setAction(async ({ stnd, account, amount }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+    // mint certain amount
+    const mint = await TokenImpl.attach(stnd).mint(account, ethers.utils.parseUnits(amount, 18));
+    await executeTx(mint, "Execute Mint at")
+  })
+
+
+
+  task("stnd-approve", "Deploy Standard Multichain token which is compatible with Anyswap")
+  .addParam("stnd", "Standard token address")
+  .addParam("spender", "Spender account")
+  .addParam("amount", "Amount to mint to address")
+  .setAction(async ({ stnd, spender, amount }, { ethers }) => {
+
+    const [deployer] = await ethers.getSigners();
+    // INFO: hre can only be imported inside task
+    const hre = require("hardhat")
+
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
+    // mint certain amount
+    const mint = await TokenImpl.attach(stnd).approve(spender, ethers.utils.parseUnits(amount, 18));
+    await executeTx(mint, "Execute Approve at")
+  })

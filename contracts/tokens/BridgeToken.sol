@@ -42,7 +42,7 @@ contract BridgeToken is AccessControl, ERC20 {
     function deposit(address user, bytes calldata depositData)
         external
     {
-        require(hasRole(MINTER_ROLE, msg.sender), "Meter: Caller is not a minter");
+        require(hasRole(DEPOSITOR_ROLE, msg.sender), "Meter: Caller is not a minter");
         uint256 amount = abi.decode(depositData, (uint256));
         _mint(user, amount);
     }

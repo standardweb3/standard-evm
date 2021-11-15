@@ -1,4 +1,4 @@
-import "./legacy"
+//import "./legacy"
 import "./amm"
 import "./vault"
 import "./synth"

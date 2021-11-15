@@ -690,22 +690,22 @@ pragma solidity ^0.8.0;
 // Staking in sSpell inspired by Chef Nomi's SushiBar - MIT license (originally WTFPL)
 // modified by BoringCrypto for DictatorDAO
 
-contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
+contract dSTNDV1 is ERC20("StandardDividend", "dSTND"), AccessControl {
     using SafeMath for uint256;
-    IERC20 public xstnd;
+    IERC20 public stnd;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
 
-    constructor(IERC20 _xstnd) public {
-        xstnd = _xstnd;
+    constructor(IERC20 _stnd) public {
+        stnd = _stnd;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
     }
 
     // Enter the bar. Pay some SUSHIs. Earn some shares.
     function enter(uint256 _amount) public {
-        uint256 totalSTND = xstnd.balanceOf(address(this));
+        uint256 totalSTND = stnd.balanceOf(address(this));
         uint256 totalShares = totalSupply();
         if (totalShares == 0 || totalSTND == 0) {
             _mint(msg.sender, _amount);
@@ -713,21 +713,21 @@ contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
             uint256 what = _amount.mul(totalShares).div(totalSTND);
             _mint(msg.sender, what);
         }
-        xstnd.transferFrom(msg.sender, address(this), _amount);
+        stnd.transferFrom(msg.sender, address(this), _amount);
     }
 
     // Leave the bar. Claim back your SUSHIs.
     function leave(uint256 _share) public {
         uint256 totalShares = totalSupply();
-        uint256 what = _share.mul(xstnd.balanceOf(address(this))).div(totalShares);
+        uint256 what = _share.mul(stnd.balanceOf(address(this))).div(totalShares);
         _burn(msg.sender, _share);
-        xstnd.transfer(msg.sender, what);
+        stnd.transfer(msg.sender, what);
     }
 
     // Chainbridge functions
     function mint(address to, uint256 amount) external  {
         // Check that the calling account has the minter role
-        require(hasRole(MINTER_ROLE, msg.sender), "Meter: Caller is not a minter");
+        require(hasRole(MINTER_ROLE, msg.sender), "dSTNDV1: Caller is not a minter");
         _mint(to, amount);
     }
 
@@ -741,7 +741,7 @@ contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
     // Anyswap functions
     function burn(address account, uint256 amount) external  {
         // Check that the calling account has the minter role
-        require(hasRole(BURNER_ROLE, msg.sender), "Meter: Caller is not a burner");
+        require(hasRole(BURNER_ROLE, msg.sender), "dSTNDV1: Caller is not a burner");
         _burn(account, amount);
     }
     
@@ -757,7 +757,7 @@ contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
     function deposit(address user, bytes calldata depositData)
         external
     {
-        require(hasRole(DEPOSITOR_ROLE, msg.sender), "Meter: Caller is not a minter");
+        require(hasRole(DEPOSITOR_ROLE, msg.sender), "dSTNDV1: Caller is not a depositor");
         uint256 amount = abi.decode(depositData, (uint256));
         _mint(user, amount);
     }

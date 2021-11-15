@@ -21,8 +21,8 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
     );
 
     // Deploy  Impl
-    console.log(`Deploying Standard Multichain Token Impl with the account: ${deployer.address}`);
-    const TokenImpl = await ethers.getContractFactory("StandardDividend")
+    console.log(`Deploying Standard Dividend Token with the account: ${deployer.address}`);
+    const TokenImpl = await ethers.getContractFactory("dSTNDV1")
     const impl = await TokenImpl.deploy(stnd)
     await deployContract(impl, "StandardDividend")
 
@@ -34,7 +34,7 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
 
     // Verify Impl
     await hre.run("verify:verify", {
-      contract: "contracts/tokens/xSTND.sol:StandardDividend",
+      contract: "contracts/tokens/dSTND.sol:dSTNDV1",
       address: impl.address,
       constructorArguments: [stnd]
     })
@@ -43,20 +43,15 @@ task("xstnd-deploy", "Deploy StandardDividend Multichain Token")
 
 
 task("xstnd-verify", "verify StandardDividend Multichain Token")
-.addParam("proxy", "Add proxy pattern to the contract for upgradability")
-.addParam("impl", "Add impl to the contract for upgradability")
-.setAction(async ({ proxy, impl }, { ethers }) => {
+.addParam("stnd", "Add proxy pattern to the contract for upgradability")
+.addParam("xstnd", "Add impl to the contract for upgradability")
+.setAction(async ({ xstnd, stnd }, { ethers }) => {
       const hre = require("hardhat")
-      // Verify Impl
-      await hre.run("verify:verify", {
-        contract: "contracts/tokens/multichain/stnd_multichain_impl.sol:UChildAdministrableERC20",
-        address: impl,
-        constructorArguments: []
-      })
-        // Verify proxy
-        await hre.run("verify:verify", {
-          contract: "contracts/tokens/multichain/stnd_multichain_proxy.sol:UChildERC20Proxy",
-          address: proxy,
-          constructorArguments: [impl]
-        })
+
+    // Verify Impl
+    await hre.run("verify:verify", {
+      contract: "contracts/tokens/dSTND.sol:dSTNDV1",
+      address: xstnd,
+      constructorArguments: [stnd]
+    })
 })

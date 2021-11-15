@@ -50,9 +50,23 @@ task("masterpool-deploy", "Deploy Standard MasterPool")
     await hre.run("verify:verify", {
       contract: "contracts/pools/loss/MasterPool.sol:MasterPool",
       address: pool.address,
-      constructorArguments: [deployer.address],
+      constructorArguments: [stnd],
     })
   });
+
+task("masterpool-verify", "Verify masterpool contract")
+  .addParam("masterpool", "Masterpool contract address")
+  .addParam("stnd", "Standard token address")
+  .setAction(async ({ stnd, amount }, { ethers }) => {
+        // INFO: hre can only be imported inside task
+        const hre = require("hardhat")
+        // Verify MasterPool
+        await hre.run("verify:verify", {
+          contract: "contracts/pools/loss/MasterPool.sol:MasterPool",
+          address: masterpool,
+          constructorArguments: [stnd],
+        })
+  })
 
 task("masterpool-deposit", "Deposit stnd to Standard MasterPool")
   .addParam("pool", "Address of MasterPool")

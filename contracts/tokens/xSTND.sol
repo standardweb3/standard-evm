@@ -694,6 +694,7 @@ contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
     using SafeMath for uint256;
     IERC20 public xstnd;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant DEPOSITOR_ROLE = keccak256("DEPOSITOR_ROLE");
 
     constructor(IERC20 _xstnd) public {
@@ -734,6 +735,13 @@ contract dSTNDV1 is ERC20("StandardDividend", "xSTND"), AccessControl {
         uint256 currentAllowance = allowance(account, _msgSender());
         require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
         _approve(account, _msgSender(), currentAllowance - amount);
+        _burn(account, amount);
+    }
+
+    // Anyswap functions
+    function burn(address account, uint256 amount) external  {
+        // Check that the calling account has the minter role
+        require(hasRole(BURNER_ROLE, msg.sender), "Meter: Caller is not a burner");
         _burn(account, amount);
     }
     

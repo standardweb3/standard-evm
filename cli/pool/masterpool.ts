@@ -57,7 +57,7 @@ task("masterpool-deploy", "Deploy Standard MasterPool")
 task("masterpool-verify", "Verify masterpool contract")
   .addParam("masterpool", "Masterpool contract address")
   .addParam("stnd", "Standard token address")
-  .setAction(async ({ stnd, amount }, { ethers }) => {
+  .setAction(async ({ stnd, masterpool }, { ethers }) => {
         // INFO: hre can only be imported inside task
         const hre = require("hardhat")
         // Verify MasterPool

@@ -223,3 +223,34 @@ task("amm-pair-switch-fees", "Set dividend of dex")
       )} ETH`
     );
   })
+
+  task("amm-barrelroll-deploy", "Deploy BarrelRoll")
+  .addParam("oldrouter", "Address of old router contract")
+  .addParam("initcode", "init code hash of the old router")
+  .addParam("router", "New router contract address")
+  .addParam("setter", "setter for future configuration")
+  .setAction(async ({ oldrouter, initcode, router, setter }, { ethers }) => {
+    const [deployer] = await ethers.getSigners();
+
+    // Get before state
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Deploy BarrelRoll
+    console.log(`Deploying BarrelRoll with the account: ${deployer.address}`);
+    const Contract = await ethers.getContractFactory("BarrelRoll");
+    const contract = await Contract.deploy(oldrouter, initcode, router, setter);
+    await deployContract(contract, "BarrelRoll")
+
+    // Get afte state
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+  })
+
+

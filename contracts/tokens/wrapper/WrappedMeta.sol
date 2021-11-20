@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "./MetaERC20.sol";
 import "./interfaces/IMeta.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/access/IAccessControl.sol";
 
 
 library MetaLibrary {
@@ -24,8 +25,11 @@ contract WrappedMeta {
 
     mapping(address => address[]) wraps;
     event WrapCreated(address metaverse, uint256 assetId, address wrapped);
+    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
 
     function createWrap(string memory name, string memory symbol, address meta, uint256 assetId, bytes memory data) public returns (address wrapped) {
+        // require sender to be ERC1155 default admin
+        require(IAccessControl(meta).hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "WrappedMeta: ACCESS INVALID");
         bytes memory bytecode = type(MetaERC20).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(name, symbol, meta, assetId, data));
         assembly {
@@ -41,7 +45,7 @@ contract WrappedMeta {
     }
 
     function wrap(address meta, uint256 id, uint256 amount, bytes memory data) public {
-        // require wrapped token to be created
+        // require wrapped token to be created by metaverse admin
         address wrapped = wraps[meta][id];
         require(wrapped != address(0x0), "WrappedMeta: WRAPPED NOT CREATED");
         // Get ERC1155

@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./MetaERC20.sol";
-import "./interfaces/IMeta.sol";
+import "./interfaces/IMetaERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
 
@@ -44,28 +44,28 @@ contract WrappedMeta {
         return keccak256(type(MetaERC20).creationCode);
     }
 
-    function wrap(address meta, uint256 id, uint256 amount, bytes memory data) public {
+    function deposit(address meta, uint256 id, uint256 amount, bytes memory data) public {
         // require wrapped token to be created by metaverse admin
         address wrapped = wraps[meta][id];
         require(wrapped != address(0x0), "WrappedMeta: WRAPPED NOT CREATED");
         // Get ERC1155
         IERC1155(meta).safeTransferFrom(msg.sender, address(this), id, amount, data);
         // if it is, mint wrapped erc20 to the sender
-        IMeta(wrapped).mint(msg.sender, amount);
+        IMetaERC20(wrapped).mint(msg.sender, amount);
     }
 
-    function unwrap(address wrapped, uint256 amount) public {
+    function withdraw(address wrapped, uint256 amount) public {
         // Get metacoin's metaverse address
-        address meta = IMeta(wrapped).meta();
+        address meta = IMetaERC20(wrapped).meta();
         // Get wrapped asset's id
-        uint256 assetId = IMeta(wrapped).assetId();
+        uint256 assetId = IMetaERC20(wrapped).assetId();
         // Get wrapped asset's data
-        bytes memory data = IMeta(wrapped).data();
+        bytes memory data = IMetaERC20(wrapped).data();
         // Verify unwrapped
         bool verify = MetaLibrary.verifyUnwrap(meta, address(this), assetId, wrappedCodeHash());
         require(verify, "WrappedMeta: NOT WRAPPED FROM THIS");
         // Get Wrapped token
-        IMeta(wrapped).transferFrom(msg.sender, address(this), amount);
+        IMetaERC20(wrapped).burn(msg.sender, amount);
         // Give back the erc1155
         IERC1155(meta).safeTransferFrom(address(this), msg.sender, assetId, amount, data);
     }

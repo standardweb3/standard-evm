@@ -1,11 +1,10 @@
-// SPDX-License-Identifier: Apache-2.0
-
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IMeta is IERC20 {
-    function mint(address to, uint256 amount) external;
-    function meta() external view returns (address meta);
-    function assetId() external view returns (uint256 assetId);
-    function data() external view returns (bytes memory data);
+interface IMeta {
+
+    function wrappedCodeHash() external view returns (bytes32);
+    function deposit(address meta, uint256 id, uint256 amount, bytes memory data) external;
+    function withdraw(address wrapped, uint256 amount) external;
+    function createWrap(string memory name, string memory symbol, address meta, uint256 assetId, bytes memory data) external returns (address wrapped);
 }
+

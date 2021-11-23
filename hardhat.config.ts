@@ -250,6 +250,14 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       blockGasLimit: 700000,
     },
+    metis: {
+      url: "https://andromeda.metis.io/?owner=1088",
+      accounts,
+      chainId: 1088,
+      live: true,
+      saveDeployments: true,
+      blockGasLimit: 700000,
+    },
     "arbitrum-testnet": {
       url: "https://kovan3.arbitrum.io/rpc",
       accounts,

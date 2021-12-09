@@ -44,6 +44,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     constructor() {
         feeToSetter = _msgSender();
+        _setupRole(ORACLE_OPERATOR_ROLE, _msgSender());
     }
 
     function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public {

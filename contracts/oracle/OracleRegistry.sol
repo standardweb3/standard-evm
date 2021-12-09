@@ -21,6 +21,15 @@ contract OracleRegistry is AccessControl {
         return feed.getThePrice();
     }
 
+    function getPriceOf(address asset_) external returns (int256) {
+        require(
+            PriceFeeds[asset_] != address(0x0),
+            "VAULT: Asset not registered"
+        );
+        feed = IPrice(PriceFeeds[asset_]);
+        return feed.getThePrice();
+    }
+
     function addOracle(address asset_, address aggregator_) public {
         require(
             hasRole(ORACLE_OPERATOR_ROLE, msg.sender),

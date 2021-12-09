@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { executeTx, deployContract, ZERO, recordAddress, executeFrom } from "../helper";
+import { executeTx, deployContract, ZERO, recordAddress, executeFrom, getAddress,ChainId } from "../helper";
 
 const assert = (condition, message) => {
   if (condition) return;
@@ -98,7 +98,7 @@ task("masterpool-deposit", "Deposit stnd to Standard MasterPool")
   });
 
 task("masterpool-add", "Add LP Pool to Standard MasterPool")
-  .addParam("masterpool", "Address of masterpool contract")
+  .addOptionalParam("masterpool", "Address of masterpool contract", "")
   .addParam("allocpoint", "Allocation point for priority")
   .addParam("lptoken", "Address of lptoken")
   .addOptionalParam("rewarder", "Address of extra rewarder address", ZERO)
@@ -114,7 +114,11 @@ task("masterpool-add", "Add LP Pool to Standard MasterPool")
 
     // Send STND to the pool
     const MasterPool = await ethers.getContractFactory("MasterPool")
-    const tx = await MasterPool.attach(masterpool).add(allocpoint, lptoken, rewarder)
+    const chainId = (await ethers.provider.getNetwork()).chainId;
+    // Get network from chain ID
+    let chain = ChainId[chainId]
+    const masterPool = await getAddress("MasterPool", chain) ?? masterpool
+    const tx = await MasterPool.attach(masterPool).add(allocpoint, lptoken, rewarder)
     await executeTx(tx, "Execute add at")
 
 

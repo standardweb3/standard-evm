@@ -3,6 +3,17 @@ import fs from "fs/promises"
 import inquirer from "inquirer"
 import "dotenv/config";
 
+export async function getAddress(contract, chain) {
+    const filename = 'address-book.json'
+    const exists = await fileExists(filename)
+    if (exists) {
+        var content = await loadAddresses()
+        return content[contract][chain]
+    } else {
+        throw new Error("Contract not registered in address_book.json")
+    }
+}
+
 export async function recordAddress(name, chain, address) {
     const filename = 'address-book.json'
     const exists = await fileExists(filename)

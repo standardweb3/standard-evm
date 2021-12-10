@@ -47,11 +47,12 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _setupRole(ORACLE_OPERATOR_ROLE, _msgSender());
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, uint8 cDecimals_) public {
         require(_msgSender() == feeToSetter, "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
-        SFRConfig[collateral_] = SFR_;   
+        SFRConfig[collateral_] = SFR_; 
+        CDecimals[collateral_] = cDecimals_;  
     }
 
     function setRebaseActive(bool set_) public {
@@ -166,7 +167,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
     }
 
-    function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public override returns (bool) {
+    function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {
         (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
 
         uint mcr = getMCR(collateral_);
@@ -194,7 +195,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return (collateralValueTimes100, debtValue);        
     }
 
-    function getAssetPrice(address asset_) public view returns (uint) {
+    function getAssetPrice(address asset_) public view override returns (uint) {
         address aggregator = PriceFeeds[asset_];
         require(
             aggregator != address(0x0),

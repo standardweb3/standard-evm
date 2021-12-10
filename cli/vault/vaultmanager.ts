@@ -111,7 +111,7 @@ task("vaultmanager-addoracle", "Add an oracle for an asset")
         await executeTx(addOracle, "Execute addOracle at")
     })
 
-task("vaultmanager-getpriceof", "Get price of an asset through oracle")
+task("vaultmanager-getassetprice", "Get price of an asset through oracle")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
     .addParam("asset", "address of token contract")
     .setAction(async ({ vaultmanager, asset, oracle }) => {
@@ -124,17 +124,20 @@ task("vaultmanager-getpriceof", "Get price of an asset through oracle")
 
         // Add oracle to vaultmanager
         const VaultManager = await ethers.getContractFactory("VaultManager");
-        const Price = await VaultManager.attach(vaultManager).getPriceOf(asset);
-        const price = await executeTx(Price, "Execute Price at")
-        console.log(price)
+        const Price = await VaultManager.attach(vaultManager);
+        const price = await Price.getAssetPrice(asset);
+        console.log(price.toNumber())
     })
 
 
-task("vaultmanager-addCDP", "Set CDP for an asset")
+task("vaultmanager-initializecdp", "initialize CDP as a collateral")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
-    .addParam("asset", "address of token contract")
-    .addParam("oracle", "oracle contract address")
-    .setAction(async ({ vaultmanager, asset, oracle }) => {
+    .addParam("collateral", "address of token contract")
+    .addParam("mcr", "Minimal Collaterization Ratio of the collateral in percent")
+    .addParam("lfr", "Liquidation Fee Ratio in percent")
+    .addParam("sfr", "Stability Fee Ratio in percent")
+    .addParam("cdecimal", "Collateral price decimal from the oracle")
+    .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, cdecimal }) => {
 
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
@@ -144,6 +147,6 @@ task("vaultmanager-addCDP", "Set CDP for an asset")
 
         // Add oracle to vaultmanager
         const VaultManager = await ethers.getContractFactory("VaultManager");
-        const addOracle = await VaultManager.attach(vaultManager).addOracle(asset, oracle);
-        await executeTx(addOracle, "Execute addOracle at")
+        const initializeCDP = await VaultManager.attach(vaultManager).initializeCDP(collateral, mcr, lfr, sfr, cdecimal);
+        await executeTx(initializeCDP, "Execute addOracle at")
     })

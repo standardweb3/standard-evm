@@ -38,5 +38,6 @@ export enum ChainId {
     PALM_TESTNET = 11297108099,
     MOONRIVER = 1285,
     METIS = 1088,
+    EVMOS_TESTNET = 9000
   }
   

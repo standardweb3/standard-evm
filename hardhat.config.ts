@@ -305,6 +305,13 @@ const config: HardhatUserConfig = {
       chainId: 42,
       saveDeployments: true,
       tags: ["staging"]
+    },
+    "evmos-testnet": {
+      url: "https://ethereum.rpc.evmos.dev",
+      accounts,
+      chainId: 9000,
+      saveDeployments: true,
+      tags: ["staging"]
     }
   },
   paths: {

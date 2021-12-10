@@ -122,7 +122,7 @@ task("vaultmanager-getassetprice", "Get price of an asset through oracle")
         const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
         console.log(vaultManager)
 
-        // Add oracle to vaultmanager
+        // Get asset price in vault manager
         const VaultManager = await ethers.getContractFactory("VaultManager");
         const Price = await VaultManager.attach(vaultManager);
         const price = await Price.getAssetPrice(asset);
@@ -138,7 +138,6 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
     .addParam("sfr", "Stability Fee Ratio in percent")
     .addParam("cdecimal", "Collateral price decimal from the oracle")
     .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, cdecimal }) => {
-
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
         let chain = ChainId[chainId]
@@ -148,5 +147,22 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
         // Add oracle to vaultmanager
         const VaultManager = await ethers.getContractFactory("VaultManager");
         const initializeCDP = await VaultManager.attach(vaultManager).initializeCDP(collateral, mcr, lfr, sfr, cdecimal);
-        await executeTx(initializeCDP, "Execute addOracle at")
+        await executeTx(initializeCDP, "Execute initializeCDP at")
+    })
+
+task("vaultmanager-getcdpconfig", "initialize CDP as a collateral")
+    .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+    .addParam("collateral", "address of token contract")
+    .setAction(async ({ vaultmanager, collateral }) => {
+        const chainId = (await ethers.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
+        console.log(vaultManager)
+
+        // Get asset price in vault manager
+        const VaultManager = await ethers.getContractFactory("VaultManager");
+        const Price = await VaultManager.attach(vaultManager);
+        const result = await Price.getCDPConfig(collateral);
+        console.log(` MCR: ${result[0]}% \n LFR: ${result[1]}% \n SFR: ${result[2]}% \n cDecimal: ${result[3]}`)
     })

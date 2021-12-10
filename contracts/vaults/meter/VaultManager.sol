@@ -43,12 +43,12 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address public override WETH;
 
     constructor() {
-        feeToSetter = _msgSender();
         _setupRole(ORACLE_OPERATOR_ROLE, _msgSender());
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, uint8 cDecimals_) public {
-        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
@@ -56,19 +56,19 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function setRebaseActive(bool set_) public {
-        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         rebaseActive = set_;
     }
 
     function setFees(address feeTo_, address dividend_, address treasury_) public {
-        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         feeTo = feeTo_;
         dividend = dividend_;
         treasury = treasury_;
     }
     
     function initialize(address v1_, address meter_, address v2Factory_, address weth_) public {
-        require(_msgSender() == feeToSetter, "IA"); // Invalid Access
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         v1 = v1_;
         meter = meter_;
         v2Factory = v2Factory_;

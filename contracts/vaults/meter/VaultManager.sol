@@ -186,7 +186,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         }
     }
 
-    function _calculateValues(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) internal returns (uint256, uint256) {
+    function _calculateValues(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) internal view returns (uint256, uint256) {
         uint256 collateralValue = getAssetValue(collateral_, cAmount_);
         uint256 debtValue = getAssetValue(debt_, dAmount_);
         uint256 collateralValueTimes100 = collateralValue * 100;
@@ -194,16 +194,17 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return (collateralValueTimes100, debtValue);        
     }
 
-
-    function getAssetPrice(address asset_) public override returns (uint) {
+    function getAssetPrice(address asset_) public view returns (uint) {
         address aggregator = PriceFeeds[asset_];
-        feed = IPrice(aggregator);
-        uint price = uint(feed.getThePrice());
-        require(price > 0); // price is zero
-        return price;
+        require(
+            aggregator != address(0x0),
+            "VAULT: Asset not registered"
+        );
+        int256 result = IPrice(aggregator).getThePrice();
+        return uint(result);
     }
 
-    function getAssetValue(address asset_, uint256 amount_) public override returns (uint256) {
+    function getAssetValue(address asset_, uint256 amount_) public view override returns (uint256) {
         uint price = getAssetPrice(asset_);
         uint256 value = price * amount_;
         require(value >= amount_); // overflow

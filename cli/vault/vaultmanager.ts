@@ -111,3 +111,39 @@ task("vaultmanager-addoracle", "Add an oracle for an asset")
         await executeTx(addOracle, "Execute addOracle at")
     })
 
+task("vaultmanager-getpriceof", "Get price of an asset through oracle")
+    .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+    .addParam("asset", "address of token contract")
+    .setAction(async ({ vaultmanager, asset, oracle }) => {
+
+        const chainId = (await ethers.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
+        console.log(vaultManager)
+
+        // Add oracle to vaultmanager
+        const VaultManager = await ethers.getContractFactory("VaultManager");
+        const Price = await VaultManager.attach(vaultManager).getPriceOf(asset);
+        const price = await executeTx(Price, "Execute Price at")
+        console.log(price)
+    })
+
+
+task("vaultmanager-addCDP", "Set CDP for an asset")
+    .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+    .addParam("asset", "address of token contract")
+    .addParam("oracle", "oracle contract address")
+    .setAction(async ({ vaultmanager, asset, oracle }) => {
+
+        const chainId = (await ethers.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
+        console.log(vaultManager)
+
+        // Add oracle to vaultmanager
+        const VaultManager = await ethers.getContractFactory("VaultManager");
+        const addOracle = await VaultManager.attach(vaultManager).addOracle(asset, oracle);
+        await executeTx(addOracle, "Execute addOracle at")
+    })

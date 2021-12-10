@@ -10,24 +10,19 @@ contract OracleRegistry is AccessControl {
         keccak256("ORACLE_OPERATOR_ROLE");
     event AggregatorAdded(address asset, address aggregator);
     mapping(address => address) public PriceFeeds;
-    IPrice feed;
 
-    function _getPriceOf(address asset_) internal returns (int256) {
-        require(
-            PriceFeeds[asset_] != address(0x0),
-            "VAULT: Asset not registered"
-        );
-        feed = IPrice(PriceFeeds[asset_]);
-        return feed.getThePrice();
+    constructor() {
+        _setupRole(ORACLE_OPERATOR_ROLE, _msgSender());
     }
 
-    function getPriceOf(address asset_) external returns (int256) {
+    function _getPriceOf(address asset_) internal view returns (int256) {
+        address aggregator = PriceFeeds[asset_];
         require(
-            PriceFeeds[asset_] != address(0x0),
+            aggregator != address(0x0),
             "VAULT: Asset not registered"
         );
-        feed = IPrice(PriceFeeds[asset_]);
-        return feed.getThePrice();
+        int256 result = IPrice(aggregator).getThePrice();
+        return result;
     }
 
     function addOracle(address asset_, address aggregator_) public {

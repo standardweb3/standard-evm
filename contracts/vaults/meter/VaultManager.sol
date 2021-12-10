@@ -27,8 +27,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
     
     /// Address of cdp nft registry
     address public override v1;
-    /// feeTo setter
-    address feeToSetter;
     /// Address of meter
     address public override meter;
     /// Address of uniswapv2 factory;

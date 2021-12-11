@@ -65,7 +65,6 @@ contract Vault is IVault {
         WETH = weth_;
     }
 
-    /// liquidate
     function liquidate() external override {
         require(
             !IVaultManager(manager).isValidCDP(
@@ -95,7 +94,6 @@ contract Vault is IVault {
         selfdestruct(payable(msg.sender));
     }
 
-    /// Deposit collateral
     function depositCollateralNative()
         external
         payable
@@ -108,7 +106,6 @@ contract Vault is IVault {
         emit DepositCollateral(vaultId, msg.value);
     }
 
-    /// Deposit collateral
     function depositCollateral(uint256 amount_)
         external
         override
@@ -150,7 +147,6 @@ contract Vault is IVault {
         emit WithdrawCollateral(vaultId, amount_);
     }
 
-    /// Withdraw collateral
     function withdrawCollateral(uint256 amount_)
         external
         override
@@ -176,7 +172,6 @@ contract Vault is IVault {
         emit WithdrawCollateral(vaultId, amount_);
     }
 
-    /// Payback MTR
     function payDebt(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
         uint256 fee = _calculateFee();
@@ -194,7 +189,6 @@ contract Vault is IVault {
         emit PayBack(vaultId, borrow, fee);
     }
 
-    /// Close CDP
     function closeVault(uint256 amount_) external override onlyVaultOwner {
         // calculate debt with interest
         uint256 fee = _calculateFee();
@@ -220,12 +214,10 @@ contract Vault is IVault {
         selfdestruct(payable(msg.sender));
     }
 
-    /// burn vault v1
     function _burnV1FromVault() internal {
         IV1(v1).burnFromVault(vaultId);
     }
 
-    /// burn vault mtr
     function _burnMTRFromVault(uint256 amount_) internal {
         IStablecoin(debt).burnFrom(msg.sender, amount_);
     }

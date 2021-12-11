@@ -92,6 +92,42 @@ task("diakeyvalueoracle-deploy", "Deploy DIA Oracle Contract")
         });
     })
 
+task("mockoracle-deploy", "Deploy DIA Oracle Contract")
+    .addParam("value", "price value in 8 decimals")
+    .addParam("name", "name of the constant oracle")
+    .setAction(async ({ name, value }) => {
+        const [deployer] = await ethers.getSigners();
+        // Get before state
+        console.log(
+            `Deployer balance: ${ethers.utils.formatEther(
+                await deployer.getBalance()
+            )} ETH`
+        );
+
+        // Deploy Vault Manager
+        console.log(
+            `Deploying MockOracle with the account: ${deployer.address}`
+        );
+        const MockOracle = await ethers.getContractFactory("MockOracle");
+        const mockoracle = await MockOracle.deploy(value, name);
+        const chainId = (await mockoracle.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        await deployContract(mockoracle, `Mock Oracle(constant ${name} on ${chain})`);
+
+        // Test price 
+        const assetPrice = await mockoracle.getThePrice()
+        console.log(`Price of ${name}: ${assetPrice}`)
+        // INFO: hre can only be imported inside task
+        const hre = require("hardhat");
+        // Verify keyvalue oracle
+        await hre.run("verify:verify", {
+            contract: "contracts/oracle/DiaKeyValue.sol:DiaKeyValue",
+            address: mockoracle,
+            constructorArguments: [value, name],
+        });
+    })
+
 
 task("vaultmanager-addoracle", "Add an oracle for an asset")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
@@ -165,4 +201,45 @@ task("vaultmanager-getcdpconfig", "initialize CDP as a collateral")
         const Price = await VaultManager.attach(vaultManager);
         const result = await Price.getCDPConfig(collateral);
         console.log(` MCR: ${result[0]}% \n LFR: ${result[1]}% \n SFR: ${result[2]}% \n cDecimal: ${result[3]}`)
+    })
+
+task("vaultmanager-isvalidcdp", "Check if cdp is valid")
+    .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+    .addParam("collateral", "address of collateral token contract")
+    .addParam("debt", "address of debt contract")
+    .addParam("camount", "amount of collateral in 18 decimals")
+    .addParam("damount", "amount of debt in 18 decimals")
+    .setAction(async ({ vaultmanager, collateral, debt, camount, damount }) => {
+
+        const chainId = (await ethers.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
+        console.log(vaultManager)
+
+        // Get asset price in vault manager
+        const VaultManager = await ethers.getContractFactory("VaultManager");
+        const Price = await VaultManager.attach(vaultManager);
+        const price = await Price.isValidCDP(collateral, debt, camount, damount);
+        console.log(price)
+    })
+
+
+task("vaultmanager-createcdp", "Create CDP position")
+    .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+    .addParam("collateral", "address of collateral token contract")
+    .addParam("camount", "amount of colalteral in 18 decimals")
+    .addParam("damount", "amount of debt in 18 decimals")
+    .setAction(async ({ vaultmanager, collateral, camount, damount }) => {
+
+        const chainId = (await ethers.provider.getNetwork()).chainId;
+        // Get network from chain ID
+        let chain = ChainId[chainId]
+        const vaultManager = await getAddress("VaultManager", chain) ?? vaultmanager
+        console.log(vaultManager)
+
+        // Get asset price in vault manager
+        const VaultManager = await ethers.getContractFactory("VaultManager");
+        const createCDP = await VaultManager.attach(vaultManager).createCDP(collateral, camount, damount);
+        await executeTx(createCDP, "Execute createCDP at")
     })

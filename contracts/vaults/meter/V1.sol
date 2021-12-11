@@ -23,7 +23,6 @@ contract V1 is ERC721Enumerable, AccessControl, IV1  {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
-        _setupRole(MINTER_ROLE, manager);
         _setupRole(BURNER_ROLE, _msgSender());
         manager = manager_;
     }
@@ -35,7 +34,7 @@ contract V1 is ERC721Enumerable, AccessControl, IV1  {
 
     function mint(address to, uint256 tokenId_) external override {
         // Check that the calling account has the minter role
-        require(hasRole(MINTER_ROLE, msg.sender), "MTRV1: Caller is not a minter");
+        require(_msgSender() == manager, "MTRV1: Caller is not a minter");
         _mint(to, tokenId_);
     }
 

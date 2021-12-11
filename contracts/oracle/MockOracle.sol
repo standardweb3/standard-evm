@@ -4,13 +4,15 @@ pragma solidity ^0.8.0;
 
 import "./IPrice.sol";
 
-contract Dummy is IPrice {
+contract MockOracle is IPrice {
     int256 price;
+    string public name;
     address operator;
 
-    constructor(int256 price_) {
+    constructor(int256 price_, string memory name_) {
         price = price_;
         operator = msg.sender;
+        name = name_;
     }
 
     function setPrice(int256 price_) public {

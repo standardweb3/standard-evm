@@ -8,7 +8,7 @@ interface IVaultManager {
     /// NFT token address
     function  v1() external view returns (address);
     /// Stablecoin address
-    function meter() external view returns (address);
+    function stablecoin() external view returns (address);
     /// UniswapV2Factory address
     function v2Factory() external view returns (address);
     /// Address of feeTo
@@ -19,7 +19,7 @@ interface IVaultManager {
     function treasury() external view returns (address);
     /// Address of wrapped eth
     function WETH() external view returns (address);
-    /// Desired of supply of meter to be minted
+    /// Desired of supply of stablecoin to be minted
     function desiredSupply() external view returns (uint256);
     /// Switch to on/off rebase
     function rebaseActive() external view returns (bool);

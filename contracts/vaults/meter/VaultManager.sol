@@ -27,8 +27,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     
     /// Address of cdp nft registry
     address public override v1;
-    /// Address of meter
-    address public override meter;
+    /// Address of stablecoin
+    address public override stablecoin;
     /// Address of uniswapv2 factory;
     address public override v2Factory;
     /// Address of feeTo
@@ -65,10 +65,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
         treasury = treasury_;
     }
     
-    function initialize(address v1_, address meter_, address v2Factory_, address weth_) public {
+    function initialize(address v1_, address stablecoin_, address v2Factory_, address weth_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         v1 = v1_;
-        meter = meter_;
+        stablecoin = stablecoin_;
         v2Factory = v2Factory_;
         WETH = weth_;
     }
@@ -81,41 +81,41 @@ contract VaultManager is OracleRegistry, IVaultManager {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
         Vault(vault).initialize(vaultId_, collateral_, debt_, v1, amount_, v2Factory, WETH);
-        emit VaultCreated(vaultId_, collateral_, debt_, msg.sender, vault);
         return vault;
     }
 
     function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // get aggregators
         // check position
-        require(isValidCDP(collateral_, meter, cAmount_, dAmount_)
+        require(isValidCDP(collateral_, stablecoin, cAmount_, dAmount_)
         , "IP"); // Invalid Position
-        // check rebased supply of meter
+        // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
         uint256 gIndex = allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
-        address vlt = _createVault(gIndex, collateral_, meter, dAmount_);
+        address vlt = _createVault(gIndex, collateral_, stablecoin, dAmount_);
         // transfer collateral to the vault, manage collateral from there
         TransferHelper.safeTransferFrom(collateral_, _msgSender(), vlt, cAmount_);
         allVaults.push(vlt);
         // mint mtr to the sender
-        IStablecoin(meter).mint(_msgSender(), dAmount_);
+        IStablecoin(stablecoin).mint(_msgSender(), dAmount_);
+        emit VaultCreated(gIndex, collateral_, stablecoin, msg.sender, vlt);
         return true;
     }
 
-    function createCDPNative(uint dAmount_) payable public {
+    function createCDPNative(uint dAmount_) payable public returns(bool success) {
         // check tests
-        require(isValidCDP(WETH, meter, msg.value, dAmount_)
+        require(isValidCDP(WETH, stablecoin, msg.value, dAmount_)
         , "IP"); // Invalid Position
-        // check rebased supply of meter
+        // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
         // mint ERC721 for vault
         uint256 gIndex = allVaultsLength();
         IV1(v1).mint(_msgSender(), gIndex);
-        address vlt = _createVault(gIndex, WETH, meter, dAmount_);
+        address vlt = _createVault(gIndex, WETH, stablecoin, dAmount_);
         // wrap native currency
         IWETH(WETH).deposit{value: address(this).balance}();
         uint256 weth = IERC20Minimal(WETH).balanceOf(address(this));
@@ -123,7 +123,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
         require(IWETH(WETH).transfer(vlt, weth)); 
         allVaults.push(vlt);
         // mint mtr to the sender
-        IStablecoin(meter).mint(_msgSender(), dAmount_);
+        IStablecoin(stablecoin).mint(_msgSender(), dAmount_);
+        emit VaultCreated(gIndex, WETH, stablecoin, msg.sender, vlt);
+        return true;
     }
     
     function allVaultsLength() public view returns (uint) {
@@ -156,11 +158,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     // Set desirable supply of issuing stablecoin
     function rebase() public {
-        uint256 totalSupply = IERC20Minimal(meter).totalSupply(); 
+        uint256 totalSupply = IERC20Minimal(stablecoin).totalSupply(); 
         if ( totalSupply == 0 ) {
             return;
         }
-        uint stablecoinPrice = uint(_getPriceOf(meter));
+        uint stablecoinPrice = uint(_getPriceOf(stablecoin));
         // get desired supply and update 
         desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
     }
@@ -179,7 +181,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function isValidSupply(uint256 issueAmount_) internal view returns (bool) {
         if (rebaseActive) {
-            return IERC20Minimal(meter).totalSupply() + issueAmount_ <= desiredSupply;
+            return IERC20Minimal(stablecoin).totalSupply() + issueAmount_ <= desiredSupply;
         } else {
             return true;
         }
@@ -214,3 +216,4 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return keccak256(type(Vault).creationCode);
     }
 }
+

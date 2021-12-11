@@ -253,7 +253,7 @@ task("stnd-anyswap-deploy", "Deploy Standard Multichain token which is compatibl
     );
 
     const TokenImpl = await ethers.getContractFactory("UChildAdministrableERC20")
-    // mint certain amount
-    const mint = await TokenImpl.attach(stnd).approve(spender, ethers.utils.parseUnits(amount, 18));
-    await executeTx(mint, "Execute Approve at")
+    // approve certain amount
+    const approve = await TokenImpl.attach(stnd).approve(spender, ethers.utils.parseUnits(amount, 18));
+    await executeTx(approve, "Execute Approve at")
   })

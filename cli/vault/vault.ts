@@ -61,7 +61,6 @@ task("vault-deploy", "Deploy Standard Vault Components")
     await deployContract(bndstrtgy, "BondedStrategy");
     // Record address with chainid
     //await recordAddress(ethers, "BondedStrategy", bndstrtgy.address);
-    console.log("res");
     // Initiailize VaultManager
     const tx = await vaultManager
       .attach(vaultManager.address)
@@ -160,7 +159,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await deployContract(bndstrtgy, "BondedStrategy");
     // Record address with chainid
     //await recordAddress(ethers, "BondedStrategy", bndstrtgy.address);
-    console.log("res");
     // Initiailize VaultManager
     const tx = await vaultManager
       .attach(vaultManager.address)
@@ -204,6 +202,12 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // initialize CDP
     const initializeCDP = await vaultManager.initializeCDP(weth, 150, 20, 5, 8);
     await executeTx(initializeCDP, "Execute initializeCDP at")
+
+    // Approve spending collateral
+    const TokenImpl = await ethers.getContractFactory("WETH9_")
+    // approve certain amount
+    const approve = await TokenImpl.attach(weth).approve(vaultManager.address, ethers.utils.parseUnits("1000000", 18));
+    await executeTx(approve, "Execute Approve at")
     
     // Create CDP
     const createCDP = await vaultManager.createCDP(weth, "100000000000000000", "95982310500000000");
@@ -241,7 +245,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
 
     // Verify FeePool
     await hre.run("verify:verify", {
-      contract: "contracts/vaults/pool/BondedStrategt.sol:BondedStrategy",
+      contract: "contracts/vaults/pool/BondedStrategy.sol:BondedStrategy",
       address: v1.address,
       cosntructorArguments: [stnd, mtr.address],
     });

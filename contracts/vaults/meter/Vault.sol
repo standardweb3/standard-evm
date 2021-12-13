@@ -65,6 +65,10 @@ contract Vault is IVault {
         WETH = weth_;
     }
 
+    function getStatus() external view override returns (address collateral, uint256 cBalance, address debt, uint256 dBalance) {
+        return (collateral, IERC20Minimal(collateral).balanceOf(address(this)), debt, IERC20Minimal(debt).balanceOf(address(this)));
+    }
+
     function liquidate() external override {
         require(
             !IVaultManager(manager).isValidCDP(
@@ -186,7 +190,7 @@ contract Vault is IVault {
         uint256 left = _sendFee(debt, amount_, fee);
         _burnMTRFromVault(left);
         borrow -= left;
-        emit PayBack(vaultId, borrow, fee);
+        emit PayBack(vaultId, borrow, fee, amount_);
     }
 
     function closeVault(uint256 amount_) external override onlyVaultOwner {

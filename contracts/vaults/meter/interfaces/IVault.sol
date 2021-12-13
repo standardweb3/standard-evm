@@ -6,7 +6,7 @@ interface IVault {
     event DepositCollateral(uint256 vaultID, uint256 amount);
     event WithdrawCollateral(uint256 vaultID, uint256 amount);
     event Borrow(uint256 vaultID, uint256 amount);
-    event PayBack(uint256 vaultID, uint256 amount, uint256 paybackFee);
+    event PayBack(uint256 vaultID, uint256 borrow, uint256 paybackFee, uint256 amount);
     event CloseVault(address vault, uint256 amount, uint256 closingFee);
     event Liquidated(address vault, address collateral, uint256 amount);
     /// Getters
@@ -30,6 +30,8 @@ interface IVault {
     function getDebt() external returns (uint256);
     /// V2 factory address for liquidation
     function v2Factory() external view returns (address);
+    /// Vault status
+    function getStatus() external view returns (address collateral, uint256 cBalance, address debt, uint256 dBalance);
 
     /// Functions
     function liquidate() external;

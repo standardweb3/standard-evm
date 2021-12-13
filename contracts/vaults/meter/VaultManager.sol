@@ -50,12 +50,14 @@ contract VaultManager is OracleRegistry, IVaultManager {
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
-        CDecimals[collateral_] = cDecimals_;  
+        CDecimals[collateral_] = cDecimals_;
+        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals_);  
     }
 
     function setRebaseActive(bool set_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         rebaseActive = set_;
+        emit RebaseActive(set_);
     }
 
     function setFees(address feeTo_, address dividend_, address treasury_) public {
@@ -63,6 +65,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         feeTo = feeTo_;
         dividend = dividend_;
         treasury = treasury_;
+        emit SetFees(feeTo_, dividend_, treasury_);
     }
     
     function initialize(address v1_, address stablecoin_, address v2Factory_, address weth_) public {
@@ -101,7 +104,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         allVaults.push(vlt);
         // mint mtr to the sender
         IStablecoin(stablecoin).mint(_msgSender(), dAmount_);
-        emit VaultCreated(gIndex, collateral_, stablecoin, msg.sender, vlt);
+        emit VaultCreated(gIndex, collateral_, stablecoin, msg.sender, vlt, cAmount_, dAmount_);
         return true;
     }
 
@@ -124,7 +127,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         allVaults.push(vlt);
         // mint mtr to the sender
         IStablecoin(stablecoin).mint(_msgSender(), dAmount_);
-        emit VaultCreated(gIndex, WETH, stablecoin, msg.sender, vlt);
+        emit VaultCreated(gIndex, WETH, stablecoin, msg.sender, vlt, msg.value, dAmount_);
         return true;
     }
     
@@ -165,6 +168,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint stablecoinPrice = uint(_getPriceOf(stablecoin));
         // get desired supply and update 
         desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
+        emit Rebase(totalSupply, desiredSupply);
     }
 
     function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {

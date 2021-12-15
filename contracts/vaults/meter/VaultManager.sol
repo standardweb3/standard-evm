@@ -16,14 +16,14 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address[] public allVaults;
 
     // CDP configs
-    /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) 
+    /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => uint) internal LFRConfig;
-    /// key: Collateral address, value: Minimum Collateralization Ratio (MCR) in percent(%)
+    /// key: Collateral address, value: Minimum Collateralization Ratio (MCR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => uint) internal MCRConfig;
-    /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%)
+    /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => uint) internal SFRConfig; 
     /// key: Collateral address, value: collateral decimals, oracles come with same precision, so amounts has to be adjusted to collateral
-    mapping (address => uint8) internal CDecimals;
+    //mapping (address => uint8) internal CDecimals;
     
     /// Address of cdp nft registry
     address public override v1;
@@ -45,13 +45,13 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, uint8 cDecimals_) public {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
-        CDecimals[collateral_] = cDecimals_;
-        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals_);  
+        uint8 cDecimals = IERC20Minimal(collateral_).decimals();
+        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals);  
     }
 
     function setRebaseActive(bool set_) public {
@@ -136,7 +136,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals) {
-        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], CDecimals[collateral_]);
+        uint8 cDecimals = IERC20Minimal(collateral_).decimals();
+        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], cDecimals);
     }
 
     function getMCR(address collateral_) public view override returns (uint) {
@@ -152,7 +153,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     } 
     
     function getCDecimal(address collateral_) public view override returns (uint) {
-        return CDecimals[collateral_];
+        return IERC20Minimal(collateral_).decimals();
     }     
 
     function getVault(uint vaultId_) external view override returns (address) {
@@ -172,15 +173,15 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {
-        (uint256 collateralValueTimes100, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
+        (uint256 collateralValueTimes100Point00000, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
 
         uint mcr = getMCR(collateral_);
-        uint cDecimals = getCDecimal(collateral_);
+        uint cDecimals = IERC20Minimal(collateral_).decimals();
 
         uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
 
         // if the debt become obsolete
-        return debtValueAdjusted == 0 ? true : collateralValueTimes100 / debtValueAdjusted >= mcr;
+        return debtValueAdjusted == 0 ? true : collateralValueTimes100Point00000 / debtValueAdjusted >= mcr;
     }
 
     function isValidSupply(uint256 issueAmount_) internal view returns (bool) {
@@ -194,9 +195,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function _calculateValues(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) internal view returns (uint256, uint256) {
         uint256 collateralValue = getAssetValue(collateral_, cAmount_);
         uint256 debtValue = getAssetValue(debt_, dAmount_);
-        uint256 collateralValueTimes100 = collateralValue * 100;
-        require(collateralValueTimes100 >= collateralValue); // overflow check
-        return (collateralValueTimes100, debtValue);        
+        uint256 collateralValueTimes100Point00000 = collateralValue * 10000000;
+        require(collateralValueTimes100Point00000 >= collateralValue); // overflow check
+        return (collateralValueTimes100Point00000, debtValue);        
     }
 
     function getAssetPrice(address asset_) public view override returns (uint) {

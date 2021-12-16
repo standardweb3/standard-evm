@@ -27,7 +27,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     
     /// Address of cdp nft registry
     address public override v1;
-    /// Address of stablecoin
+    /// Address of stablecoin oracle  standard dex
     address public override stablecoin;
     /// Address of uniswapv2 factory;
     address public override v2Factory;
@@ -166,9 +166,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
         if ( totalSupply == 0 ) {
             return;
         }
-        uint stablecoinPrice = uint(_getPriceOf(stablecoin));
+        uint overallPrice = uint(_getPriceOf(address(0x0))); // set 0x0 oracle as overall oracle price of stablecoin in all exchanges
         // get desired supply and update 
-        desiredSupply = totalSupply * 1e8 / stablecoinPrice; 
+        desiredSupply = totalSupply * 1e8 / overallPrice; 
         emit Rebase(totalSupply, desiredSupply);
     }
 

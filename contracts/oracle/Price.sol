@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./AggregatorV3Interface.sol";
-import "./IPrice.sol";
+import "./interfaces/IPrice.sol";
 
 contract PriceConsumerV3 is IPrice {
     AggregatorV3Interface internal priceFeed;

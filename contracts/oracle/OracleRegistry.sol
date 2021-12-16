@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "../oracle/IPrice.sol";
+import "../oracle/interfaces/IPrice.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract OracleRegistry is AccessControl {

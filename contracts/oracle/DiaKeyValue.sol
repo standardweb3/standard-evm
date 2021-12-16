@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./DiaKeyValueInterface.sol";
-import "./IPrice.sol";
+import "./interfaces/IPrice.sol";
 
 contract DiaKeyValue is IPrice {
     DiaKeyValueInterface internal priceFeed;

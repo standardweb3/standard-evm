@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./DiaCoinInfoInterface.sol";
-import "./IPrice.sol";
+import "./interfaces/IPrice.sol";
 
 contract DiaCoinInfo is IPrice {
     DiaCoinInfoInterface internal priceFeed;

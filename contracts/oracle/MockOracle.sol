@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./IPrice.sol";
+import "./interfaces/IPrice.sol";
 
 contract MockOracle is IPrice {
     int256 price;
@@ -16,6 +16,7 @@ contract MockOracle is IPrice {
     }
 
     function setPrice(int256 price_) public {
+        require(msg.sender == operator, "IA");
         price = price_;
     }
 

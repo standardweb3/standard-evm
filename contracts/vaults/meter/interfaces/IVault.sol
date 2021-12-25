@@ -39,6 +39,7 @@ interface IVault {
     function depositCollateral(uint256 amount_) external;
     function withdrawCollateralNative(uint256 amount_) payable external;
     function withdrawCollateral(uint256 amount_) external;
+    function borrowMore(uint256 cAmount_, uint256 dAmount_) external;
     function payDebt(uint256 amount_) external;
     function closeVault(uint256 amount_) external;
 

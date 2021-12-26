@@ -26,7 +26,7 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 
     /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     * @dev Moves `amount` tokens from the caller"s account to `recipient`.
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
@@ -44,14 +44,14 @@ interface IERC20 {
     function allowance(address owner, address spender) external view returns (uint256);
 
     /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
+     * @dev Sets `amount` as the allowance of `spender` over the caller"s tokens.
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
      * IMPORTANT: Beware that changing an allowance with this method brings the risk
      * that someone may use both the old and the new allowance by unfortunate
      * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
+     * condition is to first reduce the spender"s allowance to 0 and set the
      * desired value afterwards:
      * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
      *
@@ -61,7 +61,7 @@ interface IERC20 {
 
     /**
      * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
+     * allowance mechanism. `amount` is then deducted from the caller"s
      * allowance.
      *
      * Returns a boolean value indicating whether the operation succeeded.
@@ -90,7 +90,7 @@ interface IERC20 {
 
 
 /**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
+ * @dev Wrappers over Solidity"s arithmetic operations with added overflow
  * checks.
  *
  * Arithmetic operations in Solidity wrap on overflow. This can easily result
@@ -100,14 +100,14 @@ interface IERC20 {
  * operation overflows.
  *
  * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
+ * class of bugs, so it"s recommended to use it always.
  */
 library SafeMath {
     /**
      * @dev Returns the addition of two unsigned integers, reverting on
      * overflow.
      *
-     * Counterpart to Solidity's `+` operator.
+     * Counterpart to Solidity"s `+` operator.
      *
      * Requirements:
      *
@@ -124,7 +124,7 @@ library SafeMath {
      * @dev Returns the subtraction of two unsigned integers, reverting on
      * overflow (when the result is negative).
      *
-     * Counterpart to Solidity's `-` operator.
+     * Counterpart to Solidity"s `-` operator.
      *
      * Requirements:
      *
@@ -138,7 +138,7 @@ library SafeMath {
      * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
      * overflow (when the result is negative).
      *
-     * Counterpart to Solidity's `-` operator.
+     * Counterpart to Solidity"s `-` operator.
      *
      * Requirements:
      *
@@ -155,15 +155,15 @@ library SafeMath {
      * @dev Returns the multiplication of two unsigned integers, reverting on
      * overflow.
      *
-     * Counterpart to Solidity's `*` operator.
+     * Counterpart to Solidity"s `*` operator.
      *
      * Requirements:
      *
      * - Multiplication cannot overflow.
      */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
+        // Gas optimization: this is cheaper than requiring "a" not being zero, but the
+        // benefit is lost if "b" is also tested.
         // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
         if (a == 0) {
             return 0;
@@ -179,7 +179,7 @@ library SafeMath {
      * @dev Returns the integer division of two unsigned integers. Reverts on
      * division by zero. The result is rounded towards zero.
      *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * Counterpart to Solidity"s `/` operator. Note: this function uses a
      * `revert` opcode (which leaves remaining gas untouched) while Solidity
      * uses an invalid opcode to revert (consuming all remaining gas).
      *
@@ -195,7 +195,7 @@ library SafeMath {
      * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
      * division by zero. The result is rounded towards zero.
      *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * Counterpart to Solidity"s `/` operator. Note: this function uses a
      * `revert` opcode (which leaves remaining gas untouched) while Solidity
      * uses an invalid opcode to revert (consuming all remaining gas).
      *
@@ -206,7 +206,7 @@ library SafeMath {
     function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
         require(b > 0, errorMessage);
         uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+        // assert(a == b * c + a % b); // There is no case in which this doesn"t hold
 
         return c;
     }
@@ -215,7 +215,7 @@ library SafeMath {
      * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
      * Reverts when dividing by zero.
      *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * Counterpart to Solidity"s `%` operator. This function uses a `revert`
      * opcode (which leaves remaining gas untouched) while Solidity uses an
      * invalid opcode to revert (consuming all remaining gas).
      *
@@ -231,7 +231,7 @@ library SafeMath {
      * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
      * Reverts with custom message when dividing by zero.
      *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * Counterpart to Solidity"s `%` operator. This function uses a `revert`
      * opcode (which leaves remaining gas untouched) while Solidity uses an
      * invalid opcode to revert (consuming all remaining gas).
      *
@@ -273,7 +273,7 @@ library Address {
     function isContract(address account) internal view returns (bool) {
         // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
         // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
-        // for accounts without code, i.e. `keccak256('')`
+        // for accounts without code, i.e. `keccak256("")`
         bytes32 codehash;
         bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
         // solhint-disable-next-line no-inline-assembly
@@ -282,7 +282,7 @@ library Address {
     }
 
     /**
-     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to
+     * @dev Replacement for Solidity"s `transfer`: sends `amount` wei to
      * `recipient`, forwarding all available gas and reverting on errors.
      *
      * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost
@@ -425,7 +425,7 @@ library SafeERC20 {
     function safeApprove(IERC20 token, address spender, uint256 value) internal {
         // safeApprove should only be called when setting an initial allowance,
         // or when resetting it to zero. To increase and decrease it, use
-        // 'safeIncreaseAllowance' and 'safeDecreaseAllowance'
+        // "safeIncreaseAllowance" and "safeDecreaseAllowance"
         // solhint-disable-next-line max-line-length
         require((value == 0) || (token.allowance(address(this), spender) == 0),
             "SafeERC20: approve from non-zero to non-zero allowance"
@@ -450,8 +450,8 @@ library SafeERC20 {
      * @param data The call data (encoded using abi.encode or one of its variants).
      */
     function _callOptionalReturn(IERC20 token, bytes memory data) private {
-        // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
-        // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
+        // We need to perform a low level call here, to bypass Solidity"s return data size checking mechanism, since
+        // we"re implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
         // the target address contains contract code and also asserts for success in the low-level call.
 
         bytes memory returndata = address(token).functionCall(data, "SafeERC20: low-level call failed");
@@ -641,15 +641,15 @@ interface IUniswapV2Factory {
 
 library SafeMathUniswap {
     function add(uint x, uint y) internal pure returns (uint z) {
-        require((z = x + y) >= x, 'ds-math-add-overflow');
+        require((z = x + y) >= x, "ds-math-add-overflow");
     }
 
     function sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, 'ds-math-sub-underflow');
+        require((z = x - y) <= x, "ds-math-sub-underflow");
     }
 
     function mul(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x, 'ds-math-mul-overflow');
+        require(y == 0 || (z = x * y) / y == x, "ds-math-mul-overflow");
     }
 }
 
@@ -663,19 +663,19 @@ library UniswapV2Library {
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
-        require(tokenA != tokenB, 'UniswapV2Library: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, "UniswapV2Library: IDENTICAL_ADDRESSES");
         (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'UniswapV2Library: ZERO_ADDRESS');
+        require(token0 != address(0), "UniswapV2Library: ZERO_ADDRESS");
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
     function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(uint(keccak256(abi.encodePacked(
-                hex'ff',
+                hex"ff",
                 factory,
                 keccak256(abi.encodePacked(token0, token1)),
-                hex'914b7167277393b1c321f92b1b4746aaee9273174bc623118623f8dc4ba6c2d4' // init code hash
+                hex"914b7167277393b1c321f92b1b4746aaee9273174bc623118623f8dc4ba6c2d4" // init code hash
             ))));
     }
 
@@ -688,15 +688,15 @@ library UniswapV2Library {
 
     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
     function quote(uint amountA, uint reserveA, uint reserveB) internal pure returns (uint amountB) {
-        require(amountA > 0, 'UniswapV2Library: INSUFFICIENT_AMOUNT');
-        require(reserveA > 0 && reserveB > 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountA > 0, "UniswapV2Library: INSUFFICIENT_AMOUNT");
+        require(reserveA > 0 && reserveB > 0, "UniswapV2Library: INSUFFICIENT_LIQUIDITY");
         amountB = amountA.mul(reserveB) / reserveA;
     }
 
     // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) internal pure returns (uint amountOut) {
-        require(amountIn > 0, 'UniswapV2Library: INSUFFICIENT_INPUT_AMOUNT');
-        require(reserveIn > 0 && reserveOut > 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountIn > 0, "UniswapV2Library: INSUFFICIENT_INPUT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "UniswapV2Library: INSUFFICIENT_LIQUIDITY");
         uint amountInWithFee = amountIn.mul(997);
         uint numerator = amountInWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(amountInWithFee);
@@ -705,8 +705,8 @@ library UniswapV2Library {
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) internal pure returns (uint amountIn) {
-        require(amountOut > 0, 'UniswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT');
-        require(reserveIn > 0 && reserveOut > 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');
+        require(amountOut > 0, "UniswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(reserveIn > 0 && reserveOut > 0, "UniswapV2Library: INSUFFICIENT_LIQUIDITY");
         uint numerator = reserveIn.mul(amountOut).mul(1000);
         uint denominator = reserveOut.sub(amountOut).mul(997);
         amountIn = (numerator / denominator).add(1);
@@ -714,7 +714,7 @@ library UniswapV2Library {
 
     // performs chained getAmountOut calculations on any number of pairs
     function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns (uint[] memory amounts) {
-        require(path.length >= 2, 'UniswapV2Library: INVALID_PATH');
+        require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint[](path.length);
         amounts[0] = amountIn;
         for (uint i; i < path.length - 1; i++) {
@@ -725,7 +725,7 @@ library UniswapV2Library {
 
     // performs chained getAmountIn calculations on any number of pairs
     function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts) {
-        require(path.length >= 2, 'UniswapV2Library: INVALID_PATH');
+        require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint[](path.length);
         amounts[amounts.length - 1] = amountOut;
         for (uint i = path.length - 1; i > 0; i--) {
@@ -748,18 +748,19 @@ contract FeeRoll {
     address[] allCollaterals;
     address stnd;
     address dstnd;
-    bytes32 initCode;
+    address stablecoin;
 
-    constructor(IUniswapV2Router01 _router, address _setter, address stnd, address dstnd, bytes32 _initCode) public {
+    constructor(IUniswapV2Router01 _router, address _setter, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
         router = _router;
         setter = _setter;
         stnd = _stnd;
         dstnd = _dstnd;
         initCode = _initCode;
+        stablecoin = _stablecoin;
     }
 
     function setRouter(IUniswapV2Router01 _router, bytes32 _initCode) public {
-        require(msg.sender == setter, "BarrelRoll: ACCESS_INVALID");
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         router = _router;
         initCode = _initCode;
     }
@@ -768,26 +769,25 @@ contract FeeRoll {
     function pairForRouter(address tokenA, address tokenB) internal view returns (address pair) {
         (address token0, address token1) = UniswapV2Library.sortTokens(tokenA, tokenB);
         pair = address(uint(keccak256(abi.encodePacked(
-                hex'ff',
+                hex"ff",
                 router.factory(),
                 keccak256(abi.encodePacked(token0, token1)),
                 initCode // init code hash
             ))));
     }
 
-    function setLPs(uint256 id, address lp) {
+    function setLP(uint256 id, address lp) public {
         require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         allLPs[id] = lp;
     }
 
-    function addLP(address lp) {
+    function addLP(address lp) public {
         require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         allLPs.push(lp);
     }
 
-    // msg.sender should have approved 'liquidity' amount of LP token of 'tokenA' and 'tokenB'
+    // msg.sender should have approved "liquidity" amount of LP token of "tokenA" and "tokenB"
     function tradeLPs() public {
-        require(deadline >= block.timestamp, 'Standard DEX: EXPIRED');
         // for all lp tokens in the LP array
         uint256 len = allLPs.length;
         for (uint256 i = 0; i < len; ++i) {
@@ -797,7 +797,7 @@ contract FeeRoll {
 
     function tradeLP(
         address lp
-    ) {
+    ) internal {
         // Get each lp token specified in the LP array
         address tokenA = IUniswapV2Pair(lp).token0();
         address tokenB = IUniswapV2Pair(lp).token1();
@@ -805,29 +805,36 @@ contract FeeRoll {
         (uint256 amountA, uint256 amountB) = removeLiquidity(
             tokenA,
             tokenB,
-            IERC20(lp).balanceOf(address(this));,
+            IERC20(lp).balanceOf(address(this)),
             0,
             0,
-            deadline
+            block.timestamp + 20000000
         );
-
-        IUniswapV2Router01(router).swapExactTokensForTokens(amountA, 0, [tokenA, stablecoin, stnd], dstnd, block.timestamp + 200000);
-        IUniswapV2Router01(router).swapExactTokensForTokens(amountB, 0, [tokenB, stablecoin, stnd], dstnd, block.timestamp + 200000);
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountA, 0, getPathToStnd(tokenA), dstnd, block.timestamp + 20000000);
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountB, 0, getPathToStnd(tokenB), dstnd, block.timestamp + 20000000);
     }
 
     function tradeCollaterals() public {
-        require(deadline >= block.timestamp, 'Standard DEX: EXPIRED');
-        // for all lp tokens in the LP array
+        // for all lp tokens in the collateral array
         uint256 len = allCollaterals.length;
         for (uint256 i = 0; i < len; ++i) {
             tradeCollateral(allCollaterals[i]);
         }
     }
 
-    function tradeCollateral(
+    function getPathToStnd(address input) private view returns (address[] memory) {
+        address[] memory path = new address[](3);
+        path[0] = input;
+        path[1] = stablecoin;
+        path[2] = stnd;
+    
+        return path;
+    }
+
+    function tradeCollateral (
         address collateral
-    ) {
-        IUniswapV2Router01(router).swapExactTokensForTokens(IERC20(collateral).balanceOf(address(this)), 0, [collateral, stablecoin, stnd], dstnd, block.timestamp + 200000);
+    ) internal {
+        IUniswapV2Router01(router).swapExactTokensForTokens(IERC20(collateral).balanceOf(address(this)), 0, getPathToStnd(collateral), dstnd, block.timestamp + 20000000);
     }
 
     function removeLiquidity(
@@ -843,46 +850,7 @@ contract FeeRoll {
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
-        require(amountA >= amountAMin, 'BarrelRoll: INSUFFICIENT_A_AMOUNT');
-        require(amountB >= amountBMin, 'BarrelRoll: INSUFFICIENT_B_AMOUNT');
-    }
-
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired
-    ) internal returns (uint amountA, uint amountB) {
-        (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired);
-        address pair = UniswapV2Library.pairFor(router.factory(), tokenA, tokenB);
-        IERC20(tokenA).safeTransfer(pair, amountA);
-        IERC20(tokenB).safeTransfer(pair, amountB);
-        IUniswapV2Pair(pair).mint(msg.sender);
-    }
-
-    function _addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountADesired,
-        uint256 amountBDesired
-    ) internal returns (uint256 amountA, uint256 amountB) {
-        // create the pair if it doesn't exist yet
-        IUniswapV2Factory factory = IUniswapV2Factory(router.factory());
-        if (factory.getPair(tokenA, tokenB) == address(0)) {
-            factory.createPair(tokenA, tokenB);
-        }
-        (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(address(factory), tokenA, tokenB);
-        if (reserveA == 0 && reserveB == 0) {
-            (amountA, amountB) = (amountADesired, amountBDesired);
-        } else {
-            uint256 amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
-            if (amountBOptimal <= amountBDesired) {
-                (amountA, amountB) = (amountADesired, amountBOptimal);
-            } else {
-                uint256 amountAOptimal = UniswapV2Library.quote(amountBDesired, reserveB, reserveA);
-                assert(amountAOptimal <= amountADesired);
-                (amountA, amountB) = (amountAOptimal, amountBDesired);
-            }
-        }
+        require(amountA >= amountAMin, "BarrelRoll: INSUFFICIENT_A_AMOUNT");
+        require(amountB >= amountBMin, "BarrelRoll: INSUFFICIENT_B_AMOUNT");
     }
 }

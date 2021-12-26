@@ -6,7 +6,7 @@ interface IVaultFactory {
 
     /// View funcs
     /// NFT token address
-    function  v1() external view returns (address);
+    function v1() external view returns (address);
     /// UniswapV2Factory address
     function v2Factory() external view returns (address);
     /// Address of wrapped eth

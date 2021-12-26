@@ -735,79 +735,99 @@ library UniswapV2Library {
     }
 }
 
-// File: contracts/BarrelRoll.sol
+// File: contracts/FeeRoll.sol
 
-// Modified by Standard Developers from SushiRoll Contract by Sushiswap developers
-// BarrelRoll helps your migrate your existing dex LP tokens to Standard DEX LTR ones
-contract BarrelRoll {
+// FeeRoll turns fees in the protocol into stnd to deposit in standard staking pool
+contract FeeRoll {
     using SafeERC20 for IERC20;
 
-    IUniswapV2Router01 public oldRouter;
     IUniswapV2Router01 public router;
     bytes32 initCode;
     address setter;
+    address[] allLPs;
+    address[] allCollaterals;
+    address stnd;
+    address dstnd;
+    bytes32 initCode;
 
-    constructor(IUniswapV2Router01 _oldRouter, bytes32 _initCode, IUniswapV2Router01 _router, address _setter) public {
-        oldRouter = _oldRouter;
-        initCode = _initCode;
+    constructor(IUniswapV2Router01 _router, address _setter, address stnd, address dstnd, bytes32 _initCode) public {
         router = _router;
         setter = _setter;
-    }
-    
-    function setOldRouter(IUniswapV2Router01 _oldRouter, bytes32 _initCode) public {
-        require(msg.sender == setter, "BarrelRoll: ACCESS_INVALID");
-        oldRouter = _oldRouter;
+        stnd = _stnd;
+        dstnd = _dstnd;
         initCode = _initCode;
     }
 
-    function migrateWithPermit(
-        address tokenA,
-        address tokenB,
-        uint256 liquidity,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public {
-        IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
-        pair.permit(msg.sender, address(this), liquidity, deadline, v, r, s);
+    function setRouter(IUniswapV2Router01 _router, bytes32 _initCode) public {
+        require(msg.sender == setter, "BarrelRoll: ACCESS_INVALID");
+        router = _router;
+        initCode = _initCode;
+    }
+    
+    // calculates the CREATE2 address for a pair without making any external calls
+    function pairForRouter(address tokenA, address tokenB) internal view returns (address pair) {
+        (address token0, address token1) = UniswapV2Library.sortTokens(tokenA, tokenB);
+        pair = address(uint(keccak256(abi.encodePacked(
+                hex'ff',
+                router.factory(),
+                keccak256(abi.encodePacked(token0, token1)),
+                initCode // init code hash
+            ))));
+    }
 
-        migrate(tokenA, tokenB, liquidity, amountAMin, amountBMin, deadline);
+    function setLPs(uint256 id, address lp) {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        allLPs[id] = lp;
+    }
+
+    function addLP(address lp) {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        allLPs.push(lp);
     }
 
     // msg.sender should have approved 'liquidity' amount of LP token of 'tokenA' and 'tokenB'
-    function migrate(
-        address tokenA,
-        address tokenB,
-        uint256 liquidity,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        uint256 deadline
-    ) public {
+    function tradeLPs() public {
         require(deadline >= block.timestamp, 'Standard DEX: EXPIRED');
+        // for all lp tokens in the LP array
+        uint256 len = allLPs.length;
+        for (uint256 i = 0; i < len; ++i) {
+            tradeLP(allLPs[i]);
+        }
+    }
 
+    function tradeLP(
+        address lp
+    ) {
+        // Get each lp token specified in the LP array
+        address tokenA = IUniswapV2Pair(lp).token0();
+        address tokenB = IUniswapV2Pair(lp).token1();
         // Remove liquidity from the old router with permit
         (uint256 amountA, uint256 amountB) = removeLiquidity(
             tokenA,
             tokenB,
-            liquidity,
-            amountAMin,
-            amountBMin,
+            IERC20(lp).balanceOf(address(this));,
+            0,
+            0,
             deadline
         );
 
-        // Add liquidity to the new router
-        (uint256 pooledAmountA, uint256 pooledAmountB) = addLiquidity(tokenA, tokenB, amountA, amountB);
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountA, 0, [tokenA, stablecoin, stnd], dstnd, block.timestamp + 200000);
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountB, 0, [tokenB, stablecoin, stnd], dstnd, block.timestamp + 200000);
+    }
 
-        // Send remaining tokens to msg.sender
-        if (amountA > pooledAmountA) {
-            IERC20(tokenA).safeTransfer(msg.sender, amountA - pooledAmountA);
+    function tradeCollaterals() public {
+        require(deadline >= block.timestamp, 'Standard DEX: EXPIRED');
+        // for all lp tokens in the LP array
+        uint256 len = allCollaterals.length;
+        for (uint256 i = 0; i < len; ++i) {
+            tradeCollateral(allCollaterals[i]);
         }
-        if (amountB > pooledAmountB) {
-            IERC20(tokenB).safeTransfer(msg.sender, amountB - pooledAmountB);
-        }
+    }
+
+    function tradeCollateral(
+        address collateral
+    ) {
+        IUniswapV2Router01(router).swapExactTokensForTokens(IERC20(collateral).balanceOf(address(this)), 0, [collateral, stablecoin, stnd], dstnd, block.timestamp + 200000);
     }
 
     function removeLiquidity(
@@ -818,24 +838,13 @@ contract BarrelRoll {
         uint256 amountBMin,
         uint256 deadline
     ) internal returns (uint256 amountA, uint256 amountB) {
-        IUniswapV2Pair pair = IUniswapV2Pair(pairForOldRouter(tokenA, tokenB));
+        IUniswapV2Pair pair = IUniswapV2Pair(pairForRouter(tokenA, tokenB));
         pair.transferFrom(msg.sender, address(pair), liquidity);
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
         require(amountA >= amountAMin, 'BarrelRoll: INSUFFICIENT_A_AMOUNT');
         require(amountB >= amountBMin, 'BarrelRoll: INSUFFICIENT_B_AMOUNT');
-    }
-
-    // calculates the CREATE2 address for a pair without making any external calls
-    function pairForOldRouter(address tokenA, address tokenB) internal view returns (address pair) {
-        (address token0, address token1) = UniswapV2Library.sortTokens(tokenA, tokenB);
-        pair = address(uint(keccak256(abi.encodePacked(
-                hex'ff',
-                oldRouter.factory(),
-                keccak256(abi.encodePacked(token0, token1)),
-                initCode // init code hash
-            ))));
     }
 
     function addLiquidity(

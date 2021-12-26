@@ -245,7 +245,7 @@ contract Vault is IVault {
   }
 
   function _burnMTRFromVault(uint256 amount_) internal {
-    IStablecoin(debt).burnFrom(msg.sender, amount_);
+    IStablecoin(debt).burn(amount_);
   }
 
   function _calculateFee() internal returns (uint256) {

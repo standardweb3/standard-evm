@@ -73,10 +73,6 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
 
     function burn(uint256 amount) external override {
         // Check that the calling account has the burner role
-        require(
-            hasRole(BURNER_ROLE, _msgSender()),
-            "Meter: must have burner role to burn"
-        );
         _burn(_msgSender(), amount);
     }
 

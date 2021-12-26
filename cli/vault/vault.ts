@@ -105,7 +105,7 @@ task("vault-deploy", "Deploy Standard Vault Components")
     });
   });
 
-// npx hardhat --network rinkeby vault-deploy  --weth 0xc778417E063141139Fce010982780140Aa0cD5Ab --stnd 0xccf56fb87850fe6cff0cd16f491933c138b7eadd --factory 0xb10db5fc1c2ca4d72e6ebe1a9494b61fa3b71385
+// npx hardhat --network rinkeby vault-test-deploy --weth 0xc778417E063141139Fce010982780140Aa0cD5Ab --stnd 0xccf56fb87850fe6cff0cd16f491933c138b7eadd --factory 0xb10db5fc1c2ca4d72e6ebe1a9494b61fa3b71385
 task("vault-test-deploy", "Deploy Standard Vault Components")
   .addParam("weth", "Address of wrapped ether")
   .addParam("stnd", "Address of Standard")
@@ -120,23 +120,31 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       )} ETH`
     );
 
-    // Deploy Vault Manager
+    // Deploy Vault factory
     console.log(
-      `Deploying Standard VaultManager with the account: ${deployer.address}`
+      `Deploying Standard VaultFactory with the account: ${deployer.address}`
     );
-    const VaultManager = await ethers.getContractFactory("VaultManager");
-    const vaultManager = await VaultManager.deploy();
-    await deployContract(vaultManager, "VaultManager");
+    const VaultFactory = await ethers.getContractFactory("VaultFactory");
+    const vaultFactory = await VaultFactory.deploy();
+    await deployContract(vaultFactory, "VaultFactory");
     // Record address with chainid
     //await recordAddress(ethers, "VaultManager", vaultManager.address);
 
     // Deploy V1
     console.log(`Deploying Standard V1 with the account: ${deployer.address}`);
     const V1 = await ethers.getContractFactory("V1");
-    const v1 = await V1.deploy(vaultManager.address);
+    const v1 = await V1.deploy(vaultFactory.address);
     await deployContract(v1, "V1");
     // Record address with chainid
     //await recordAddress(ethers, "V1", v1.address);
+
+    // Deploy Vault manager
+    console.log(
+      `Deploying Standard VaultManager with the account: ${deployer.address}`
+    );
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+    const vaultManager = await VaultManager.deploy();
+    await deployContract(vaultManager, "VaultManager");
 
     // Deploy Stablecoin
     console.log(`Deploying meterUSD with the account: ${deployer.address}`);
@@ -157,13 +165,18 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     const BondedStrategy = await ethers.getContractFactory("BondedStrategy");
     const bndstrtgy = await BondedStrategy.deploy(stnd);
     await deployContract(bndstrtgy, "BondedStrategy");
-    // Record address with chainid
-    //await recordAddress(ethers, "BondedStrategy", bndstrtgy.address);
-    // Initiailize VaultManager
-    const tx = await vaultManager
-      .attach(vaultManager.address)
-      .initialize(v1.address, mtr.address, factory, weth);
+    // Initiailize VaultFactory
+    const tx = await vaultFactory
+      .attach(vaultFactory.address)
+      .initialize(v1.address, factory, weth);
     await executeTx(tx, "Execute initialize at");
+
+    // Initialize Vault manager
+    const tx2 = await vaultManager
+      .attach(vaultManager.address)
+      .initialize(mtr.address, vaultFactory.address);
+    await executeTx(tx2, "Execute initialize at");
+
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
@@ -200,7 +213,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await executeTx(addOracle2, "Execute addOracle of weth test at");
 
     // initialize CDP
-    const initializeCDP = await vaultManager.initializeCDP(weth, 150, 20, 5, 8);
+    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000);
     await executeTx(initializeCDP, "Execute initializeCDP at")
 
     // Approve spending collateral
@@ -233,20 +246,20 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await hre.run("verify:verify", {
       contract: "contracts/vaults/meter/V1.sol:V1",
       address: v1.address,
-      cosntructorArguments: [vaultManager.address],
+      cosntructorArguments: [vaultFactory.address],
     });
 
     // Verify MeterUSD
     await hre.run("verify:verify", {
       contract: "contracts/tokens/meter.sol:MeterToken",
-      address: v1.address,
+      address: mtr.address,
       cosntructorArguments: [vaultManager.address],
     });
 
     // Verify FeePool
     await hre.run("verify:verify", {
       contract: "contracts/vaults/pool/BondedStrategy.sol:BondedStrategy",
-      address: v1.address,
+      address: bndstrtgy.address,
       cosntructorArguments: [stnd, mtr.address],
     });
   });

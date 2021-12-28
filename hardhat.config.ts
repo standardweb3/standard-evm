@@ -78,10 +78,11 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
     hardhat: {
+      chainId: 0,
       forking: {
         enabled: process.env.FORKING === "true",
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 13000000,
+        url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`, // `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 9888360,
       },
       allowUnlimitedContractSize: true,
       live: false,

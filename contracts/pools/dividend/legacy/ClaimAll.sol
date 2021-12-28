@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./interfaces/IBondedStrategy.sol";
+import "../interfaces/IBondedStrategy.sol";
 
 
 contract ClaimAll {

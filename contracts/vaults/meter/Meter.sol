@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./IStablecoin.sol";
+import "./interfaces/IStablecoin.sol";
+import "./interfaces/IVaultFactory.sol";
 
 /**
  * @title MeterToken
@@ -17,6 +18,7 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
+    bytes32 public constant FACTORY_ROLE = keccak256("FACTORY_ROLE");
 
     bytes32 public DOMAIN_SEPARATOR;
     // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
@@ -54,13 +56,6 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
         );
     }
 
-    function setManager(address manager_) public {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-            "MTRV1: Caller is not a default admin"
-        );
-        _setupRole(MINTER_ROLE, manager_);
-    }
 
     function mint(address to, uint256 amount) external override {
         // Check that the calling account has the minter role
@@ -69,6 +64,11 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
             "Meter: Caller is not a minter"
         );
         _mint(to, amount);
+    }
+
+    function mintFromVault(address factory, uint256 vaultId_, address to, uint256 amount) external override {
+        require(hasRole(FACTORY_ROLE, factory), "IA");
+        require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "Meter: Not from Vault");
     }
 
     function burn(uint256 amount) external override {

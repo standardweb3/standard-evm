@@ -7,9 +7,11 @@ interface IVault {
     event WithdrawCollateral(uint256 vaultID, uint256 amount);
     event Borrow(uint256 vaultID, uint256 amount);
     event PayBack(uint256 vaultID, uint256 borrow, uint256 paybackFee, uint256 amount);
-    event CloseVault(address vault, uint256 amount, uint256 closingFee);
-    event Liquidated(address vault, address collateral, uint256 amount);
+    event CloseVault(uint256 vaultID, uint256 amount, uint256 closingFee);
+    event Liquidated(uint256 vaultID, address collateral, uint256 amount);
     /// Getters
+    /// Address of a manager
+    function  factory() external view returns (address);
     /// Address of a manager
     function  manager() external view returns (address);
     /// Address of debt;

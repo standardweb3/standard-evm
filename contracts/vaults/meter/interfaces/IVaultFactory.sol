@@ -11,11 +11,13 @@ interface IVaultFactory {
     function v2Factory() external view returns (address);
     /// Address of wrapped eth
     function WETH() external view returns (address);
+    /// Address of a manager
+    function  manager() external view returns (address);
 
     /// Getters
     /// Get Config of CDP
     function vaultCodeHash() external pure returns (bytes32);
-    function createVault(address collateral_, address debt_, uint256 amount_) external returns (address vault, uint256 id);
+    function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external returns (address vault, uint256 id);
     function getVault(uint vaultId_) external view returns (address);
 
     /// Event

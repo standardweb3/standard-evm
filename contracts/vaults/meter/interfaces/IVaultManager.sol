@@ -22,11 +22,12 @@ interface IVaultManager {
 
     /// Getters
     /// Get Config of CDP
-    function getCDPConfig(address collateral) external view returns (uint, uint, uint, uint);
+    function getCDPConfig(address collateral) external view returns (uint, uint, uint, uint, bool);
     function getCDecimal(address collateral) external view returns(uint);
     function getMCR(address collateral) external view returns(uint);
     function getLFR(address collateral) external view returns(uint);
     function getSFR(address collateral) external view returns(uint);
+    function getOpen(address collateral_) external view returns (bool);
     function getAssetPrice(address asset) external returns (uint);
     function getAssetValue(address asset, uint256 amount) external returns (uint256);
     function isValidCDP(address collateral, address debt, uint256 cAmount, uint256 dAmount) external returns (bool);

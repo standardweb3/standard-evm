@@ -23,7 +23,7 @@ task("vaultmanager-verify", "Verify Standard Vault Manager")
 task("diacoininfooracle-deploy", "Deploy DIA Oracle Contract")
     .addParam("aggregator", "aggregator contract address")
     .addParam("name", "asset name")
-    .setAction(async ({ name, aggregator }) => {
+    .setAction(async ({ name, aggregator}, {ethers}) => {
         const [deployer] = await ethers.getSigners();
         // Get before state
         console.log(
@@ -59,7 +59,7 @@ task("diacoininfooracle-deploy", "Deploy DIA Oracle Contract")
 task("diakeyvalueoracle-deploy", "Deploy DIA Oracle Contract")
     .addParam("aggregator", "aggregator contract address")
     .addParam("key", "asset key (e.g. ETH/USD)")
-    .setAction(async ({ key, aggregator }) => {
+    .setAction(async ({ key, aggregator }, {ethers}) => {
         const [deployer] = await ethers.getSigners();
         // Get before state
         console.log(
@@ -95,7 +95,7 @@ task("diakeyvalueoracle-deploy", "Deploy DIA Oracle Contract")
 task("mockoracle-deploy", "Deploy DIA Oracle Contract")
     .addParam("value", "price value in 8 decimals")
     .addParam("name", "name of the constant oracle")
-    .setAction(async ({ name, value }) => {
+    .setAction(async ({ name, value }, {ethers}) => {
         const [deployer] = await ethers.getSigners();
         // Get before state
         console.log(
@@ -133,7 +133,7 @@ task("vaultmanager-addoracle", "Add an oracle for an asset")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
     .addParam("asset", "address of token contract")
     .addParam("oracle", "oracle contract address")
-    .setAction(async ({ vaultmanager, asset, oracle }) => {
+    .setAction(async ({ vaultmanager, asset, oracle }, {ethers}) => {
 
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
@@ -150,7 +150,7 @@ task("vaultmanager-addoracle", "Add an oracle for an asset")
 task("vaultmanager-getassetprice", "Get price of an asset through oracle")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
     .addParam("asset", "address of token contract")
-    .setAction(async ({ vaultmanager, asset, oracle }) => {
+    .setAction(async ({ vaultmanager, asset, oracle }, {ethers}) => {
 
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
@@ -173,7 +173,7 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
     .addParam("lfr", "Liquidation Fee Ratio in percent")
     .addParam("sfr", "Stability Fee Ratio in percent")
     .addParam("cdecimal", "Collateral price decimal from the oracle")
-    .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, cdecimal }) => {
+    .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, cdecimal }, {ethers}) => {
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
         let chain = ChainId[chainId]
@@ -189,7 +189,7 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
 task("vaultmanager-getcdpconfig", "initialize CDP as a collateral")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
     .addParam("collateral", "address of token contract")
-    .setAction(async ({ vaultmanager, collateral }) => {
+    .setAction(async ({ vaultmanager, collateral }, {ethers}) => {
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
         let chain = ChainId[chainId]
@@ -209,7 +209,7 @@ task("vaultmanager-isvalidcdp", "Check if cdp is valid")
     .addParam("debt", "address of debt contract")
     .addParam("camount", "amount of collateral in 18 decimals")
     .addParam("damount", "amount of debt in 18 decimals")
-    .setAction(async ({ vaultmanager, collateral, debt, camount, damount }) => {
+    .setAction(async ({ vaultmanager, collateral, debt, camount, damount }, {ethers}) => {
 
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
@@ -230,7 +230,7 @@ task("vaultmanager-createcdp", "Create CDP position")
     .addParam("collateral", "address of collateral token contract")
     .addParam("camount", "amount of colalteral in 18 decimals")
     .addParam("damount", "amount of debt in 18 decimals")
-    .setAction(async ({ vaultmanager, collateral, camount, damount }) => {
+    .setAction(async ({ vaultmanager, collateral, camount, damount }, {ethers}) => {
 
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID

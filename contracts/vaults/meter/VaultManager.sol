@@ -20,8 +20,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     mapping (address => uint) internal MCRConfig;
     /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => uint) internal SFRConfig; 
-    /// key: Collateral address, value: collateral decimals, oracles come with same precision, so amounts has to be adjusted to collateral
-    //mapping (address => uint8) internal CDecimals;
+    /// key: Collateral address, value: whether collateral is allowed to borrow
+    mapping (address => bool) internal IsOpen;
     
     /// Address of stablecoin oracle  standard dex
     address public override stablecoin;
@@ -39,11 +39,12 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_) public {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, bool on) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
+        IsOpen[collateral_] = on;
         uint8 cDecimals = IERC20Minimal(collateral_).decimals();
         emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals);  
     }
@@ -69,14 +70,15 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
-        // get aggregators
+        // check if collateral is open
+        require(IsOpen[collateral_], "VAULTMANAGER: NOT OPEN");
         // check position
         require(isValidCDP(collateral_, stablecoin, cAmount_, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
-        (address vlt, uint256 id) = IVaultFactory(factory).createVault(collateral_, stablecoin, dAmount_);
+        (address vlt, uint256 id) = IVaultFactory(factory).createVault(collateral_, stablecoin, dAmount_, _msgSender());
         require(vlt != address(0), "VAULTMANAGER: FE"); // Factory error
         // transfer collateral to the vault, manage collateral from there
         TransferHelper.safeTransferFrom(collateral_, _msgSender(), vlt, cAmount_);
@@ -87,15 +89,16 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
 
     function createCDPNative(uint dAmount_) payable public returns(bool success) {
-        // check tests
         address WETH = IVaultFactory(factory).WETH();
+        // check if collateral is open
+        require(IsOpen[WETH], "VAULTMANAGER: NOT OPEN");
+        // check position
         require(isValidCDP(WETH, stablecoin, msg.value, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
-        // create vault
-        (address vlt, uint256 id) = IVaultFactory(factory).createVault(WETH, stablecoin, dAmount_);
+        (address vlt, uint256 id) = IVaultFactory(factory).createVault(WETH, stablecoin, dAmount_, _msgSender());
         require(vlt != address(0), "VAULTMANAGER: FE"); // Factory error
         // wrap native currency
         IWETH(WETH).deposit{value: address(this).balance}();
@@ -109,9 +112,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     }
     
 
-    function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals) {
+    function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals, bool isOpen) {
         uint8 cDecimals = IERC20Minimal(collateral_).decimals();
-        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], cDecimals);
+        return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], cDecimals, IsOpen[collateral_]);
     }
 
     function getMCR(address collateral_) public view override returns (uint) {
@@ -124,6 +127,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function getSFR(address collateral_) public view override returns (uint) {
         return SFRConfig[collateral_];
+    } 
+
+    function getOpen(address collateral_) public view override returns (bool) {
+        return IsOpen[collateral_];
     } 
     
     function getCDecimal(address collateral_) public view override returns (uint) {

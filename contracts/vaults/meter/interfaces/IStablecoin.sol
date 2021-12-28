@@ -9,6 +9,8 @@ interface IStablecoin {
 
     function burnFrom(address account, uint256 amount) external;
 
+    function mintFromVault(address factory, uint256 vaultId_, address to, uint256 amount) external;
+
     function permit(
         address owner,
         address spender,

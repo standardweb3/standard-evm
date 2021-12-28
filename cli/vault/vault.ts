@@ -171,6 +171,10 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       .initialize(v1.address, factory, weth);
     await executeTx(tx, "Execute initialize at");
 
+    // print vault code hash for UniswapV2Library to use
+    console.log(`VaultCodeHash(For VaultLibrary vaultfor() function): ${await vaultFactory.vaultCodeHash()}`)
+    console.log(`Change VaultLibrary vaultFor() with the creation hash above then recompile after verification`)
+
     // Initialize Vault manager
     const tx2 = await vaultManager
       .attach(vaultManager.address)
@@ -213,7 +217,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await executeTx(addOracle2, "Execute addOracle of weth test at");
 
     // initialize CDP
-    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000);
+    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000, true);
     await executeTx(initializeCDP, "Execute initializeCDP at")
 
     // Approve spending collateral
@@ -225,6 +229,19 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // Create CDP
     const createCDP = await vaultManager.createCDP(weth, "100000000000000000", "95982310500000000");
     await executeTx(createCDP, "Execute createCDP at")
+
+    // Test vault 
+    const Vault = await ethers.getContractFactory("Vault")
+    const vaultAddr = await vaultFactory.allVaults(0);
+
+    // Deposit Collateral
+    const depositCollateral = Vault.attach(vaultAddr).depositCollateralNative(1000)
+
+    await executeTx(depositCollateral, "Execute depositCollateralNative at")
+
+    // Withdraw Collateral
+    const withdrawCollateral = Vault.attach(vaultAddr).depositCollateral(19)
+
       
     // Get results
     console.log(
@@ -263,3 +280,5 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       cosntructorArguments: [stnd, mtr.address],
     });
   });
+
+

@@ -10,13 +10,15 @@ import "./interfaces/IERC721Minimal.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
 import "./interfaces/IUniswapV2FactoryMinimal.sol";
-import "../../tokens/IStablecoin.sol";
+import "./interfaces/IStablecoin.sol";
 
 contract Vault is IVault {
   /// Uniswap v2 factory interface
   address public override v2Factory;
   /// Address of a manager
   address public override manager;
+  /// Address of a factory
+  address public override factory;
   /// Address of debt;
   address public override debt;
   /// Address of vault ownership registry
@@ -33,7 +35,7 @@ contract Vault is IVault {
   address public override WETH;
 
   constructor() public {
-    manager = msg.sender;
+    factory = msg.sender;
     createdAt = block.timestamp;
   }
 
@@ -47,6 +49,7 @@ contract Vault is IVault {
 
   // called once by the factory at time of deployment
   function initialize(
+    address manager_,
     uint256 vaultId_,
     address collateral_,
     address debt_,
@@ -55,7 +58,7 @@ contract Vault is IVault {
     address v2Factory_,
     address weth_
   ) external {
-    require(msg.sender == manager, "Vault: FORBIDDEN"); // sufficient check
+    require(msg.sender == factory, "Vault: FORBIDDEN"); // sufficient check
     vaultId = vaultId_;
     collateral = collateral_;
     debt = debt_;
@@ -63,6 +66,7 @@ contract Vault is IVault {
     borrow = amount_;
     v2Factory = v2Factory_;
     WETH = weth_;
+    manager = manager_;
   }
 
   function getStatus()
@@ -108,7 +112,7 @@ contract Vault is IVault {
     TransferHelper.safeTransfer(collateral, pair, left);
     // burn vault nft
     _burnV1FromVault();
-    emit Liquidated(address(this), collateral, balance);
+    emit Liquidated(vaultId, collateral, balance);
     // self destruct the contract, send remaining balance if collateral is native currency
     selfdestruct(payable(msg.sender));
   }
@@ -152,7 +156,7 @@ contract Vault is IVault {
     // unwrap collateral
     IWETH(WETH).withdraw(amount_);
     // send withdrawn native currency
-    payable(msg.sender).transfer(address(this).balance);
+    TransferHelper.safeTransferETH(msg.sender, address(this).balance);
     emit WithdrawCollateral(vaultId, amount_);
   }
 
@@ -166,15 +170,12 @@ contract Vault is IVault {
       "Vault: Not enough collateral"
     );
     if (borrow != 0) {
+      uint256 test = IERC20Minimal(collateral).balanceOf(address(this)) - amount_;
       require(
-        IVaultManager(manager).isValidCDP(
-          collateral,
-          debt,
-          IERC20Minimal(collateral).balanceOf(address(this)) - amount_,
-          borrow
-        ),
+        IVaultManager(manager).isValidCDP(collateral,debt,test,borrow) == true,
         "Vault: below MCR"
       );
+      
     }
     TransferHelper.safeTransfer(collateral, msg.sender, amount_);
     emit WithdrawCollateral(vaultId, amount_);
@@ -185,7 +186,7 @@ contract Vault is IVault {
     uint256 dAmount_
   ) external override onlyVaultOwner {
     // get vault balance
-    uint256 deposits = IERC20Minimal(address(this)).balanceOf(collateral);
+    uint256 deposits = IERC20Minimal(collateral).balanceOf(address(this));
     // check position
     require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+ deposits, dAmount_), "IP"); // Invalid Position
     // check rebased supply of stablecoin
@@ -193,14 +194,14 @@ contract Vault is IVault {
     // transfer collateral to the vault, manage collateral from there
     TransferHelper.safeTransferFrom(collateral, msg.sender, address(this), cAmount_);
     // mint mtr to the sender
-    IStablecoin(debt).mint(msg.sender, dAmount_);
+    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
   }
 
   function borrowMoreNative(
     uint256 dAmount_
   ) external payable onlyVaultOwner {
     // get vault balance
-    uint256 deposits = IERC20Minimal(address(this)).balanceOf(WETH);
+    uint256 deposits = IERC20Minimal(WETH).balanceOf(address(this));
     // check position
     require(IVaultManager(manager).isValidCDP(collateral, debt, msg.value + deposits, dAmount_), "IP"); // Invalid Position
     // check rebased supply of stablecoin
@@ -208,7 +209,7 @@ contract Vault is IVault {
     // wrap native currency
     IWETH(WETH).deposit{value: address(this).balance}();
     // mint mtr to the sender
-    IStablecoin(debt).mint(msg.sender, dAmount_);
+    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
   }
 
   function payDebt(uint256 amount_) external override onlyVaultOwner {
@@ -235,7 +236,7 @@ contract Vault is IVault {
     _burnMTRFromVault(left);
     // burn vault nft
     _burnV1FromVault();
-    emit CloseVault(address(this), amount_, fee);
+    emit CloseVault(vaultId, amount_, fee);
     // self destruct the contract, send remaining balance if collateral is native currency
     selfdestruct(payable(msg.sender));
   }

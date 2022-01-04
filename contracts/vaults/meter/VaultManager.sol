@@ -33,6 +33,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     address public override dividend;
     /// Address of Standard Treasury
     address public override treasury;
+    /// Address of liquidator
+    address public override liquidator;
 
     constructor() {
         _setupRole(ORACLE_OPERATOR_ROLE, _msgSender());
@@ -63,10 +65,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         emit SetFees(feeTo_, dividend_, treasury_);
     }
     
-    function initialize(address stablecoin_, address factory_) public {
+    function initialize(address stablecoin_, address factory_, address liquidator_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         stablecoin = stablecoin_;
         factory = factory_;
+        liquidator = liquidator_;
     }
 
     function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {

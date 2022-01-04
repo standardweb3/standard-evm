@@ -109,7 +109,8 @@ contract Vault is IVault {
     uint256 liquidationFee = (lfr * balance) / 100;
     uint256 left = _sendFee(collateral, balance, liquidationFee);
     // Distribute collaterals
-    TransferHelper.safeTransfer(collateral, pair, left);
+    address liquidator = IVaultManager(manager).liquidator();
+    TransferHelper.safeTransfer(collateral, liquidator, left);
     // burn vault nft
     _burnV1FromVault();
     emit Liquidated(vaultId, collateral, balance);

@@ -15,6 +15,8 @@ interface IVaultManager {
     function dividend() external view returns (address);
     /// Address of Standard treasury
     function treasury() external view returns (address);
+    /// Address of liquidator
+    function liquidator() external view returns (address);
     /// Desired of supply of stablecoin to be minted
     function desiredSupply() external view returns (uint256);
     /// Switch to on/off rebase

@@ -8,6 +8,7 @@ import "./interfaces/IERC20Minimal.sol";
 import "./libraries/TransferHelper.sol";
 import "./interfaces/ISupplyPool.sol";
 import "./interfaces/IBondFactory.sol";
+import "./interfaces/IBondManager.sol";
 
 contract SupplyPool is AccessControl, ISupplyPool {
     using SafeMath for uint256;
@@ -176,12 +177,20 @@ contract SupplyPool is AccessControl, ISupplyPool {
 
     function sendDebt(address borrower_, uint256 amount_) public override {
         require(msg.sender == manager, "SupplyPool: Caller is not the manager");
+        require(_checkReserve(amount_), "SupplyPool: Below reserve rate");
         TransferHelper.safeTransfer(input, borrower_, amount_);
     }
 
     function sendDebtFromBond(address factory_, uint256 bondId_, address to_, uint256 amount_) external override {
-        require(factory == factory_, "IA"); // confirm bond factory contract is the known factory contract from the system, this prevents hackers making fake contracts that has the same interface
-        require(IBondFactory(factory).getBond(bondId_)  == _msgSender(), "Meter: Not from Vault");
+        require(factory == factory_, "SupplyPool: IA"); // confirm bond factory contract is the known factory contract from the system, this prevents hackers making fake contracts that has the same interface
+        require(IBondFactory(factory).getBond(bondId_)  == _msgSender(), "SupplyPool: Sender is not a Bond");
+        require(_checkReserve(amount_), "SupplyPool: Below reserve rate");
         TransferHelper.safeTransfer(input, to_, amount_);
+    }
+
+    function _checkReserve(uint256 withdrawal_) internal view returns (bool) {
+        uint reserveRate = IBondManager(manager).getRR(input);
+        uint reserveResult = IERC20Minimal(input).balanceOf(address(this)).sub(withdrawal_);
+        return reserveRate >= totalSupply.mul(100000).div(reserveResult);
     }
 }

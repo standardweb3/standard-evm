@@ -14,9 +14,11 @@ contract BondManager is OracleRegistry, IBondManager {
     /// key: Collateral address, value: Minimum Collateralization Ratio (MCR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => mapping (address => uint)) internal MCRConfig;
     /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%) with 5 decimal precision(100.00000%)
-    mapping (address => mapping (address => uint)) internal SFRConfig; 
+    mapping (address => mapping (address => uint)) internal SFRConfig;
+    /// key: debt address, value: Reserve Ratio (SFR) in percent(%) with 5 decimal precision(100.00000%) from supply pool
+    mapping (address => uint) internal RRConfig; 
     /// key: Collateral address, value: whether collateral is allowed to borrow
-    mapping (address => bool) internal IsOpen;
+    mapping (address => mapping(address => bool)) internal IsOpen;
     /// key: supply token address, value: supply pool which stores debt
     mapping (address => address) internal SupplyPool;
     
@@ -41,9 +43,16 @@ contract BondManager is OracleRegistry, IBondManager {
         LFRConfig[collateral_][debt_] = LFR_;
         MCRConfig[collateral_][debt_] = MCR_;
         SFRConfig[collateral_][debt_] = SFR_; 
-        IsOpen[collateral_] = on;
+        IsOpen[collateral_][debt_] = on;
         uint8 cDecimals = IERC20Minimal(collateral_).decimals();
         emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals);  
+    }
+
+    function initializeSupply(address debt_, uint RR_) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
+        RRConfig[debt_] = RR_;
+        uint8 cDecimals = IERC20Minimal(debt_).decimals();
+        emit SupplyInitialized(debt_, RR_, cDecimals);  
     }
 
     function setFees(address feeTo_, address dividend_, address treasury_) public {
@@ -61,7 +70,7 @@ contract BondManager is OracleRegistry, IBondManager {
 
     function createCDP(address collateral_, address debt_, uint cAmount_, uint dAmount_) external override returns (bool success) {
         // check if collateral is open
-        require(IsOpen[collateral_], "BondManager: NOT OPEN");
+        require(IsOpen[collateral_][debt_], "BondManager: NOT OPEN");
         // check position
         require(isValidCDP(collateral_, debt_, cAmount_, dAmount_)
         , "IP"); // Invalid Position
@@ -79,7 +88,7 @@ contract BondManager is OracleRegistry, IBondManager {
     function createCDPNative(address debt_, uint dAmount_) payable public returns(bool success) {
         address WETH = IBondFactory(bondFactory).WETH();
         // check if collateral is open
-        require(IsOpen[WETH], "BondManager: NOT OPEN");
+        require(IsOpen[WETH][debt_], "BondManager: NOT OPEN");
         // check position
         require(isValidCDP(WETH, debt_, msg.value, dAmount_)
         , "IP"); // Invalid Position
@@ -105,7 +114,7 @@ contract BondManager is OracleRegistry, IBondManager {
     
     function getCDPConfig(address collateral_, address debt_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals, bool isOpen) {
         uint8 cDecimals = IERC20Minimal(collateral_).decimals();
-        return (MCRConfig[collateral_][debt_], LFRConfig[collateral_][debt_], SFRConfig[collateral_][debt_], cDecimals, IsOpen[collateral_]);
+        return (MCRConfig[collateral_][debt_], LFRConfig[collateral_][debt_], SFRConfig[collateral_][debt_], cDecimals, IsOpen[collateral_][debt_]);
     }
 
     function getMCR(address collateral_, address debt_) public view override returns (uint) {
@@ -118,10 +127,14 @@ contract BondManager is OracleRegistry, IBondManager {
 
     function getSFR(address collateral_, address debt_) public view override returns (uint) {
         return SFRConfig[collateral_][debt_];
+    }
+
+    function getRR(address debt_) public view override returns (uint) {
+        return RRConfig[debt_];
     } 
 
     function getOpen(address collateral_, address debt_) public view override returns (bool) {
-        return IsOpen[collateral_];
+        return IsOpen[collateral_][debt_];
     }
 
     function getSupplyPool(address debt_) public view override returns (address) {

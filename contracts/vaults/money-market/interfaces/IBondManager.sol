@@ -22,6 +22,7 @@ interface IBondManager {
     function getMCR(address collateral, address debt) external view returns(uint);
     function getLFR(address collateral, address debt) external view returns(uint);
     function getSFR(address collateral, address debt) external view returns(uint);
+    function getRR(address debt) external view returns(uint);
     function getOpen(address collateral, address debt) external view returns (bool);
     function getSupplyPool(address debt_) external view returns (address);
     function getAssetPrice(address asset) external returns (uint);
@@ -33,6 +34,7 @@ interface IBondManager {
     event BondCreated(uint256 bondId, address collateral, address debt, address creator, address bond, uint256 cAmount, uint256 dAmount);
     event SupplyCreated(address debt, address supplyPool);
     event CDPInitialized(address collateral, uint mcr, uint lfr, uint sfr, uint8 cDecimals);
+    event SupplyInitialized(address debt, uint rr, uint8 cDecimals);
     event RebaseActive(bool set);
     event SetFees(address feeTo, address treasury, address dividend);
     event Rebase(uint256 totalSupply, uint256 desiredSupply);

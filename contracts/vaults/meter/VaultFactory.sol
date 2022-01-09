@@ -23,7 +23,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    /// Vault cannot issue stablecoin, it just manages the position
+    /// Vault can issue stablecoin, it just manages the position
     function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external override returns (address vault, uint256 id) {
         uint256 gIndex = allVaultsLength();
         IV1(v1).mint(recipient, gIndex);

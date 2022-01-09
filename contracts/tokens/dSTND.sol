@@ -688,7 +688,7 @@ contract ERC20 is Context, IERC20 {
 pragma solidity ^0.8.0;
 
 // Staking in sSpell inspired by Chef Nomi's SushiBar - MIT license (originally WTFPL)
-// modified by BoringCrypto for DictatorDAO
+// Modified for multichain bridge capabilities for Standard
 
 contract dSTNDV1 is ERC20("StandardDividend", "dSTND"), AccessControl {
     using SafeMath for uint256;

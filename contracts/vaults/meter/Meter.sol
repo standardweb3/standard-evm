@@ -67,8 +67,9 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
     }
 
     function mintFromVault(address factory, uint256 vaultId_, address to, uint256 amount) external override {
-        require(hasRole(FACTORY_ROLE, factory), "IA");
-        require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "Meter: Not from Vault");
+        require(hasRole(FACTORY_ROLE, factory), "IA"); // confirm factory contract is the known factory contract from the system, this prevents hackers making fake contracts that has the same interface
+        require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "Meter: Not from Vault"); // check interface exists
+        _mint(to, amount);
     }
 
     function burn(uint256 amount) external override {

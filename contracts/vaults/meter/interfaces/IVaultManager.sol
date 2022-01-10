@@ -30,11 +30,11 @@ interface IVaultManager {
     function getLFR(address collateral) external view returns(uint);
     function getSFR(address collateral) external view returns(uint);
     function getOpen(address collateral_) external view returns (bool);
-    function getAssetPrice(address asset) external returns (uint);
-    function getAssetValue(address asset, uint256 amount) external returns (uint256);
-    function isValidCDP(address collateral, address debt, uint256 cAmount, uint256 dAmount) external returns (bool);
+    function getAssetPrice(address asset, string memory fiat_) external returns (uint);
+    function getAssetValue(address asset, string memory fiat_, uint256 amount) external returns (uint256);
+    function isValidCDP(address collateral, string memory fiat_, address debt, uint256 cAmount, uint256 dAmount) external returns (bool);
     function isValidSupply(uint256 issueAmount_) external returns (bool);
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) external returns (bool success);
+    function createCDP(address collateral_, string memory fiat_, uint cAmount_, uint dAmount_) external returns (bool success);
 
     /// Event
     event VaultCreated(uint256 vaultId, address collateral, address debt, address creator, address vault, uint256 cAmount, uint256 dAmount);

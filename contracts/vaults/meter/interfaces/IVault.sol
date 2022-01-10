@@ -20,6 +20,8 @@ interface IVault {
     function  v1() external view returns (address);
     /// address of a collateral
     function  collateral() external view returns (address);
+    /// fiat currency unit that a vault uses
+    function  fiat() external view returns (string memory);
     /// Vault global identifier
     function vaultId() external view returns (uint);
     /// borrowed amount 

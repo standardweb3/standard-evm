@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import "../../oracle/OracleRegistry.sol";
+import "../../oracle/InternationalOracleRegistry.sol";
 import "./Vault.sol";
 import "./interfaces/IVaultFactory.sol";
 
-contract VaultManager is OracleRegistry, IVaultManager {
+contract VaultManager is InternationalOracleRegistry, IVaultManager {
     
     /// Desirable supply of stablecoin 
     uint256 public override desiredSupply;
@@ -72,16 +72,16 @@ contract VaultManager is OracleRegistry, IVaultManager {
         liquidator = liquidator_;
     }
 
-    function createCDP(address collateral_, uint cAmount_, uint dAmount_) external override returns(bool success) {
+    function createCDP(address collateral_, string memory fiat_, uint cAmount_, uint dAmount_) external override returns(bool success) {
         // check if collateral is open
         require(IsOpen[collateral_], "VAULTMANAGER: NOT OPEN");
         // check position
-        require(isValidCDP(collateral_, stablecoin, cAmount_, dAmount_)
+        require(isValidCDP(collateral_, fiat_, stablecoin, cAmount_, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
-        (address vlt, uint256 id) = IVaultFactory(factory).createVault(collateral_, stablecoin, dAmount_, _msgSender());
+        (address vlt, uint256 id) = IVaultFactory(factory).createVault(collateral_, fiat_, stablecoin, dAmount_, _msgSender());
         require(vlt != address(0), "VAULTMANAGER: FE"); // Factory error
         // transfer collateral to the vault, manage collateral from there
         TransferHelper.safeTransferFrom(collateral_, _msgSender(), vlt, cAmount_);
@@ -91,17 +91,17 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return true;
     }
 
-    function createCDPNative(uint dAmount_) payable public returns(bool success) {
+    function createCDPNative(uint dAmount_, string memory fiat_) payable public returns(bool success) {
         address WETH = IVaultFactory(factory).WETH();
         // check if collateral is open
         require(IsOpen[WETH], "VAULTMANAGER: NOT OPEN");
         // check position
-        require(isValidCDP(WETH, stablecoin, msg.value, dAmount_)
+        require(isValidCDP(WETH, fiat_, stablecoin, msg.value, dAmount_)
         , "IP"); // Invalid Position
         // check rebased supply of stablecoin
         require(isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
         // create vault
-        (address vlt, uint256 id) = IVaultFactory(factory).createVault(WETH, stablecoin, dAmount_, _msgSender());
+        (address vlt, uint256 id) = IVaultFactory(factory).createVault(WETH, fiat_, stablecoin, dAmount_, _msgSender());
         require(vlt != address(0), "VAULTMANAGER: FE"); // Factory error
         // wrap native currency
         IWETH(WETH).deposit{value: address(this).balance}();
@@ -142,19 +142,19 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
 
     // Set desirable supply of issuing stablecoin
-    function rebase() public {
+    function rebase(string memory fiat_) public {
         uint256 totalSupply = IERC20Minimal(stablecoin).totalSupply(); 
         if ( totalSupply == 0 ) {
             return;
         }
-        uint overallPrice = uint(_getPriceOf(address(0x0))); // set 0x0 oracle as overall oracle price of stablecoin in all exchanges
+        uint overallPrice = uint(_getPriceOf(address(0x0), fiat_)); // set 0x0 oracle as overall oracle price of stablecoin in all exchanges
         // get desired supply and update 
         desiredSupply = totalSupply * 1e8 / overallPrice; 
         emit Rebase(totalSupply, desiredSupply);
     }
 
-    function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {
-        (uint256 collateralValueTimes100Point00000, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
+    function isValidCDP(address collateral_, string memory fiat_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {
+        (uint256 collateralValueTimes100Point00000, uint256 debtValue) = _calculateValues(collateral_, fiat_, debt_, cAmount_, dAmount_);
 
         uint mcr = getMCR(collateral_);
         uint cDecimals = IERC20Minimal(collateral_).decimals();
@@ -173,16 +173,16 @@ contract VaultManager is OracleRegistry, IVaultManager {
         }
     }
 
-    function _calculateValues(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) internal view returns (uint256, uint256) {
-        uint256 collateralValue = getAssetValue(collateral_, cAmount_);
-        uint256 debtValue = getAssetValue(debt_, dAmount_);
+    function _calculateValues(address collateral_, string memory fiat_, address debt_, uint256 cAmount_, uint256 dAmount_) internal view returns (uint256, uint256) {
+        uint256 collateralValue = getAssetValue(collateral_, fiat_, cAmount_);
+        uint256 debtValue = getAssetValue(debt_, fiat_, dAmount_);
         uint256 collateralValueTimes100Point00000 = collateralValue * 10000000;
         require(collateralValueTimes100Point00000 >= collateralValue); // overflow check
         return (collateralValueTimes100Point00000, debtValue);        
     }
 
-    function getAssetPrice(address asset_) public view override returns (uint) {
-        address aggregator = PriceFeeds[asset_];
+    function getAssetPrice(address asset_, string memory fiat_) public view override returns (uint) {
+        address aggregator = PriceFeeds[asset_][fiat_];
         require(
             aggregator != address(0x0),
             "VAULT: Asset not registered"
@@ -191,8 +191,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return uint(result);
     }
 
-    function getAssetValue(address asset_, uint256 amount_) public view override returns (uint256) {
-        uint price = getAssetPrice(asset_);
+    function getAssetValue(address asset_, string memory fiat_, uint256 amount_) public view override returns (uint256) {
+        uint price = getAssetPrice(asset_, fiat_);
         uint256 value = price * amount_;
         require(value >= amount_); // overflow
         return value;

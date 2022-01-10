@@ -17,7 +17,7 @@ interface IVaultFactory {
     /// Getters
     /// Get Config of CDP
     function vaultCodeHash() external pure returns (bytes32);
-    function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external returns (address vault, uint256 id);
+    function createVault(address collateral_, string memory fiat_, address debt_, uint256 amount_, address recipient) external returns (address vault, uint256 id);
     function getVault(uint vaultId_) external view returns (address);
 
     /// Event

@@ -24,7 +24,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
     }
 
     /// Vault can issue stablecoin, it just manages the position
-    function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external override returns (address vault, uint256 id) {
+    function createVault(address collateral_, string memory fiat_, address debt_, uint256 amount_, address recipient) external override returns (address vault, uint256 id) {
         uint256 gIndex = allVaultsLength();
         IV1(v1).mint(recipient, gIndex);
         bytes memory bytecode = type(Vault).creationCode;
@@ -32,7 +32,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
         assembly {
             vault := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        Vault(vault).initialize(manager, gIndex, collateral_, debt_, v1, amount_, v2Factory, WETH);
+        Vault(vault).initialize(manager, gIndex, collateral_, fiat_, debt_, v1, amount_, v2Factory, WETH);
         allVaults.push(vault);
         return (vault, gIndex);
     }

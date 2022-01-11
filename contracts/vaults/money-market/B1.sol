@@ -8,7 +8,7 @@ import "./interfaces/IBondFactory.sol";
 import "./interfaces/IB1.sol";
 import "./interfaces/IBond.sol";
 
-contract V1 is ERC721Enumerable, AccessControl, IB1  {
+contract B1 is ERC721Enumerable, AccessControl, IB1  {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");

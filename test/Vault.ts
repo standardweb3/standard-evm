@@ -159,10 +159,14 @@ describe("Vault", function () {
       `Change VaultLibrary vaultFor() with the creation hash above then recompile after verification`
     );
 
+    // Deploy liquidator
+    const Liquidator = await ethers.getContractFactory("Liquidator");
+    const liquidator = await Liquidator.deploy();
+
     // Initialize Vault manager
     const tx2 = await vaultManager
       .attach(vaultManager.address)
-      .initialize(mtr.address, vaultFactory.address);
+      .initialize(mtr.address, vaultFactory.address, liquidator.address);
     await executeTx(tx2, "Execute initialize at");
 
     // Initiailize VaultFactory

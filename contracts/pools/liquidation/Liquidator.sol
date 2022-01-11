@@ -7,7 +7,7 @@ import "./interfaces/IUniswapV2FactoryMinimal.sol";
 import "./interfaces/IERC20Minimal.sol";
 import "./TransferHelper.sol";
 
-contract liquidator is AccessControl {
+contract Liquidator is AccessControl {
 
   address v2Factory;
   address debt;

@@ -59,8 +59,7 @@ task("vault-deploy", "Deploy Standard Vault Components")
     const BondedStrategy = await ethers.getContractFactory("BondedStrategy");
     const bndstrtgy = await BondedStrategy.deploy(stnd);
     await deployContract(bndstrtgy, "BondedStrategy");
-    // Record address with chainid
-    //await recordAddress(ethers, "BondedStrategy", bndstrtgy.address);
+    
     // Initiailize VaultManager
     const tx = await vaultManager
       .attach(vaultManager.address)
@@ -135,8 +134,11 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     const V1 = await ethers.getContractFactory("V1");
     const v1 = await V1.deploy(vaultFactory.address);
     await deployContract(v1, "V1");
-    // Record address with chainid
-    //await recordAddress(ethers, "V1", v1.address);
+
+
+    // Deploy liquidator
+    const Liquidator = await ethers.getContractFactory("Liquidator");
+    const liquidator = await Liquidator.deploy();
 
     // Deploy Vault manager
     console.log(
@@ -155,8 +157,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       vaultManager.address
     );
     await deployContract(mtr, "MeterToken");
-    // Record address with chainid
-    //await recordAddress(ethers, "MeterToken", mtr.address);
 
     // Deploy FeePool
     console.log(
@@ -165,10 +165,11 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     const BondedStrategy = await ethers.getContractFactory("BondedStrategy");
     const bndstrtgy = await BondedStrategy.deploy(stnd);
     await deployContract(bndstrtgy, "BondedStrategy");
+
     // Initiailize VaultFactory
     const tx = await vaultFactory
       .attach(vaultFactory.address)
-      .initialize(v1.address, factory, weth);
+      .initialize(v1.address, factory, weth, vaultManager.address);
     await executeTx(tx, "Execute initialize at");
 
     // print vault code hash for UniswapV2Library to use
@@ -178,7 +179,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // Initialize Vault manager
     const tx2 = await vaultManager
       .attach(vaultManager.address)
-      .initialize(mtr.address, vaultFactory.address);
+      .initialize(mtr.address, vaultFactory.address, liquidator.address);
     await executeTx(tx2, "Execute initialize at");
 
 
@@ -233,15 +234,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // Test vault 
     const Vault = await ethers.getContractFactory("Vault")
     const vaultAddr = await vaultFactory.allVaults(0);
-
-    // Deposit Collateral
-    const depositCollateral = Vault.attach(vaultAddr).depositCollateralNative(1000)
-
-    await executeTx(depositCollateral, "Execute depositCollateralNative at")
-
-    // Withdraw Collateral
-    const withdrawCollateral = Vault.attach(vaultAddr).depositCollateral(19)
-
       
     // Get results
     console.log(

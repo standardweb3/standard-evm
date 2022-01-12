@@ -189,13 +189,15 @@ contract Vault is IVault {
     // get vault balance
     uint256 deposits = IERC20Minimal(collateral).balanceOf(address(this));
     // check position
-    require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+ deposits, dAmount_), "IP"); // Invalid Position
+    require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+ deposits, borrow+dAmount_), "IP"); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
     // transfer collateral to the vault, manage collateral from there
     TransferHelper.safeTransferFrom(collateral, msg.sender, address(this), cAmount_);
     // mint mtr to the sender
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
+    // set new borrow amount
+    borrow += dAmount_;
   }
 
   function borrowMoreNative(
@@ -211,6 +213,8 @@ contract Vault is IVault {
     IWETH(WETH).deposit{value: address(this).balance}();
     // mint mtr to the sender
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
+    // set new borrow amount
+    borrow += dAmount_;
   }
 
   function payDebt(uint256 amount_) external override onlyVaultOwner {

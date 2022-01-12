@@ -225,6 +225,7 @@ contract Vault is IVault {
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     uint256 left = _sendFee(debt, amount_, fee);
     _burnMTRFromVault(left);
+    // set new borrow amount
     borrow -= left;
     emit PayBack(vaultId, borrow, fee, amount_);
   }
@@ -232,7 +233,7 @@ contract Vault is IVault {
   function closeVault(uint256 amount_) external override onlyVaultOwner {
     // calculate debt with interest
     uint256 fee = _calculateFee();
-    require(fee + borrow == amount_, "Vault: not enough balance to payback");
+    require(fee + borrow <= amount_ + IERC20Minimal(debt).balanceOf(address(this)), "Vault: not enough balance to payback");
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // send fee to the pool
@@ -241,6 +242,8 @@ contract Vault is IVault {
     _burnMTRFromVault(left);
     // burn vault nft
     _burnV1FromVault();
+    // send remainder back to sender
+    TransferHelper.safeTransfer(debt, msg.sender, left - borrow);
     emit CloseVault(vaultId, amount_, fee);
     // self destruct the contract, send remaining balance if collateral is native currency
     selfdestruct(payable(msg.sender));

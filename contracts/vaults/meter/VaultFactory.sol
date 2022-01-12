@@ -25,6 +25,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
 
     /// Vault can issue stablecoin, it just manages the position
     function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external override returns (address vault, uint256 id) {
+        require(msg.sender == manager, "VaultFactory: IA");
         uint256 gIndex = allVaultsLength();
         IV1(v1).mint(recipient, gIndex);
         bytes memory bytecode = type(Vault).creationCode;

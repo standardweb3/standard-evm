@@ -78,11 +78,10 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
     hardhat: {
-      chainId: 0,
       forking: {
         enabled: process.env.FORKING === "true",
-        url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`, // `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 9888360,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 13000000,
       },
       allowUnlimitedContractSize: true,
       live: false,
@@ -283,6 +282,21 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       tags: ["staging"],
     },
+    moonriver: {
+      url: "https://rpc.moonriver.moonbeam.network",
+      accounts,
+      chainId: 1285,
+      saveDeployments: true,
+      tags: ["staging"],
+    },
+    moonbeam: {
+      url: "https://rpc.api.moonbeam.network",
+      accounts,
+      chainId: 1284,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"]
+    },
     shibuya: {
       url: "https://rpc.shibuya.astar.network:8545",
       accounts,
@@ -304,13 +318,6 @@ const config: HardhatUserConfig = {
       url: "http://localhost:8545",
       accounts,
       chainId: 42,
-      saveDeployments: true,
-      tags: ["staging"]
-    },
-    "evmos-testnet": {
-      url: "https://ethereum.rpc.evmos.dev",
-      accounts,
-      chainId: 9000,
       saveDeployments: true,
       tags: ["staging"]
     }
@@ -348,7 +355,7 @@ const config: HardhatUserConfig = {
             enabled: true,
             // For deploying token/masterpool only, set 65866 
             // For deploying contracts in shiden/shibuya different evm behavior from optimizer or size limit is detected, set optimizer 500 
-            runs: 65866,
+            runs: 99999,
           },
         },
       },

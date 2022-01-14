@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "./ERC721A.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/IVaultFactory.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IVault.sol";
 
-contract V1 is ERC721Enumerable, AccessControl, IV1  {
+contract V1 is ERC721A, AccessControl, IV1  {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
@@ -17,7 +17,7 @@ contract V1 is ERC721Enumerable, AccessControl, IV1  {
     // URIs for V1
     mapping (address => string) URIs;
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Enumerable, AccessControl) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721A, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -40,7 +40,7 @@ contract V1 is ERC721Enumerable, AccessControl, IV1  {
     }
 
     constructor(address factory_)
-    ERC721("MTRVaultV1", "MTRV1") {
+    ERC721A("MTRVaultV1", "MTRV1", 1) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
@@ -56,17 +56,17 @@ contract V1 is ERC721Enumerable, AccessControl, IV1  {
     function mint(address to, uint256 tokenId_) external override {
         // Check that the calling account has the minter role
         require(_msgSender() == factory, "MTRV1: Caller is not factory");
-        _mint(to, tokenId_);
+        _safeMint(to, 1);
     }
 
     function burn(uint256 tokenId_) external override {
         require(hasRole(BURNER_ROLE, _msgSender()), "MTRV1: must have burner role to burn");
-        _burn(tokenId_);
+        _safeBurn(tokenId_);
     }
 
     function burnFromVault(uint vaultId_) external override {
         require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "MTRV1: Caller is not vault");
-        _burn(vaultId_);
+        _safeBurn(vaultId_);
     }
 
     function exists(uint256 tokenId_) external view override returns (bool) {

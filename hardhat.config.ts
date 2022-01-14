@@ -14,6 +14,7 @@ import "solidity-coverage";
 import "@tenderly/hardhat-tenderly";
 import "@typechain/hardhat";
 import "hardhat-tracer";
+import '@primitivefi/hardhat-marmite';
 import "./cli";
 
 import { HardhatUserConfig } from "hardhat/config";

@@ -331,6 +331,11 @@ contract ERC721A is
     _safeBurn(tokenId);
   }
 
+  /**
+   * @dev Burns a certain token from id.
+   *
+   * Emits a {Transfer} event.
+   */
   function _safeBurn(
     uint256 tokenId,
     bytes memory _data

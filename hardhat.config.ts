@@ -34,6 +34,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
     currency: "USD",
+    gasPrice: 13,
     enabled: process.env.REPORT_GAS === "true",
     excludeContracts: ["ERC20Mock", "ERC20", "WETH9"],
   },

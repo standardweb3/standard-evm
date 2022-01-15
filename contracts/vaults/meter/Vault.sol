@@ -11,8 +11,9 @@ import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
 import "./interfaces/IUniswapV2FactoryMinimal.sol";
 import "./interfaces/IStablecoin.sol";
+import "./libraries/Initializable.sol";
 
-contract Vault is IVault {
+contract Vault is IVault, Initializable {
   /// Uniswap v2 factory interface
   address public override v2Factory;
   /// Address of a manager
@@ -34,10 +35,6 @@ contract Vault is IVault {
   /// Address of wrapped eth
   address public override WETH;
 
-  constructor() public {
-    factory = msg.sender;
-    createdAt = block.timestamp;
-  }
 
   modifier onlyVaultOwner() {
     require(
@@ -57,8 +54,7 @@ contract Vault is IVault {
     uint256 amount_,
     address v2Factory_,
     address weth_
-  ) external {
-    require(msg.sender == factory, "Vault: FORBIDDEN"); // sufficient check
+  ) external override initializer {
     vaultId = vaultId_;
     collateral = collateral_;
     debt = debt_;
@@ -67,6 +63,8 @@ contract Vault is IVault {
     v2Factory = v2Factory_;
     WETH = weth_;
     manager = manager_;
+    factory = msg.sender;
+    createdAt = block.timestamp;
   }
 
   function getStatus()

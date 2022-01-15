@@ -53,10 +53,10 @@ contract V1 is ERC721A, AccessControl, IV1  {
         factory = factory_;
     }
 
-    function mint(address to, uint256 tokenId_) external override {
+    function mint(address to, uint256 tokenId) external override {
         // Check that the calling account has the minter role
         require(_msgSender() == factory, "MTRV1: Caller is not factory");
-        _safeMint(to, 1);
+        _safeMint(to, 1); 
     }
 
     function burn(uint256 tokenId_) external override {

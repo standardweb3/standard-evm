@@ -36,6 +36,15 @@ interface IVault {
     function getStatus() external view returns (address collateral, uint256 cBalance, address debt, uint256 dBalance);
 
     /// Functions
+    function initialize(address manager_,
+    uint256 vaultId_,
+    address collateral_,
+    address debt_,
+    address v1_,
+    uint256 amount_,
+    address v2Factory_,
+    address weth_
+    ) external;
     function liquidate() external;
     function depositCollateralNative() payable external;
     function depositCollateral(uint256 amount_) external;

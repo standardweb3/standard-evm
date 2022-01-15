@@ -27,7 +27,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
 
   constructor() {
     _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    upgrader = _msgSender();
+    upgrader = address(1);
     _createImpl();
   }
 
@@ -105,6 +105,11 @@ contract VaultFactory is AccessControl, IVaultFactory {
     v2Factory = v2Factory_;
     WETH = weth_;
     manager = manager_;
+  }
+
+  function setUpgrader(address upgrader_) public {
+     require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
+     upgrader = upgrader_; 
   }
 
   function getVault(uint256 vaultId_) external view override returns (address) {

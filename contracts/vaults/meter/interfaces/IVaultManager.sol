@@ -38,7 +38,7 @@ interface IVaultManager {
 
     /// Event
     event VaultCreated(uint256 vaultId, address collateral, address debt, address creator, address vault, uint256 cAmount, uint256 dAmount);
-    event CDPInitialized(address collateral, uint mcr, uint lfr, uint sfr, uint8 cDecimals);
+    event CDPInitialized(address collateral, uint mcr, uint lfr, uint sfr, bool isOpen);
     event RebaseActive(bool set);
     event SetFees(address feeTo, address treasury, address dividend);
     event Rebase(uint256 totalSupply, uint256 desiredSupply);

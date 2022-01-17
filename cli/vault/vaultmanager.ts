@@ -169,11 +169,11 @@ task("vaultmanager-getassetprice", "Get price of an asset through oracle")
 task("vaultmanager-initializecdp", "initialize CDP as a collateral")
     .addOptionalParam("vaultmanager", "VaultManager contract address", "")
     .addParam("collateral", "address of token contract")
-    .addParam("mcr", "Minimal Collaterization Ratio of the collateral in percent")
+    .addParam("mcr", "Minimal Collaterization Ratio of the collateral in percent  e.g. 100.00000% == 10000000")
     .addParam("lfr", "Liquidation Fee Ratio in percent")
     .addParam("sfr", "Stability Fee Ratio in percent")
-    .addParam("cdecimal", "Collateral price decimal from the oracle")
-    .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, cdecimal }, {ethers}) => {
+    .addParam("on", "whether collateral should be accepted or not")
+    .setAction(async ({ vaultmanager, collateral, mcr,lfr,sfr, on}, {ethers}) => {
         const chainId = (await ethers.provider.getNetwork()).chainId;
         // Get network from chain ID
         let chain = ChainId[chainId]
@@ -181,8 +181,9 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
         console.log(vaultManager)
 
         // Add oracle to vaultmanager
+        const result = on === "true";
         const VaultManager = await ethers.getContractFactory("VaultManager");
-        const initializeCDP = await VaultManager.attach(vaultManager).initializeCDP(collateral, mcr, lfr, sfr, cdecimal);
+        const initializeCDP = await VaultManager.attach(vaultManager).initializeCDP(collateral, mcr, lfr, sfr, result);
         await executeTx(initializeCDP, "Execute initializeCDP at")
     })
 

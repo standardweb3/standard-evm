@@ -1,4 +1,4 @@
-import { executeTx, deployContract, recordAddress, ChainId } from "../helper";
+import { executeTx, deployContract, ChainId, FACTORY_ROLE } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
 
@@ -157,6 +157,11 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       vaultManager.address
     );
     await deployContract(mtr, "MeterToken");
+
+
+    // Grant factory a factory role for vault to mint stablecoin
+    const grantRole = await mtr.grantRole(FACTORY_ROLE, vaultFactory.address);
+    await executeTx(grantRole, "Executing grantRole for vault factory at")
 
     // Deploy FeePool
     console.log(

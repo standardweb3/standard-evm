@@ -47,8 +47,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
         IsOpen[collateral_] = on;
-        uint8 cDecimals = IERC20Minimal(collateral_).decimals();
-        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, cDecimals);  
+        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, on);  
     }
 
     function setRebaseActive(bool set_) public {
@@ -140,6 +139,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return IERC20Minimal(collateral_).decimals();
     }     
 
+    // Set desired supply for initial setting
+    function setDesiredSupply(uint256 desiredSupply_) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
+        desiredSupply = desiredSupply_;
+    }
 
     // Set desirable supply of issuing stablecoin
     function rebase() public {

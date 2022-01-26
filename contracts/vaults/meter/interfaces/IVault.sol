@@ -6,6 +6,7 @@ interface IVault {
     event DepositCollateral(uint256 vaultID, uint256 amount);
     event WithdrawCollateral(uint256 vaultID, uint256 amount);
     event Borrow(uint256 vaultID, uint256 amount);
+    event BorrowMore(uint256 vaultID, uint256 cAmount, uint256 dAmount, uint256 borrow);
     event PayBack(uint256 vaultID, uint256 borrow, uint256 paybackFee, uint256 amount);
     event CloseVault(uint256 vaultID, uint256 amount, uint256 closingFee);
     event Liquidated(uint256 vaultID, address collateral, uint256 amount);

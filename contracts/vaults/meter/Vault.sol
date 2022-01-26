@@ -196,6 +196,7 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     // set new borrow amount
     borrow += dAmount_;
+    emit BorrowMore(vaultId, cAmount_, dAmount_, borrow);
   }
 
   function borrowMoreNative(
@@ -213,6 +214,7 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     // set new borrow amount
     borrow += dAmount_;
+    emit BorrowMore(vaultId, msg.value, dAmount_, borrow);
   }
 
   function payDebt(uint256 amount_) external override onlyVaultOwner {

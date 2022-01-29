@@ -78,11 +78,13 @@ contract Vault is IVault, Initializable {
       uint256 dBalance
     )
   {
+    uint256 cBalance = IERC20Minimal(collateral).balanceOf(address(this));
+    uint256 dBalance = IERC20Minimal(debt).balanceOf(address(this));
     return (
       collateral,
-      IERC20Minimal(collateral).balanceOf(address(this)),
+      cBalance,
       debt,
-      IERC20Minimal(debt).balanceOf(address(this))
+      dBalance
     );
   }
 

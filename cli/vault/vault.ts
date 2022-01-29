@@ -1,4 +1,4 @@
-import { executeTx, deployContract, ChainId, FACTORY_ROLE } from "../helper";
+import { executeTx, deployContract, ChainId, FACTORY_ROLE, getAddress } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
 
@@ -278,4 +278,23 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     });
   });
 
+task("vault-create-cdp", "createCDP in vaultmanager")
+  .addOptionalParam("vaultmanager", "Contract address of vaultmanager")
+  .addParam("collateral", "Contract address of collateral asset")
+  .addParam("camount", "amount of collateral in 18 decimals")
+  .addParam("damount", "amount of debt in 18 decimals")
+  .setAction(async ({ vaultmanager, collateral, camount, damount }, { ethers }) => {
+
+    const chainId = (await ethers.provider.getNetwork()).chainId;
+    // Get network from chain ID
+    let chain = ChainId[chainId];
+    const vaultManager =
+      (await getAddress("VaultManager", chain)) ?? vaultmanager;
+    console.log(vaultManager);
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+
+    // Create CDP
+    const createCDP = await VaultManager.attach(vaultManager).createCDP(collateral, camount, damount);
+    await executeTx(createCDP, "Execute createCDP at")
+  })
 

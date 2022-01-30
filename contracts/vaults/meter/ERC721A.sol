@@ -422,6 +422,7 @@ contract ERC721A is
     address to,
     uint256 tokenId
   ) private {
+    require(!Address.isContract(to), "ERC721A: recipient is contract");
     TokenOwnership memory prevOwnership = ownershipOf(tokenId);
 
     bool isApprovedOrOwner = (_msgSender() == prevOwnership.addr ||

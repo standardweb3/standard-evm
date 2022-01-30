@@ -94,7 +94,7 @@ contract Vault is IVault, Initializable {
         collateral,
         debt,
         IERC20Minimal(collateral).balanceOf(address(this)),
-        IERC20Minimal(debt).balanceOf(address(this))
+        borrow
       ),
       "Vault: Position is still safe"
     );

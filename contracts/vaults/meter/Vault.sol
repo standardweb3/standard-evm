@@ -189,7 +189,7 @@ contract Vault is IVault, Initializable {
     // get vault balance
     uint256 deposits = IERC20Minimal(collateral).balanceOf(address(this));
     // check position
-    require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+ deposits, borrow+dAmount_), "IP"); // Invalid Position
+    require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+deposits, borrow+dAmount_), "IP"); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
     // transfer collateral to the vault, manage collateral from there
@@ -207,7 +207,7 @@ contract Vault is IVault, Initializable {
     // get vault balance
     uint256 deposits = IERC20Minimal(WETH).balanceOf(address(this));
     // check position
-    require(IVaultManager(manager).isValidCDP(collateral, debt, msg.value + deposits, dAmount_), "IP"); // Invalid Position
+    require(IVaultManager(manager).isValidCDP(collateral, debt, msg.value+deposits, borrow+dAmount_), "IP"); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
     // wrap native currency

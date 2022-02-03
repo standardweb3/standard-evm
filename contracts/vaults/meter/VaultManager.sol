@@ -166,7 +166,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         // if the debt become obsolete
         // Calculation: https://www.desmos.com/calculator/cfh64zb0di
         // Valid amounts should be a point inside the boundary with mcr in percentage(%)
-        return debtValue == 0 ? true : collateralValueTimes100Point00000 / debtValue * 10**(18-cDecimals[collateral_]) >= mcr;
+        return debtValue == 0 ? true : collateralValueTimes100Point00000 * 10**(18-cDecimals[collateral_]) / debtValue  >= mcr;
     }
 
     function isValidSupply(uint256 issueAmount_) public view override returns (bool) {

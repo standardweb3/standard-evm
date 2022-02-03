@@ -13,7 +13,7 @@ import { ChainId, recordAddress } from ".";
 export async function executeTx(tx: any, event: string) {
     console.log(`${event}: ${tx.hash}`);
     console.log("Mining...");
-    await tx.wait();
+    return await tx.wait();
 }
   
 /// deploys a contract without race conditions in production environment

@@ -22,6 +22,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     mapping (address => uint) internal SFRConfig; 
     /// key: Collateral address, value: whether collateral is allowed to borrow
     mapping (address => bool) internal IsOpen;
+    /// key: Collateral address, value: whether collateral is allowed to borrow
+    mapping (address => uint8) internal cDecimals;
     
     /// Address of stablecoin oracle  standard dex
     address public override stablecoin;
@@ -47,6 +49,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
         IsOpen[collateral_] = on;
+        cDecimals[collateral_] = IERC20Minimal(collateral_).decimals();
         emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, on);  
     }
 
@@ -159,14 +162,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function isValidCDP(address collateral_, address debt_, uint256 cAmount_, uint256 dAmount_) public view override returns (bool) {
         (uint256 collateralValueTimes100Point00000, uint256 debtValue) = _calculateValues(collateral_, debt_, cAmount_, dAmount_);
-
         uint mcr = getMCR(collateral_);
-        uint cDecimals = IERC20Minimal(collateral_).decimals();
-
-        uint256 debtValueAdjusted = debtValue / (10 ** cDecimals);
-
         // if the debt become obsolete
-        return debtValueAdjusted == 0 ? true : collateralValueTimes100Point00000 / debtValueAdjusted >= mcr;
+        // Calculation: https://www.desmos.com/calculator/cfh64zb0di
+        // Valid amounts should be a point inside the boundary with mcr in percentage(%)
+        return debtValue == 0 ? true : collateralValueTimes100Point00000 / debtValue * 10**(18-cDecimals[collateral_]) >= mcr;
     }
 
     function isValidSupply(uint256 issueAmount_) public view override returns (bool) {
@@ -199,6 +199,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint price = getAssetPrice(asset_);
         uint256 value = price * amount_;
         require(value >= amount_); // overflow
+        //uint8 precision5 = cDecimals[asset_] - 5;// in precision of 5 decimals
         return value;
     }
 

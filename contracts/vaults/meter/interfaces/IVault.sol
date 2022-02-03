@@ -30,12 +30,10 @@ interface IVault {
     /// address of wrapped eth
     function  WETH() external view returns (address);
     /// Total debt amount with interest
-    function getDebt() external returns (uint256);
+    function outstandingPayment() external returns (uint256);
     /// V2 factory address for liquidation
     function v2Factory() external view returns (address);
-    /// Vault status
-    function getStatus() external view returns (address collateral, uint256 cBalance, address debt, uint256 dBalance);
-
+    
     /// Functions
     function initialize(address manager_,
     uint256 vaultId_,
@@ -49,7 +47,7 @@ interface IVault {
     function liquidate() external;
     function depositCollateralNative() payable external;
     function depositCollateral(uint256 amount_) external;
-    function withdrawCollateralNative(uint256 amount_) payable external;
+    function withdrawCollateralNative(uint256 amount_) external;
     function withdrawCollateral(uint256 amount_) external;
     function borrowMore(uint256 cAmount_, uint256 dAmount_) external;
     function payDebt(uint256 amount_) external;

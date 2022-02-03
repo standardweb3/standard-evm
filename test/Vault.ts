@@ -1,3 +1,4 @@
+import { exec } from "child_process";
 import { assert } from "console";
 import { FACTORY_ROLE } from "../cli/helper";
 import { executeTx, deployContract, ChainId, getAddress } from "./helper";
@@ -142,7 +143,7 @@ describe("Vault", function () {
 
     // Grant factory a factory role for vault to mint stablecoin
     const grantRole = await mtr.grantRole(FACTORY_ROLE, vaultFactory.address);
-    await executeTx(grantRole, "Executing grantRole for vault factory at")
+    await executeTx(grantRole, "Executing grantRole for vault factory at");
     // Deploy FeePool
     console.log(
       `Deploying BondedStrategy with the account: ${deployer.address}`
@@ -150,6 +151,17 @@ describe("Vault", function () {
     const BondedStrategy = await ethers.getContractFactory("BondedStrategy");
     const bndstrtgy = await BondedStrategy.deploy(proxy.address);
     await deployContract(bndstrtgy, "BondedStrategy");
+
+    // approve certain amount to Vault
+    const approveDex = await mtr.approve(
+      router.address,
+      ethers.utils.parseUnits("1000000", 18)
+    );
+    const pair1 = await factory.createPair(weth.address, mtr.address)
+    executeTx(pair1, "create pair between weth and usm at")
+    const pairAddr = await factory.getPair(weth.address, mtr.address)
+    
+
 
     // print vault code hash for UniswapV2Library to use
     console.log(
@@ -172,13 +184,18 @@ describe("Vault", function () {
     // Initiailize VaultFactory
     const tx = await vaultFactory
       .attach(vaultFactory.address)
-      .initialize(v1.address, factory.address, weth.address, vaultManager.address);
+      .initialize(
+        v1.address,
+        factory.address,
+        weth.address,
+        vaultManager.address
+      );
     await executeTx(tx, "Execute initialize at");
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
     const MockOracle = await ethers.getContractFactory("MockOracle");
-    const mockoracle = await MockOracle.deploy(100000000, "USM TEST");
+    const mockoracle = await MockOracle.deploy("100000000", "USM TEST");
     const chainId = (await mockoracle.provider.getNetwork()).chainId;
     // Get network from chain ID
     let chain = ChainId[chainId];
@@ -239,7 +256,12 @@ describe("Vault", function () {
     this.weth = weth.address;
     this.vaultManager = vaultManager.address;
     this.stablecoin = mtr.address;
-    (this.cAmount = "100000000000000000"), (this.dAmount = "95982310500000000");
+    this.cAmount = "100000000000000000";
+    this.dAmount = "95982310500000000";
+    this.cOracle = mockoracle2.address;
+    this.dOracle = mockoracle.address;
+    this.liquidator = liquidator;
+    this.pair = pairAddr
   });
 
   it("A vault should work depositCollateral", async function () {
@@ -256,12 +278,50 @@ describe("Vault", function () {
     await executeTx(depositCollateral, "Execute depositCollateralNative at");
   });
 
+  it("A vault should work withdrawCollateralNative", async function () {
+    const vaultAddr = this.vault;
+    console.log(vaultAddr);
+    // Test vault
+    const Vault = await ethers.getContractFactory("Vault");
+    const collateral = await Vault.attach(vaultAddr).collateral();
+    console.log(collateral);
+    assert(collateral == this.weth);
+
+    // Deposit Collateral
+    const depositCollateralNative = await Vault.attach(
+      vaultAddr
+    ).depositCollateralNative({ value: ethers.utils.parseEther("0.1") });
+
+    await executeTx(
+      depositCollateralNative,
+      "Execute depositCollateralNative at"
+    );
+    // simulate CDP position
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+    const isValid = await VaultManager.attach(this.vaultManager).isValidCDP(
+      this.weth,
+      this.stablecoin,
+      "99999999999999999",
+      this.dAmount
+    );
+    console.log(isValid);
+
+    // Withdraw Collateral Native
+    const withdrawCollateralNative = await Vault.attach(
+      vaultAddr
+    ).withdrawCollateralNative(100000000);
+    await executeTx(
+      withdrawCollateralNative,
+      "Execute withdrawCollateralNative at"
+    );
+  });
+
   it("A vault should work withdrawCollateral", async function () {
     const vaultAddr = this.vault;
     console.log(vaultAddr);
     // Test vault
     const Vault = await ethers.getContractFactory("Vault");
-    const collateral = Vault.attach(vaultAddr).collateral();
+    const collateral = await Vault.attach(vaultAddr).collateral();
     console.log(collateral);
     assert(collateral == this.weth);
 
@@ -291,15 +351,60 @@ describe("Vault", function () {
     await executeTx(withdrawCollateral, "Execute withdrawCollateral at");
   });
 
+  it("A vault should work borrowMoreNative", async function () {
+    // Approve spending collateral
+    const WETHImpl = await ethers.getContractFactory("WETH9_");
+    // approve certain amount to Vault
+    const approve = await WETHImpl.attach(this.weth).approve(
+      this.vault,
+      ethers.utils.parseUnits("1000000", 18)
+    );
+    await executeTx(approve, "Execute Approve at");
+    const vaultAddr = this.vault;
+    // approve certain amount
+    console.log(vaultAddr);
+    // Test vault
+    const Vault = await ethers.getContractFactory("Vault");
+    const collateral = Vault.attach(vaultAddr).collateral();
+    console.log(collateral);
+    assert(collateral == this.weth);
+
+    // Deposit Collateral
+    const depositCollateralNative = await Vault.attach(
+      vaultAddr
+    ).depositCollateralNative({ value: ethers.utils.parseEther("0.1") });
+
+    await executeTx(
+      depositCollateralNative,
+      "Execute depositCollateralNative at"
+    );
+    // simulate CDP position
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+    const isValid = await VaultManager.attach(this.vaultManager).isValidCDP(
+      this.weth,
+      this.stablecoin,
+      "99999999999999999",
+      this.dAmount
+    );
+    console.log(isValid);
+
+    // borrow more
+    const borrowMore = await Vault.attach(vaultAddr).borrowMoreNative(
+      this.dAmount,
+      { value: this.cAmount }
+    );
+    await executeTx(borrowMore, "Execute borrowMore at");
+  });
+
   it("A vault should work borrowMore", async function () {
-     // Approve spending collateral
-     const WETHImpl = await ethers.getContractFactory("WETH9_");
-     // approve certain amount to Vault
-     const approve = await WETHImpl.attach(this.weth).approve(
-       this.vault,
-       ethers.utils.parseUnits("1000000", 18)
-     );
-     await executeTx(approve, "Execute Approve at");
+    // Approve spending collateral
+    const WETHImpl = await ethers.getContractFactory("WETH9_");
+    // approve certain amount to Vault
+    const approve = await WETHImpl.attach(this.weth).approve(
+      this.vault,
+      ethers.utils.parseUnits("1000000", 18)
+    );
+    await executeTx(approve, "Execute Approve at");
     const vaultAddr = this.vault;
     // approve certain amount
     console.log(vaultAddr);
@@ -334,5 +439,65 @@ describe("Vault", function () {
       this.dAmount
     );
     await executeTx(borrowMore, "Execute borrowMore at");
+  });
+
+  it("vault liquidates once oracle changes price", async function () {
+    const MockOracle = await ethers.getContractFactory("MockOracle");
+    const ERC20 = await ethers.getContractFactory("WETH9_");
+    const Vault = await ethers.getContractFactory("Vault");
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+
+    // get info from vault
+    let collateral = await Vault.attach(this.vault).collateral();
+    let debt = await Vault.attach(this.vault).debt();
+    let [mcr, lfr, sfr, cDecimals, on] = await VaultManager.attach(
+      this.vaultManager
+    ).getCDPConfig(collateral);
+    let cAmount = await ERC20.attach(collateral).balanceOf(this.vault);
+    let dAmount = await Vault.attach(this.vault).borrow();
+    let cPrice = await MockOracle.attach(this.cOracle).getThePrice();
+    let dPrice = await MockOracle.attach(this.dOracle).getThePrice();
+
+    console.log(cPrice, dPrice, collateral, debt, mcr, cAmount, dAmount);
+
+    // get previous position
+    let cv = cPrice.mul(cAmount);
+    let dv = dPrice.mul(dAmount);
+    console.log(cv);
+    console.log(dv);
+    console.log(cv.gt(dv));
+    let cr = cv.div(dv);
+    console.log(cr);
+    console.log(mcr.div(10000).div(100));
+    assert(cr > mcr.div(10000).div(100));
+    // get whether the position is valid
+    const isValidCDP = await VaultManager.attach(this.vaultManager).isValidCDP(
+      collateral,
+      debt,
+      cAmount,
+      dAmount
+    );
+    console.log(isValidCDP);
+    const mockOracle = await MockOracle.attach(this.cOracle).setPrice("1000");
+    await executeTx(mockOracle, "execute setPrice at");
+    let cPrice2 = await MockOracle.attach(this.cOracle).getThePrice();
+    let dPrice2 = await MockOracle.attach(this.dOracle).getThePrice();
+
+    // get after position
+    let cr2 = cPrice2.mul(cAmount).div(dPrice2.mul(dAmount));
+    console.log(cr2);
+    console.log(mcr.div(10000).div(100));
+    assert(cr2 > mcr.div(10000).div(100));
+    const isValidCDP2 = await VaultManager.attach(this.vaultManager).isValidCDP(
+      collateral,
+      debt,
+      cAmount,
+      dAmount
+    );
+    console.log(isValidCDP2);
+    const liquidate = await Vault.attach(this.vault).liquidate();
+    await executeTx(liquidate, "execute liquidate at");
+    console.log(await ERC20.attach(collateral).balanceOf(this.liquidator.address))
+    console.log(await ERC20.attach(collateral).balanceOf(this.pair))
   });
 });

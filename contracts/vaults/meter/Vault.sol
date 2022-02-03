@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IERC20Minimal.sol";
 import "./libraries/TransferHelper.sol";
+import "./libraries/FeeHelper.sol";
 import "./interfaces/IVault.sol";
-import "./interfaces/IVaultManager.sol";
 import "./interfaces/IERC721Minimal.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
@@ -34,7 +34,6 @@ contract Vault is IVault, Initializable {
   uint256 public override createdAt;
   /// Address of wrapped eth
   address public override WETH;
-
 
   modifier onlyVaultOwner() {
     require(
@@ -67,27 +66,6 @@ contract Vault is IVault, Initializable {
     createdAt = block.timestamp;
   }
 
-  function getStatus()
-    external
-    view
-    override
-    returns (
-      address collateral,
-      uint256 cBalance,
-      address debt,
-      uint256 dBalance
-    )
-  {
-    uint256 cBalance = IERC20Minimal(collateral).balanceOf(address(this));
-    uint256 dBalance = IERC20Minimal(debt).balanceOf(address(this));
-    return (
-      collateral,
-      cBalance,
-      debt,
-      dBalance
-    );
-  }
-
   function liquidate() external override {
     require(
       !IVaultManager(manager).isValidCDP(
@@ -98,19 +76,27 @@ contract Vault is IVault, Initializable {
       ),
       "Vault: Position is still safe"
     );
-    // check the pair if it exists
-    address pair = IUniswapV2FactoryMinimal(v2Factory).getPair(
-      collateral,
-      debt
-    );
-    require(pair != address(0), "Vault: Liquidating pair not supported");
     uint256 balance = IERC20Minimal(collateral).balanceOf(address(this));
     uint256 lfr = IVaultManager(manager).getLFR(collateral);
-    uint256 liquidationFee = (lfr * balance) / 100;
-    uint256 left = _sendFee(collateral, balance, liquidationFee);
+    uint256 liquidationFee = (lfr * balance) / 10000000; // 100 in 5 decimal
+    uint256 left = FeeHelper._sendFee(manager, collateral, balance, liquidationFee);
     // Distribute collaterals
     address liquidator = IVaultManager(manager).liquidator();
-    TransferHelper.safeTransfer(collateral, liquidator, left);
+    if (liquidator == address(0)) {
+      address pair = IUniswapV2FactoryMinimal(v2Factory).getPair(
+        collateral,
+        debt
+      );
+      require(pair != address(0), "Vault: Liquidating pair not supported");
+      // Distribute collaterals
+      TransferHelper.safeTransfer(
+        collateral,
+        pair,
+        IERC20Minimal(collateral).balanceOf(address(this))
+      );
+    } else {
+      TransferHelper.safeTransfer(collateral, liquidator, left);
+    }
     // burn vault nft
     _burnV1FromVault();
     emit Liquidated(vaultId, collateral, balance);
@@ -136,21 +122,13 @@ contract Vault is IVault, Initializable {
   }
 
   /// Withdraw collateral as native currency
-  function withdrawCollateralNative(uint256 amount_)
-    external
-    payable
-    override
-    onlyVaultOwner
-  {
+  function withdrawCollateralNative(uint256 amount_) external virtual override onlyVaultOwner {
     require(collateral == WETH, "Vault: collateral is not a native asset");
     if (borrow != 0) {
+      uint256 result = IERC20Minimal(collateral).balanceOf(address(this)) -
+        amount_;
       require(
-        IVaultManager(manager).isValidCDP(
-          collateral,
-          debt,
-          IERC20Minimal(collateral).balanceOf(address(this)) - amount_,
-          borrow
-        ),
+        IVaultManager(manager).isValidCDP(collateral, debt, result, borrow),
         "Vault: below MCR"
       );
     }
@@ -171,29 +149,44 @@ contract Vault is IVault, Initializable {
       "Vault: Not enough collateral"
     );
     if (borrow != 0) {
-      uint256 test = IERC20Minimal(collateral).balanceOf(address(this)) - amount_;
+      uint256 test = IERC20Minimal(collateral).balanceOf(address(this)) -
+        amount_;
       require(
-        IVaultManager(manager).isValidCDP(collateral,debt,test,borrow) == true,
+        IVaultManager(manager).isValidCDP(collateral, debt, test, borrow) ==
+          true,
         "Vault: below MCR"
       );
-      
     }
     TransferHelper.safeTransfer(collateral, msg.sender, amount_);
     emit WithdrawCollateral(vaultId, amount_);
   }
 
-  function borrowMore(
-    uint256 cAmount_,
-    uint256 dAmount_
-  ) external override onlyVaultOwner {
+  function borrowMore(uint256 cAmount_, uint256 dAmount_)
+    external
+    override
+    onlyVaultOwner
+  {
     // get vault balance
     uint256 deposits = IERC20Minimal(collateral).balanceOf(address(this));
     // check position
-    require(IVaultManager(manager).isValidCDP(collateral, debt, cAmount_+deposits, borrow+dAmount_), "IP"); // Invalid Position
+    require(
+      IVaultManager(manager).isValidCDP(
+        collateral,
+        debt,
+        cAmount_ + deposits,
+        borrow + dAmount_
+      ),
+      "IP"
+    ); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
     // transfer collateral to the vault, manage collateral from there
-    TransferHelper.safeTransferFrom(collateral, msg.sender, address(this), cAmount_);
+    TransferHelper.safeTransferFrom(
+      collateral,
+      msg.sender,
+      address(this),
+      cAmount_
+    );
     // mint mtr to the sender
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     // set new borrow amount
@@ -201,17 +194,23 @@ contract Vault is IVault, Initializable {
     emit BorrowMore(vaultId, cAmount_, dAmount_, borrow);
   }
 
-  function borrowMoreNative(
-    uint256 dAmount_
-  ) external payable onlyVaultOwner {
+  function borrowMoreNative(uint256 dAmount_) external payable onlyVaultOwner {
     // get vault balance
     uint256 deposits = IERC20Minimal(WETH).balanceOf(address(this));
     // check position
-    require(IVaultManager(manager).isValidCDP(collateral, debt, msg.value+deposits, borrow+dAmount_), "IP"); // Invalid Position
+    require(
+      IVaultManager(manager).isValidCDP(
+        collateral,
+        debt,
+        msg.value + deposits,
+        borrow + dAmount_
+      ),
+      "IP"
+    ); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
     // wrap native currency
-    IWETH(WETH).deposit{value: address(this).balance}();
+    IWETH(WETH).deposit{ value: address(this).balance }();
     // mint mtr to the sender
     IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     // set new borrow amount
@@ -225,7 +224,7 @@ contract Vault is IVault, Initializable {
     require(amount_ != 0, "Vault: amount is zero");
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
-    uint256 left = _sendFee(debt, amount_, fee);
+    uint256 left = FeeHelper._sendFee(manager, debt, amount_, fee);
     _burnMTRFromVault(left);
     // set new borrow amount
     borrow -= left;
@@ -235,11 +234,14 @@ contract Vault is IVault, Initializable {
   function closeVault(uint256 amount_) external override onlyVaultOwner {
     // calculate debt with interest
     uint256 fee = _calculateFee();
-    require(fee + borrow <= amount_ + IERC20Minimal(debt).balanceOf(address(this)), "Vault: not enough balance to payback");
+    require(
+      fee + borrow <= amount_ + IERC20Minimal(debt).balanceOf(address(this)),
+      "Vault: not enough balance to payback"
+    );
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // send fee to the pool
-    uint256 left = _sendFee(debt, amount_, fee);
+    uint256 left = FeeHelper._sendFee(manager, debt, amount_, fee);
     // burn mtr debt with interest
     _burnMTRFromVault(left);
     // burn vault nft
@@ -270,36 +272,11 @@ contract Vault is IVault, Initializable {
     return (sfrTimesV / 100) * duration;
   }
 
-  function getDebt() external override returns (uint256) {
+  function outstandingPayment() external override returns (uint256) {
     return _calculateFee() + borrow;
   }
 
-  function _sendFee(
-    address asset_,
-    uint256 amount_,
-    uint256 fee_
-  ) internal returns (uint256 left) {
-    address dividend = IVaultManager(manager).dividend();
-    address feeTo = IVaultManager(manager).feeTo();
-    address treasury = IVaultManager(manager).treasury();
-    bool feeOn = feeTo != address(0);
-    bool treasuryOn = treasury != address(0);
-    bool dividendOn = dividend != address(0);
-    // send fee to the pool
-    if (feeOn) {
-      if (dividendOn) {
-        uint256 half = fee_ / 2;
-        TransferHelper.safeTransfer(asset_, dividend, half);
-        TransferHelper.safeTransfer(asset_, feeTo, half);
-      } else if (dividendOn && treasuryOn) {
-        uint256 third = fee_ / 3;
-        TransferHelper.safeTransfer(asset_, dividend, third);
-        TransferHelper.safeTransfer(asset_, feeTo, third);
-        TransferHelper.safeTransfer(asset_, treasury, third);
-      } else {
-        TransferHelper.safeTransfer(asset_, feeTo, fee_);
-      }
-    }
-    return amount_ - fee_;
+  receive() external payable {
+    assert(msg.sender == WETH); // only accept ETH via fallback from the WETH contract
   }
 }

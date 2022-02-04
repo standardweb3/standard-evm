@@ -33,7 +33,7 @@ interface IVault {
     function outstandingPayment() external returns (uint256);
     /// V2 factory address for liquidation
     function v2Factory() external view returns (address);
-    
+
     /// Functions
     function initialize(address manager_,
     uint256 vaultId_,

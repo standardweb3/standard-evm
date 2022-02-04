@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import { assert } from "console";
-import { FACTORY_ROLE } from "../cli/helper";
+import { FACTORY_ROLE, ZERO } from "../cli/helper";
 import { executeTx, deployContract, ChainId, getAddress } from "./helper";
 const { EtherscanProvider } = require("@ethersproject/providers");
 const { expect } = require("chai");
@@ -206,11 +206,18 @@ describe("Vault", function () {
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
-    const MockOracle2 = await ethers.getContractFactory("MockOracle");
-    const mockoracle2 = await MockOracle2.deploy("202000000", "WETH TEST");
+    const mockoracle2 = await MockOracle.deploy("202000000", "WETH TEST");
     await deployContract(
       mockoracle2,
       `Mock Oracle(constant WETH TEST on ${chain})`
+    );
+
+    // Deploy Mock Oracle
+    console.log(`Deploying MockOracle with the account: ${deployer.address}`);
+    const mockoracle3 = await MockOracle.deploy("50000000", "Global USM price TEST");
+    await deployContract(
+      mockoracle3,
+      `Mock Oracle(constant USM on DEXes TEST on ${chain})`
     );
 
     // Add oracles to vaultmanager
@@ -224,6 +231,11 @@ describe("Vault", function () {
       mockoracle2.address
     );
     await executeTx(addOracle2, "Execute addOracle of weth test at");
+    const addOracle3 = await vaultManager.addOracle(
+      ZERO,
+      mockoracle3.address
+    );
+    await executeTx(addOracle3, "Execute addOracle of USM dex test at");
 
     // initialize CDP
     const initializeCDP = await vaultManager.initializeCDP(
@@ -499,5 +511,24 @@ describe("Vault", function () {
     await executeTx(liquidate, "execute liquidate at");
     console.log(await ERC20.attach(collateral).balanceOf(this.liquidator.address))
     console.log(await ERC20.attach(collateral).balanceOf(this.pair))
+  });
+
+  it("vaultmanager rebases supply once price goes down", async function () {
+    const VaultManager = await ethers.getContractFactory("VaultManager");
+    const tx = await VaultManager.attach(this.vaultManager).setDesiredSupply("10000000000000000000000000000000000000")
+    const ERC20 = await ethers.getContractFactory("WETH9_");
+    executeTx(tx, "set disired supply at")
+    const totalSupply = await ERC20.attach(this.stablecoin).totalSupply();
+    console.log(totalSupply.toString())
+    const before = await VaultManager.attach(this.vaultManager).desiredSupply()
+    console.log(before.toString())
+    const tx2 = await VaultManager.attach(this.vaultManager).setRebaseActive(true);
+    executeTx(tx2, "set rebase active at")
+    const tx3 = await VaultManager.attach(this.vaultManager).rebase()
+    executeTx(tx3, "rebase at")
+    const after = await VaultManager.attach(this.vaultManager).desiredSupply()
+    console.log(after.toString())
+
+    assert(after.gt(before))
   });
 });

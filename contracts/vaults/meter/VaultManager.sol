@@ -12,6 +12,8 @@ contract VaultManager is OracleRegistry, IVaultManager {
     uint256 public override desiredSupply;
     /// Switch to on/off rebase;
     bool public override rebaseActive;
+    /// Last rebase
+    uint256 public override lastRebase;
 
     // CDP configs
     /// key: Collateral address, value: Liquidation Fee Ratio (LFR) in percent(%) with 5 decimal precision(100.00000%)
@@ -150,13 +152,15 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     // Set desirable supply of issuing stablecoin
     function rebase() public {
+        require(block.timestamp - lastRebase >= 3600, "RB not applied");
         uint256 totalSupply = IERC20Minimal(stablecoin).totalSupply(); 
         if ( totalSupply == 0 ) {
             return;
         }
         uint overallPrice = uint(_getPriceOf(address(0x0))); // set 0x0 oracle as overall oracle price of stablecoin in all exchanges
         // get desired supply and update 
-        desiredSupply = totalSupply * 1e8 / overallPrice; 
+        desiredSupply = totalSupply * overallPrice / 1e8; 
+        lastRebase = block.timestamp;
         emit Rebase(totalSupply, desiredSupply);
     }
 

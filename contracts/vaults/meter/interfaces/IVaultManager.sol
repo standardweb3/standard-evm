@@ -5,6 +5,8 @@ pragma solidity ^0.8.0;
 interface IVaultManager {
 
     /// View funcs
+    /// Last rebase
+    function lastRebase() external view returns (uint256);
     /// Stablecoin address
     function stablecoin() external view returns (address);
     /// VaultFactory address

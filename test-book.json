@@ -113,9 +113,12 @@
     "undefined": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
   },
   "Mock Oracle(constant WETH TEST on undefined)": {
-    "undefined": "0x59b670e9fA9D0A427751Af201D676719a970857b"
+    "undefined": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
   },
   "Mock Oracle(constant DAI on RINKEBY)": {
     "RINKEBY": "0x282E58A9B6b8b687f04bf2737739832a5f2D97E2"
+  },
+  "Mock Oracle(constant USM on DEXes TEST on undefined)": {
+    "undefined": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1"
   }
 }

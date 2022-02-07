@@ -159,6 +159,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         }
         uint overallPrice = uint(_getPriceOf(address(0x0))); // set 0x0 oracle as overall oracle price of stablecoin in all exchanges
         // get desired supply and update 
+        // solve equation where sigma{all dex pair value with MTR} / MTR total supply = 1 with decimal
         desiredSupply = totalSupply * overallPrice / 1e8; 
         lastRebase = block.timestamp;
         emit Rebase(totalSupply, desiredSupply);

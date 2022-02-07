@@ -264,12 +264,12 @@ contract Vault is IVault, Initializable {
   function _calculateFee() internal returns (uint256) {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
     uint256 sfr = IVaultManager(manager).getSFR(collateral);
-    /// (sfr * assetValue/100) * (duration in months)
-    uint256 sfrTimesV = sfr * assetValue;
-    // get duration in months
-    uint256 duration = (block.timestamp - createdAt) / 60 / 60 / 24 / 30;
-    require(sfrTimesV >= assetValue); // overflow check
-    return (sfrTimesV / 100) * duration;
+    /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals)) 
+    // get duration in months with decimal 
+    uint256 duration = (block.timestamp - createdAt) * 10*18 / 2592000;
+    // remove precision then apply sfr with decimals
+    uint256 durationV = duration*assetValue / 10^18;
+    return durationV * sfr / 10000000;
   }
 
   function outstandingPayment() external override returns (uint256) {

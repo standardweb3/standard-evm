@@ -1,4 +1,4 @@
-import { executeTx, deployContract, ChainId, FACTORY_ROLE, getAddress } from "../helper";
+import { executeTx, deployContract, ChainId, FACTORY_ROLE, getAddress, ZERO } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
 
@@ -184,7 +184,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // Initialize Vault manager
     const tx2 = await vaultManager
       .attach(vaultManager.address)
-      .initialize(mtr.address, vaultFactory.address, liquidator.address);
+      .initialize(mtr.address, vaultFactory.address, ZERO);
     await executeTx(tx2, "Execute initialize at");
 
 
@@ -210,6 +210,14 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       `Mock Oracle(constant WETH TEST on ${chain})`
     );
 
+    // Deploy Mock Oracle
+    console.log(`Deploying MockOracle with the account: ${deployer.address}`);
+    const mockoracle3 = await MockOracle.deploy("50000000", "Global USM price TEST");
+    await deployContract(
+      mockoracle3,
+      `Mock Oracle(constant USM on DEXes TEST on ${chain})`
+    );
+
     // Add oracles to vaultmanager
     const addOracle = await vaultManager.addOracle(
       mtr.address,
@@ -221,6 +229,13 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       mockoracle2.address
     );
     await executeTx(addOracle2, "Execute addOracle of weth test at");
+    await executeTx(addOracle2, "Execute addOracle of weth test at");
+    const addOracle3 = await vaultManager.addOracle(
+      ZERO,
+      mockoracle3.address
+    );
+    await executeTx(addOracle3, "Execute addOracle of USM dex test at");
+
 
     // initialize CDP
     const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000, true);

@@ -22,7 +22,7 @@ contract V1 is ERC721A, AccessControl, IV1  {
     }
 
     function setURI(address collateral_, string memory uri_) public {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "MTRV1: Caller is not a default admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "V1: Caller is not a default admin");
         URIs[collateral_] = uri_;
     }
 
@@ -40,7 +40,7 @@ contract V1 is ERC721A, AccessControl, IV1  {
     }
 
     constructor(address factory_)
-    ERC721A("MTRVaultV1", "MTRV1", 1) {
+    ERC721A("Vault1", "V1", 1) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
@@ -49,23 +49,23 @@ contract V1 is ERC721A, AccessControl, IV1  {
     }
     
     function setFactory(address factory_) public {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "MTRV1: Caller is not a default admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "V1: Caller is not a default admin");
         factory = factory_;
     }
 
     function mint(address to) external override {
         // Check that the calling account has the minter role
-        require(_msgSender() == factory, "MTRV1: Caller is not factory");
+        require(_msgSender() == factory, "V1: Caller is not factory");
         _safeMint(to, 1); 
     }
 
     function burn(uint256 tokenId_) external override {
-        require(hasRole(BURNER_ROLE, _msgSender()), "MTRV1: must have burner role to burn");
+        require(hasRole(BURNER_ROLE, _msgSender()), "V1: must have burner role to burn");
         _safeBurn(tokenId_);
     }
 
     function burnFromVault(uint vaultId_) external override {
-        require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "MTRV1: Caller is not vault");
+        require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "V1: Caller is not vault");
         _safeBurn(vaultId_);
     }
 

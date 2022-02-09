@@ -26,7 +26,7 @@ interface IVault {
     /// borrowed amount 
     function borrow() external view returns (uint256);
     /// created block timestamp
-    function createdAt() external view returns (uint256);
+    function lastUpdated() external view returns (uint256);
     /// address of wrapped eth
     function  WETH() external view returns (address);
     /// Total debt amount with interest

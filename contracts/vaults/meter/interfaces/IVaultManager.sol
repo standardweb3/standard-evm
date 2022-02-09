@@ -31,6 +31,7 @@ interface IVaultManager {
     function getMCR(address collateral) external view returns(uint);
     function getLFR(address collateral) external view returns(uint);
     function getSFR(address collateral) external view returns(uint);
+    function getExpiary(address collateral) external view returns(uint256);
     function getOpen(address collateral_) external view returns (bool);
     function getAssetPrice(address asset) external returns (uint);
     function getAssetValue(address asset, uint256 amount) external returns (uint256);

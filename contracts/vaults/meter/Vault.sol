@@ -31,9 +31,11 @@ contract Vault is IVault, Initializable {
   /// Borrowed amount
   uint256 public override borrow;
   /// Created block timestamp
-  uint256 public override createdAt;
+  uint256 public override lastUpdated;
   /// Address of wrapped eth
   address public override WETH;
+  /// Interest rate until expiary
+  uint256 ex_sfr;
 
   modifier onlyVaultOwner() {
     require(
@@ -63,7 +65,8 @@ contract Vault is IVault, Initializable {
     WETH = weth_;
     manager = manager_;
     factory = msg.sender;
-    createdAt = block.timestamp;
+    lastUpdated = block.timestamp;
+    ex_sfr = IVaultManager(manager).getSFR(collateral_);
   }
 
   function liquidate() external override {
@@ -263,12 +266,17 @@ contract Vault is IVault, Initializable {
 
   function _calculateFee() internal returns (uint256) {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
-    uint256 sfr = IVaultManager(manager).getSFR(collateral);
+    uint256 present = block.timestamp;
+    uint256 expiary =  IVaultManager(manager).getExpiary(collateral);
+    // Check if interest is retroactive or not
+    uint256 sfr = present > expiary ? IVaultManager(manager).getSFR(collateral) : ex_sfr;
     /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals)) 
     // get duration in months with decimal 
-    uint256 duration = (block.timestamp - createdAt) * 10*18 / 2592000;
+    uint256 duration = (present - lastUpdated) * 1e18 / 2592000;
     // remove precision then apply sfr with decimals
-    uint256 durationV = duration*assetValue / 10^18;
+    uint256 durationV = duration*assetValue / 1e18;
+    // reset last updated timestamp
+    lastUpdated = present;
     return durationV * sfr / 10000000;
   }
 

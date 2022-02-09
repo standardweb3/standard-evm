@@ -21,7 +21,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     /// key: Collateral address, value: Minimum Collateralization Ratio (MCR) in percent(%) with 5 decimal precision(100.00000%)
     mapping (address => uint) internal MCRConfig;
     /// key: Collateral address, value: Stability Fee Ratio (SFR) in percent(%) with 5 decimal precision(100.00000%)
-    mapping (address => uint) internal SFRConfig; 
+    mapping (address => uint) internal SFRConfig;
+    /// key: Collateral address, value: Expiaries of a debt for interest rate fixation
+    mapping (address => uint256) internal Expiaries;  
     /// key: Collateral address, value: whether collateral is allowed to borrow
     mapping (address => bool) internal IsOpen;
     /// key: Collateral address, value: whether collateral is allowed to borrow
@@ -45,11 +47,12 @@ contract VaultManager is OracleRegistry, IVaultManager {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, bool on) public {
+    function initializeCDP(address collateral_, uint MCR_, uint LFR_, uint SFR_, uint256 expiary_, bool on) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         LFRConfig[collateral_] = LFR_;
         MCRConfig[collateral_] = MCR_;
         SFRConfig[collateral_] = SFR_; 
+        Expiaries[collateral_] = expiary_;
         IsOpen[collateral_] = on;
         cDecimals[collateral_] = IERC20Minimal(collateral_).decimals();
         emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, on);  
@@ -134,6 +137,10 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     function getSFR(address collateral_) public view override returns (uint) {
         return SFRConfig[collateral_];
+    }
+
+    function getExpiary(address collateral_) public view override returns (uint256) {
+        return Expiaries[collateral_];
     } 
 
     function getOpen(address collateral_) public view override returns (bool) {

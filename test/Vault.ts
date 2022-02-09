@@ -243,6 +243,7 @@ describe("Vault", function () {
       15000000,
       2000000,
       500000,
+      8035200,
       true
     );
     await executeTx(initializeCDP, "Execute initializeCDP at");

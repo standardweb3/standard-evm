@@ -204,7 +204,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
     const MockOracle2 = await ethers.getContractFactory("MockOracle");
-    const mockoracle2 = await MockOracle2.deploy("202000000", "WETH TEST");
+    const mockoracle2 = await MockOracle2.deploy("311200000000", "WETH TEST");
     await deployContract(
       mockoracle2,
       `Mock Oracle(constant WETH TEST on ${chain})`
@@ -238,7 +238,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
 
 
     // initialize CDP
-    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000, true);
+    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000, 8035200, true);
     await executeTx(initializeCDP, "Execute initializeCDP at")
 
     // Approve spending collateral

@@ -159,6 +159,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
 
     // Set desirable supply of issuing stablecoin
     function rebase() public {
+        require(rebaseActive, "VaultManager: RB inactive");
         require(block.timestamp - lastRebase >= 3600, "RB not applied");
         uint256 totalSupply = IERC20Minimal(stablecoin).totalSupply(); 
         if ( totalSupply == 0 ) {

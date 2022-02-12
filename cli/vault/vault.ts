@@ -1,4 +1,11 @@
-import { executeTx, deployContract, ChainId, FACTORY_ROLE, getAddress, ZERO } from "../helper";
+import {
+  executeTx,
+  deployContract,
+  ChainId,
+  FACTORY_ROLE,
+  getAddress,
+  ZERO,
+} from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
 
@@ -59,7 +66,7 @@ task("vault-deploy", "Deploy Standard Vault Components")
     const BondedStrategy = await ethers.getContractFactory("BondedStrategy");
     const bndstrtgy = await BondedStrategy.deploy(stnd);
     await deployContract(bndstrtgy, "BondedStrategy");
-    
+
     // Initiailize VaultManager
     const tx = await vaultManager
       .attach(vaultManager.address)
@@ -135,7 +142,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     const v1 = await V1.deploy(vaultFactory.address);
     await deployContract(v1, "V1");
 
-
     // Deploy liquidator
     const Liquidator = await ethers.getContractFactory("Liquidator");
     const liquidator = await Liquidator.deploy();
@@ -158,10 +164,9 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     );
     await deployContract(mtr, "MeterToken");
 
-
     // Grant factory a factory role for vault to mint stablecoin
     const grantRole = await mtr.grantRole(FACTORY_ROLE, vaultFactory.address);
-    await executeTx(grantRole, "Executing grantRole for vault factory at")
+    await executeTx(grantRole, "Executing grantRole for vault factory at");
 
     // Deploy FeePool
     console.log(
@@ -178,15 +183,18 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await executeTx(tx, "Execute initialize at");
 
     // print vault code hash for UniswapV2Library to use
-    console.log(`VaultCodeHash(For VaultLibrary vaultfor() function): ${await vaultFactory.vaultCodeHash()}`)
-    console.log(`Change VaultLibrary vaultFor() with the creation hash above then recompile after verification`)
+    console.log(
+      `VaultCodeHash(For VaultLibrary vaultfor() function): ${await vaultFactory.vaultCodeHash()}`
+    );
+    console.log(
+      `Change VaultLibrary vaultFor() with the creation hash above then recompile after verification`
+    );
 
     // Initialize Vault manager
     const tx2 = await vaultManager
       .attach(vaultManager.address)
       .initialize(mtr.address, vaultFactory.address, ZERO);
     await executeTx(tx2, "Execute initialize at");
-
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
@@ -200,7 +208,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       `Mock Oracle(constant USM TEST on ${chain})`
     );
 
-
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
     const MockOracle2 = await ethers.getContractFactory("MockOracle");
@@ -212,7 +219,10 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
-    const mockoracle3 = await MockOracle.deploy("50000000", "Global USM price TEST");
+    const mockoracle3 = await MockOracle.deploy(
+      "50000000",
+      "Global USM price TEST"
+    );
     await deployContract(
       mockoracle3,
       `Mock Oracle(constant USM on DEXes TEST on ${chain})`
@@ -224,37 +234,44 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       mockoracle.address
     );
     await executeTx(addOracle, "Execute addOracle of usm test at");
-    const addOracle2 = await vaultManager.addOracle(
-      weth,
-      mockoracle2.address
-    );
+    const addOracle2 = await vaultManager.addOracle(weth, mockoracle2.address);
     await executeTx(addOracle2, "Execute addOracle of weth test at");
     await executeTx(addOracle2, "Execute addOracle of weth test at");
-    const addOracle3 = await vaultManager.addOracle(
-      ZERO,
-      mockoracle3.address
-    );
+    const addOracle3 = await vaultManager.addOracle(ZERO, mockoracle3.address);
     await executeTx(addOracle3, "Execute addOracle of USM dex test at");
 
-
     // initialize CDP
-    const initializeCDP = await vaultManager.initializeCDP(weth, 15000000, 2000000, 500000, 8035200, true);
-    await executeTx(initializeCDP, "Execute initializeCDP at")
+    const initializeCDP = await vaultManager.initializeCDP(
+      weth,
+      15000000,
+      2000000,
+      500000,
+      8035200,
+      true
+    );
+    await executeTx(initializeCDP, "Execute initializeCDP at");
 
     // Approve spending collateral
-    const TokenImpl = await ethers.getContractFactory("WETH9_")
+    const TokenImpl = await ethers.getContractFactory("WETH9_");
     // approve certain amount
-    const approve = await TokenImpl.attach(weth).approve(vaultManager.address, ethers.utils.parseUnits("1000000", 18));
-    await executeTx(approve, "Execute Approve at")
-    
-    // Create CDP
-    const createCDP = await vaultManager.createCDP(weth, "100000000000000000", "95982310500000000");
-    await executeTx(createCDP, "Execute createCDP at")
+    const approve = await TokenImpl.attach(weth).approve(
+      vaultManager.address,
+      ethers.utils.parseUnits("1000000", 18)
+    );
+    await executeTx(approve, "Execute Approve at");
 
-    // Test vault 
-    const Vault = await ethers.getContractFactory("Vault")
+    // Create CDP
+    const createCDP = await vaultManager.createCDP(
+      weth,
+      "100000000000000000",
+      "95982310500000000"
+    );
+    await executeTx(createCDP, "Execute createCDP at");
+
+    // Test vault
+    const Vault = await ethers.getContractFactory("Vault");
     const vaultAddr = await vaultFactory.allVaults(0);
-      
+
     // Get results
     console.log(
       `Deployer balance: ${ethers.utils.formatEther(
@@ -298,18 +315,62 @@ task("vault-create-cdp", "createCDP in vaultmanager")
   .addParam("collateral", "Contract address of collateral asset")
   .addParam("camount", "amount of collateral in 18 decimals")
   .addParam("damount", "amount of debt in 18 decimals")
-  .setAction(async ({ vaultmanager, collateral, camount, damount }, { ethers }) => {
+  .setAction(
+    async ({ vaultmanager, collateral, camount, damount }, { ethers }) => {
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      // Get network from chain ID
+      let chain = ChainId[chainId];
+      const vaultManager =
+        (await getAddress("VaultManager", chain)) ?? vaultmanager;
+      console.log(vaultManager);
+      const VaultManager = await ethers.getContractFactory("VaultManager");
 
-    const chainId = (await ethers.provider.getNetwork()).chainId;
-    // Get network from chain ID
-    let chain = ChainId[chainId];
-    const vaultManager =
-      (await getAddress("VaultManager", chain)) ?? vaultmanager;
-    console.log(vaultManager);
-    const VaultManager = await ethers.getContractFactory("VaultManager");
+      // Create CDP
+      const createCDP = await VaultManager.attach(vaultManager).createCDP(
+        collateral,
+        camount,
+        damount
+      );
+      await executeTx(createCDP, "Execute createCDP at");
+    }
+  );
 
-    // Create CDP
-    const createCDP = await VaultManager.attach(vaultManager).createCDP(collateral, camount, damount);
-    await executeTx(createCDP, "Execute createCDP at")
-  })
+task("vault-rebase-set", "Configure rebase of the stablecoin supply")
+  .addOptionalParam("vaultmanager", "Contract address of vaultmanager")
+  .addOptionalParam("desiredsupply", "desired supply of stablecoin in 18 decimal", "0")
+  .addOptionalParam("active", "whether rebase is active", "null")
+  .setAction(
+    async ({ vaultmanager, desiredsupply, active }, { ethers }) => {
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      // Get network from chain ID
+      let chain = ChainId[chainId];
+      const vaultManager =
+        (await getAddress("VaultManager", chain)) ?? vaultmanager;
 
+      const mtr =
+        (await getAddress("MeterToken", chain)) ?? vaultmanager;
+      
+      console.log(vaultManager);
+      const VaultManager = await ethers.getContractFactory("VaultManager");
+
+      const Stablecoin = await ethers.getContractFactory("MeterToken");
+      const totalSupply = await Stablecoin.attach(mtr).totalSupply();
+      console.log(totalSupply.toString())
+
+      if (desiredsupply !== "0") {
+        const supply = ethers.utils.parseUnits(desiredsupply, 18)
+        const setDesiredSupply = await VaultManager.attach(vaultManager).setDesiredSupply(supply);
+        await executeTx(setDesiredSupply, "Execute setDesiredSupply at")
+      }
+      if (active !== "null") {
+        const activeV = active === "true" ? true : false
+        const setRebaseActive = await VaultManager.attach(vaultManager).setRebaseActive(activeV);
+        await executeTx(setRebaseActive, "Execute setDesiredSupply at")
+      }
+      /// print result
+      const rebase = await VaultManager.attach(vaultManager).rebaseActive()
+      const currDesiredSupply = await VaultManager.attach(vaultManager).desiredSupply()
+      console.log(`Rebase active: ${rebase}`)
+      console.log(`Current desired supply: ${currDesiredSupply}`)
+    }
+  );

@@ -155,6 +155,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function setDesiredSupply(uint256 desiredSupply_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
         desiredSupply = desiredSupply_;
+        emit SetDesiredSupply(desiredSupply_);
     }
 
     // Set desirable supply of issuing stablecoin
@@ -212,8 +213,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint price = getAssetPrice(asset_);
         uint256 value = price * amount_;
         require(value >= amount_); // overflow
-        //uint8 precision5 = cDecimals[asset_] - 5;// in precision of 5 decimals
-        return value;
+        return value / 1e8;
     }
 
 }

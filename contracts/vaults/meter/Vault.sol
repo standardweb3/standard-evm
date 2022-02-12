@@ -231,6 +231,8 @@ contract Vault is IVault, Initializable {
     _burnMTRFromVault(left);
     // set new borrow amount
     borrow -= left;
+    // reset last updated timestamp
+    lastUpdated = block.timestamp;
     emit PayBack(vaultId, borrow, fee, amount_);
   }
 
@@ -264,23 +266,21 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).burn(amount_);
   }
 
-  function _calculateFee() internal returns (uint256) {
+  function _calculateFee() internal view returns (uint256) {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
-    uint256 present = block.timestamp;
     uint256 expiary =  IVaultManager(manager).getExpiary(collateral);
     // Check if interest is retroactive or not
-    uint256 sfr = present > expiary ? IVaultManager(manager).getSFR(collateral) : ex_sfr;
+    uint256 sfr = block.timestamp > expiary ? IVaultManager(manager).getSFR(collateral) : ex_sfr;
     /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals)) 
     // get duration in months with decimal 
-    uint256 duration = (present - lastUpdated) * 1e18 / 2592000;
+    uint256 duration = (block.timestamp - lastUpdated) * 1e18 / 2592000;
     // remove precision then apply sfr with decimals
     uint256 durationV = duration*assetValue / 1e18;
-    // reset last updated timestamp
-    lastUpdated = present;
+    // divide with decimals in price
     return durationV * sfr / 10000000;
   }
 
-  function outstandingPayment() external override returns (uint256) {
+  function outstandingPayment() external view override returns (uint256) {
     return _calculateFee() + borrow;
   }
 

@@ -206,7 +206,7 @@ describe("Vault", function () {
 
     // Deploy Mock Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
-    const mockoracle2 = await MockOracle.deploy("202000000", "WETH TEST");
+    const mockoracle2 = await MockOracle.deploy("300000000000", "WETH TEST");
     await deployContract(
       mockoracle2,
       `Mock Oracle(constant WETH TEST on ${chain})`
@@ -260,7 +260,7 @@ describe("Vault", function () {
     const createCDP = await vaultManager.createCDP(
       weth.address,
       "100000000000000000",
-      "95982310500000000"
+      "200000000000000000"
     );
     await executeTx(createCDP, "Execute createCDP at");
 
@@ -270,11 +270,12 @@ describe("Vault", function () {
     this.vaultManager = vaultManager.address;
     this.stablecoin = mtr.address;
     this.cAmount = "100000000000000000";
-    this.dAmount = "95982310500000000";
+    this.dAmount = "200000000000000000";
     this.cOracle = mockoracle2.address;
     this.dOracle = mockoracle.address;
     this.liquidator = liquidator;
     this.pair = pairAddr
+    this.timestamp = await now();
   });
 
   it("A vault should work depositCollateral", async function () {
@@ -423,9 +424,13 @@ describe("Vault", function () {
     console.log(vaultAddr);
     // Test vault
     const Vault = await ethers.getContractFactory("Vault");
-    const collateral = Vault.attach(vaultAddr).collateral();
+    const collateral = await Vault.attach(vaultAddr).collateral();
     console.log(collateral);
     assert(collateral == this.weth);
+    const outstandingPayment = await Vault.attach(vaultAddr).outstandingPayment();
+    console.log("Outstanding Payment: ", outstandingPayment.toString())
+    const later = await now();
+    console.log("Passed time:", later - this.timestamp);
 
     // Deposit Collateral
     const depositCollateralNative = await Vault.attach(
@@ -518,7 +523,7 @@ describe("Vault", function () {
     const VaultManager = await ethers.getContractFactory("VaultManager");
     const tx = await VaultManager.attach(this.vaultManager).setDesiredSupply("10000000000000000000000000000000000000")
     const ERC20 = await ethers.getContractFactory("WETH9_");
-    executeTx(tx, "set disired supply at")
+    executeTx(tx, "set desired supply at")
     const totalSupply = await ERC20.attach(this.stablecoin).totalSupply();
     console.log(totalSupply.toString())
     const before = await VaultManager.attach(this.vaultManager).desiredSupply()

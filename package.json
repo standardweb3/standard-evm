@@ -78,6 +78,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "@primitivefi/hardhat-marmite": "^0.0.4"
+    "@primitivefi/hardhat-marmite": "^0.0.4",
+    "base64-sol": "^1.1.0"
   }
 }

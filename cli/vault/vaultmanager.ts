@@ -214,8 +214,9 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
   .addParam("lfr", "Liquidation Fee Ratio in percent")
   .addParam("sfr", "Stability Fee Ratio in percent")
   .addParam("on", "whether collateral should be accepted or not")
+  .addParam("expiary", "number of seconds when CDP gets expired from initial config")
   .setAction(
-    async ({ vaultmanager, collateral, mcr, lfr, sfr, on }, { ethers }) => {
+    async ({ vaultmanager, collateral, mcr, lfr, sfr, expiary, on }, { ethers }) => {
       const chainId = (await ethers.provider.getNetwork()).chainId;
       // Get network from chain ID
       let chain = ChainId[chainId];
@@ -228,7 +229,7 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
       const VaultManager = await ethers.getContractFactory("VaultManager");
       const initializeCDP = await VaultManager.attach(
         vaultManager
-      ).initializeCDP(collateral, mcr, lfr, sfr, result);
+      ).initializeCDP(collateral, mcr, lfr, sfr, expiary, result);
       await executeTx(initializeCDP, "Execute initializeCDP at");
     }
   );

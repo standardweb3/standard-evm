@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/IVaultFactory.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IVault.sol";
+import "./interfaces/INFTSVG.sol";
 
 contract V1 is ERC721A, AccessControl, IV1  {
     // Create a new role identifier for the minter role
@@ -14,33 +15,25 @@ contract V1 is ERC721A, AccessControl, IV1  {
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     // Vault factory address
     address public factory;
-    // URIs for V1
-    mapping (address => string) URIs;
+    // SVG for V1
+    address SVG;
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721A, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
-    function setURI(address collateral_, string memory uri_) public {
+    function setSVG(address svg_) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "V1: Caller is not a default admin");
-        URIs[collateral_] = uri_;
+        SVG = svg_;
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        address vault = IVaultFactory(factory).getVault(tokenId);
-        address collateral = IVault(vault).collateral();
-        string memory URI = URIs[collateral];
-        if(bytes(URI).length == 0) {
-            // return placeholder URL
-            return URIs[address(0)];
-        } else {
-            return URI;
-        }
+        INFTSVG(SVG).tokenURI(tokenId);
     }
 
     constructor(address factory_)
-    ERC721A("Vault1", "V1", 1) {
+    ERC721A("VaultOne", "V1", 1) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());

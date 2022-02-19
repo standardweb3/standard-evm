@@ -252,8 +252,11 @@ contract Vault is IVault, Initializable {
     // burn vault nft
     _burnV1FromVault();
     // send remainder back to sender
-    TransferHelper.safeTransfer(debt, msg.sender, left - borrow);
-    emit CloseVault(vaultId, amount_, fee);
+    uint256 remainderD = IERC20Minimal(debt).balanceOf(address(this));
+    uint256 remainderC = IERC20Minimal(collateral).balanceOf(address(this));
+    TransferHelper.safeTransfer(debt, msg.sender, remainderD);
+    TransferHelper.safeTransfer(collateral, msg.sender, remainderC);
+    emit CloseVault(vaultId, amount_, remainderC, remainderD, fee);
     // self destruct the contract, send remaining balance if collateral is native currency
     selfdestruct(payable(msg.sender));
   }

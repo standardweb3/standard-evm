@@ -135,6 +135,7 @@ library NFTSVG {
 
   function generateCltParam(
     string memory y,
+    string memory width,
     string memory desc,
     string memory percent
   ) internal pure returns (string memory svg) {
@@ -143,7 +144,9 @@ library NFTSVG {
         '<g style="transform:translate(30px, ',
         y,
         ')">',
-        '<rect width="120px" height="12px" rx="3px" ry="3px" fill="rgba(0,0,0,0.6)" /><text x="6px" y="9px"'
+        '<rect width="',
+        width,
+        '" height="12px" rx="3px" ry="3px" fill="rgba(0,0,0,0.6)" /><text x="6px" y="9px"',
         ' font-family="Poppins" font-size="8px" fill="white">',
         '<tspan fill="rgba(255,255,255,0.6)">',
         desc,
@@ -279,9 +282,9 @@ library NFTSVG {
         generateHealth(hParams),
         generateBitmap(),
         generateHealthBar(hParams),
-        generateCltParam("180px", "Min. Collateral Ratio", cltParams.MCR),
-        generateCltParam("195px", "Liq. Penalty Ratio", cltParams.LFR),
-        generateCltParam("210px", "Stability Fee", cltParams.SFR)
+        generateCltParam("180px", "130px", "Min. Collateral Ratio", cltParams.MCR),
+        generateCltParam("195px", "115px", "Liq. Penalty Ratio", cltParams.LFR),
+        generateCltParam("210px", "90px", "Stability Fee", cltParams.SFR)
       )
     );
     svg = string(

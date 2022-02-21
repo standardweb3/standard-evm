@@ -107,10 +107,22 @@ contract NFTConstructor {
     returns (NFTSVG.CltParams memory cltParam)
   {
     cltParam = NFTSVG.CltParams({
-      MCR: IVaultManager(manager).getMCR(collateral).toString(),
-      LFR: IVaultManager(manager).getLFR(collateral).toString(),
-      SFR: IVaultManager(manager).getSFR(collateral).toString()
+      MCR: _formatRatio(IVaultManager(manager).getMCR(collateral)),
+      LFR: _formatRatio(IVaultManager(manager).getLFR(collateral)),
+      SFR: _formatRatio(IVaultManager(manager).getSFR(collateral))
     });
+  }
+
+  function _formatRatio(uint256 ratio) internal pure returns (string memory str) {
+    uint256 integer = ratio / 100000;
+    uint256 secondPrecision = ratio / 1000 - (integer * 100);
+    if (secondPrecision > 0) {
+      str = string(
+        abi.encodePacked(integer.toString(), ".", secondPrecision.toString())
+      );
+    } else {
+      str = string(abi.encodePacked(integer.toString()));
+    }
   }
 
   function _generateDecimalString(uint256 decimals, uint256 balance)

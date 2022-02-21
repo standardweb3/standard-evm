@@ -104,7 +104,9 @@
   "VaultFactory": {
     "RINKEBY": "0x6a1cBEE58d87560A07B4CA6987ff7d8E269b0931"
   },
-  "Mock Oracle(constant USM TEST on undefined)": {},
+  "Mock Oracle(constant USM TEST on undefined)": {
+    "undefined": "0x59b670e9fA9D0A427751Af201D676719a970857b"
+  },
   "Mock Oracle(constant WETH TEST on undefined)": {
     "undefined": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
   },
@@ -113,8 +115,5 @@
   },
   "Mock Oracle(constant USM on DEXes TEST on RINKEBY)": {
     "RINKEBY": "0x4E989b2eDfac67666f6C080d4b3A09735B4C64Bf"
-  },
-  "Mock Oracle(constant USM on DEXes TEST on undefined)": {
-    "undefined": "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1"
   }
 }

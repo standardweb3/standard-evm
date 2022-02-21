@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/IVaultFactory.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IVault.sol";
-import "./interfaces/INFTSVG.sol";
+import "./svg/interfaces/INFTSVG.sol";
 
 contract V1 is ERC721A, AccessControl, IV1  {
     // Create a new role identifier for the minter role

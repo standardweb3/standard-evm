@@ -102,7 +102,7 @@ contract Vault is IVault, Initializable {
     }
     // burn vault nft
     _burnV1FromVault();
-    emit Liquidated(vaultId, collateral, balance);
+    emit Liquidated(vaultId, collateral, balance, left);
     // self destruct the contract, send remaining balance if collateral is native currency
     selfdestruct(payable(msg.sender));
   }

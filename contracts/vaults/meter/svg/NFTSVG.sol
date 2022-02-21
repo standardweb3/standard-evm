@@ -1,10 +1,58 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "base64-sol/base64.sol";
 import "../interfaces/INFTSVG.sol";
+import "../interfaces/IVault.sol";
+import "../interfaces/IVaultFactory.sol";
 
 contract NFTSVG is INFTSVG {
+
+    function getHP(uint256 tokenId_) public {
+
+    }
+
+    function generateSVGDefs(SVGParams memory params) private pure returns (string memory svg) {
+        svg = string(
+            abi.encodePacked(
+                '<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg"',
+                ' xmlns:xlink="http://www.w3.org/1999/xlink">',
+                '<rect width="400" height="250" fill="url(#pattern0)" />',
+                '<defs>',
+                '<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">',
+                '<use xlink:href="#image0_18_24" transform="scale(0.0025 0.004)" />',
+                '</pattern>',
+                '<image id="image0_18_24" width="400" height="250" xlink:href="',
+                url,
+                '"',
+                ' />',
+                '</defs>'
+            )
+        );
+    }
+
+    function generateSVG(SVGParams memory params) internal pure returns (string memory svg) {
+        return
+            string(
+                abi.encodePacked(
+                    generateSVGDefs(),
+                    generateSVGBorderText(
+                        params.quoteToken,
+                        params.baseToken,
+                        params.quoteTokenSymbol,
+                        params.baseTokenSymbol
+                    ),
+                    generateSVGCardMantle(params.quoteTokenSymbol, params.baseTokenSymbol, params.feeTier),
+                    generageSvgCurve(params.tickLower, params.tickUpper, params.tickSpacing, params.overRange),
+                    generateSVGPositionDataAndLocationCurve(
+                        params.tokenId.toString(),
+                        params.tickLower,
+                        params.tickUpper
+                    ),
+                    generateSVGRareSparkle(params.tokenId, params.poolAddress),
+                    '</svg>'
+                )
+            );
+    }
 
 
     // You could also just upload the raw SVG and have solildity convert it!
@@ -25,7 +73,7 @@ contract NFTSVG is INFTSVG {
                         bytes(
                             abi.encodePacked(
                                 '{"name":"',
-                                "SVG NFT", // You can add whatever name here
+                                "VaultOne", // You can add whatever name here
                                 '", "description":"An NFT based on SVG!", "attributes":"", "image":"',imageURI,'"}'
                             )
                         )

@@ -27,6 +27,7 @@ library NFTSVG {
     string HP;
     string HPBarColor;
     string HPStatus;
+    string HPGauge;
   }
 
   function generateSVGDefs(ChainParams memory params)
@@ -120,7 +121,9 @@ library NFTSVG {
         '<rect fill="',
         params.HPBarColor,
         '" height="3">',
-        ' <animate attributeName="width" from="0" to="20" dur="0.5s" fill="freeze" />',
+        ' <animate attributeName="width" from="0" to="',
+        params.HPGauge,
+        '" dur="0.5s" fill="freeze" />',
         "</rect>",
         "</svg>",
         "</g>",
@@ -209,7 +212,7 @@ library NFTSVG {
       abi.encodePacked(
         '<image  x="285" y="50" width="60" height="60" xlink:href="'
         "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/networks/",
-        '1088',
+        cParams.chainId,
         ".png",
         '" />',
         generateTokenLogos(cParams)

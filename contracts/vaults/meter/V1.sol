@@ -16,7 +16,7 @@ contract V1 is ERC721A, AccessControl, IV1  {
     // Vault factory address
     address public factory;
     // SVG for V1
-    address SVG;
+    address public SVG;
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721A, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
@@ -27,9 +27,9 @@ contract V1 is ERC721A, AccessControl, IV1  {
         SVG = svg_;
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory tokenURI) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        INFTSVG(SVG).tokenURI(tokenId);
+        tokenURI = INFTSVG(SVG).tokenURI(tokenId);
     }
 
     constructor(address factory_)

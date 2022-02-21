@@ -264,9 +264,17 @@ describe("Vault", function () {
     );
     await executeTx(createCDP, "Execute createCDP at");
 
+    const createCDP2 = await vaultManager.createCDP(
+      weth.address,
+      "100000000000000000",
+      "200000000000000000"
+    );
+    await executeTx(createCDP2, "Execute createCDP at");
+
     // Get data from deployments
     this.vault = await vaultFactory.allVaults(0);
     this.weth = weth.address;
+    this.vaultFactory = vaultFactory.address;
     this.vaultManager = vaultManager.address;
     this.stablecoin = mtr.address;
     this.cAmount = "100000000000000000";
@@ -274,7 +282,8 @@ describe("Vault", function () {
     this.cOracle = mockoracle2.address;
     this.dOracle = mockoracle.address;
     this.liquidator = liquidator;
-    this.pair = pairAddr
+    this.pair = pairAddr;
+    this.v1 = v1;
     this.timestamp = await now();
   });
 
@@ -536,5 +545,57 @@ describe("Vault", function () {
     console.log(after.toString())
 
     assert(after.gt(before))
+  });
+
+  it("An v1 SVG should generate a image byte data", async function () {
+    // setup the whole contracts
+    const [deployer] = await ethers.getSigners();
+
+    // Get before state
+    console.log(
+      `Deployer balance: ${ethers.utils.formatEther(
+        await deployer.getBalance()
+      )} ETH`
+    );
+
+    // Deploy pureSVG
+    console.log(`Deploying pureSVG with the account: ${deployer.address}`);
+    const SVG = await ethers.getContractFactory("PureSVG");
+    const svg = await SVG.deploy();
+    await deployContract(svg, "PureSVG");
+    //const data = await svg.svgToImageURI();
+    //console.log(data)
+
+    // Deploy NFT constructor and descriptor
+    const Constructor = await ethers.getContractFactory("NFTConstructor");
+    const constructor = await Constructor.deploy(this.vaultFactory, this.vaultManager, "TEST");
+    await deployContract(constructor, "NFTConstructor");
+
+    const tuples = await constructor.generateParams(1);
+    console.log(tuples)
+
+    const Descriptor = await ethers.getContractFactory("NFTDescriptor");
+    const descriptor = await Descriptor.deploy(constructor.address);
+    await deployContract(descriptor, "NFTDescriptor");
+
+    const image = await descriptor.svgToImageURITest(1);
+    console.log(image)
+
+    const metadata = await descriptor.formatTokenURI(image);
+    console.log(metadata)
+
+    const tokenURI = await descriptor.tokenURI(1);
+    console.log(tokenURI)
+
+    expect(tokenURI).to.equal(metadata)
+
+    const setSVG = await this.v1.setSVG(descriptor.address);
+    await executeTx(setSVG, "set SVG");
+
+    const data2 = await this.v1.SVG();
+    console.log("fuck", data2)
+
+    const data3 = await this.v1.tokenURI(1);
+    console.log("fdsdffds", data3)
   });
 });

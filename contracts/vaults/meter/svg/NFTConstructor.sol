@@ -94,9 +94,10 @@ contract NFTConstructor {
     returns (NFTSVG.HealthParams memory hParam)
   {
     hParam = NFTSVG.HealthParams({
-      HP: HP.toString(),
+      HP: _formatHP(HP),
       HPBarColor: _getHPBarColor(HP),
-      HPStatus: _getHPStatus(HP)
+      HPStatus: _getHPStatus(HP),
+      HPGauge: _formatGauge(HP)
     });
   }
 
@@ -152,6 +153,26 @@ contract NFTConstructor {
   ) internal pure returns (uint256 HP) {
     uint256 cdpRatioPercent = (cValue / dPrice) * dBalance * 100;
     HP = (100 * (cdpRatioPercent - mcr / 100000)) / 50;
+  }
+
+  function _formatHP(
+    uint256 HP
+  ) internal pure returns (string memory HPString) {
+    if (HP > 200) {
+      HPString = "200+";
+    } else {
+      HPString = HP.toString();
+    }
+  }
+
+  function _formatGauge(
+    uint256 HP
+  ) internal pure returns (string memory HPGauge) {
+    if (HP > 100) {
+      HPGauge = '32';
+    } else {
+      HPGauge = (HP*32/100).toString();
+    }
   }
 
   function _getHPBarColor(uint256 HP)

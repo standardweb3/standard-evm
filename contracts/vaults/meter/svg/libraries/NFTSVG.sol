@@ -283,7 +283,7 @@ library NFTSVG {
         generateBitmap(),
         generateHealthBar(hParams),
         generateCltParam("180px", "130px", "Min. Collateral Ratio", cltParams.MCR),
-        generateCltParam("195px", "115px", "Liq. Penalty Ratio", cltParams.LFR),
+        generateCltParam("195px", "110px", "Liquidation Fee", cltParams.LFR),
         generateCltParam("210px", "90px", "Stability Fee", cltParams.SFR)
       )
     );

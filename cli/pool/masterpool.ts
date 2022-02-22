@@ -188,8 +188,11 @@ task("masterpool-massupdate", "Add LP Pool to Standard MasterPool")
   .setAction(async ({ masterpool, stndperblock }, { ethers }) => {
     const [deployer] = await ethers.getSigners();
     await executeFrom(ethers, deployer, async () => {
-      // Set STND per block
       const MasterPool = await ethers.getContractFactory("MasterPool")
+      // Get current STND per block
+      const currentReward = await MasterPool.attach(masterpool).sushiPerBlock()
+      console.log(currentReward.toString())
+      // Set STND per block
       const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 16))
       await executeTx(tx, "Execute setRewardPerBlock at")
       const stndPerBlock = await MasterPool.attach(masterpool).sushiPerBlock();

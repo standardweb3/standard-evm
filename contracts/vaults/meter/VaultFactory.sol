@@ -53,6 +53,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
     return (proxy, gIndex);
   }
 
+  // Set immutable, consistent, one rule for vault implementation
   function _createImpl() internal {
     address addr;
     bytes memory bytecode = type(Vault).creationCode;

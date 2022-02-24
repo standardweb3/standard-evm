@@ -42,6 +42,7 @@ describe("SVG", function () {
     const svg = await SVG.deploy();
     await deployContract(svg, "PureSVG");
     const data = await svg.svgToImageURI();
+    console.log("pure SVG data:")
     console.log(data)
   });
 });

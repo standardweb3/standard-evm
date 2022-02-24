@@ -95,7 +95,8 @@ contract NFTConstructor {
   {
     hParam = NFTSVG.HealthParams({
       HP: _formatHP(HP),
-      HPBarColor: _getHPBarColor(HP),
+      HPBarColor1: _getHPBarColor1(HP),
+      HPBarColor2: _getHPBarColor2(HP),
       HPStatus: _getHPStatus(HP),
       HPGauge: _formatGauge(HP)
     });
@@ -187,22 +188,41 @@ contract NFTConstructor {
     }
   }
 
-  function _getHPBarColor(uint256 HP)
+  function _getHPBarColor1(uint256 HP)
     internal
     pure
     returns (string memory color)
   {
     if (HP <= 30) {
-      color = "#ec290a";
+      color = "#F5B1A6";
     }
     if (HP <= 50) {
-      color = "#d6ed20";
+      color = "#E8ECCA";
     }
-    if (HP <= 100) {
-      color = "#57e705";
+    if (HP < 100) {
+      color = "#C9FBAD";
     }
-    if (HP > 100) {
-      color = "#b9f2ff";
+    if (HP >= 100) {
+      color = "#C4F2FE";
+    }
+  }
+
+  function _getHPBarColor2(uint256 HP)
+    internal
+    pure
+    returns (string memory color)
+  {
+    if (HP <= 30) {
+      color = "#EC290A";
+    }
+    if (HP <= 50) {
+      color = "#D6ED20";
+    }
+    if (HP < 100) {
+      color = "#57E705";
+    }
+    if (HP >= 100) {
+      color = "#6FA4FB";
     }
   }
 

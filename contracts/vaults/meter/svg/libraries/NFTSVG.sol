@@ -25,7 +25,8 @@ library NFTSVG {
 
   struct HealthParams {
     string HP;
-    string HPBarColor;
+    string HPBarColor1;
+    string HPBarColor2;
     string HPStatus;
     string HPGauge;
   }
@@ -110,6 +111,41 @@ library NFTSVG {
     );
   }
 
+  function generateStop(string memory color1, string memory color2)
+    internal
+    pure
+    returns (string memory svg)
+  {
+    svg = string(
+      abi.encodePacked(
+        '<stop offset="5.99%">',
+        '<animate attributeName="stop-color" values="',
+        color1,
+        "; ",
+        color2,
+        "; ",
+        color1,
+        '" dur="3s" repeatCount="indefinite"></animate>',
+        "</stop>"
+      )
+    );
+  }
+
+  function generateLinearGradient(HealthParams memory params)
+    internal
+    pure
+    returns (string memory svg)
+  {
+    svg = string(
+      abi.encodePacked(
+        '<linearGradient id="myGradient" gradientTransform="rotate(270.47)" >',
+        generateStop(params.HPBarColor1, params.HPBarColor2),
+        generateStop(params.HPBarColor2, params.HPBarColor1),
+        "</linearGradient>"
+      )
+    );
+  }
+
   function generateHealthBar(HealthParams memory params)
     internal
     pure
@@ -117,10 +153,13 @@ library NFTSVG {
   {
     svg = string(
       abi.encodePacked(
+        generateLinearGradient(params),
         '<svg x="3" y="2.5" width="32" height="10">',
         '<rect fill="',
-        params.HPBarColor,
-        '" height="3">',
+        "url(",
+        "'#myGradient'",
+        ')"',
+        ' height="3">',
         ' <animate attributeName="width" from="0" to="',
         params.HPGauge,
         '" dur="0.5s" fill="freeze" />',
@@ -210,7 +249,11 @@ library NFTSVG {
     );
   }
 
-  function generateNetwork(ChainParams memory cParams) internal pure returns (string memory svg) {
+  function generateNetwork(ChainParams memory cParams)
+    internal
+    pure
+    returns (string memory svg)
+  {
     svg = string(
       abi.encodePacked(
         '<image  x="285" y="50" width="60" height="60" xlink:href="'
@@ -232,7 +275,11 @@ library NFTSVG {
     );
   }
 
-  function generateTokenLogos(ChainParams memory cParam) internal pure returns (string memory svg) {
+  function generateTokenLogos(ChainParams memory cParam)
+    internal
+    pure
+    returns (string memory svg)
+  {
     svg = string(
       abi.encodePacked(
         '<g style="transform:translate(265px, 180px)">'
@@ -240,7 +287,7 @@ library NFTSVG {
         '<image x="4" y="4" width="40" height="40" xlink:href="',
         "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/tokens/",
         cParam.chainId,
-        '/',
+        "/",
         cParam.collateral,
         ".png",
         '" />'
@@ -250,7 +297,7 @@ library NFTSVG {
         '<image x="4" y="4" width="40" height="40" xlink:href="',
         "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/tokens/",
         cParam.chainId,
-        '/',
+        "/",
         cParam.debt,
         ".png",
         '" />'
@@ -266,11 +313,7 @@ library NFTSVG {
     CltParams memory cltParams
   ) internal pure returns (string memory svg) {
     string memory a = string(
-      abi.encodePacked(
-        blParams.vault,
-        unicode" • ",
-        "Vault"
-      )
+      abi.encodePacked(blParams.vault, unicode" • ", "Vault")
     );
     string memory b = string(
       abi.encodePacked(unicode" • ", cParams.chainName, unicode" • ")
@@ -281,16 +324,26 @@ library NFTSVG {
         generateBalances(blParams),
         generateHealth(hParams),
         generateBitmap(),
-        generateHealthBar(hParams),
-        generateCltParam("180px", "130px", "Min. Collateral Ratio", cltParams.MCR),
+        generateHealthBar(hParams)
+      )
+    );
+    string memory second = string(
+      abi.encodePacked(
+        first,
+        generateCltParam(
+          "180px",
+          "130px",
+          "Min. Collateral Ratio",
+          cltParams.MCR
+        ),
         generateCltParam("195px", "110px", "Liquidation Fee", cltParams.LFR),
-        generateCltParam("210px", "90px", "Stability Fee", cltParams.SFR)
+        generateCltParam("210px", "90px", "Stability Fee", cltParams.SFR),
+        generateTextPath()
       )
     );
     svg = string(
       abi.encodePacked(
-        first,
-        generateTextPath(),
+        second,
         generateText1(a, "a"),
         generateText2(a, "a"),
         generateNetwork(cParams),

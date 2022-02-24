@@ -568,7 +568,7 @@ describe("Vault", function () {
 
     // Deploy NFT constructor and descriptor
     const Constructor = await ethers.getContractFactory("NFTConstructor");
-    const constructor = await Constructor.deploy(this.vaultFactory, this.vaultManager, "TEST");
+    const constructor = await Constructor.deploy(this.vaultFactory, this.vaultManager, "HARDHAT");
     await deployContract(constructor, "NFTConstructor");
 
     const tuples = await constructor.generateParams(1);
@@ -579,23 +579,15 @@ describe("Vault", function () {
     await deployContract(descriptor, "NFTDescriptor");
 
     const image = await descriptor.svgToImageURITest(1);
+    console.log("Image data")
     console.log(image)
 
-    const metadata = await descriptor.formatTokenURI(image);
-    console.log(metadata)
-
     const tokenURI = await descriptor.tokenURI(1);
+    console.log("Encoded tokenURI")
     console.log(tokenURI)
-
-    expect(tokenURI).to.equal(metadata)
 
     const setSVG = await this.v1.setSVG(descriptor.address);
     await executeTx(setSVG, "set SVG");
 
-    const data2 = await this.v1.SVG();
-    console.log("fuck", data2)
-
-    const data3 = await this.v1.tokenURI(1);
-    console.log("fdsdffds", data3)
   });
 });

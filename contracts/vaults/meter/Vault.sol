@@ -239,12 +239,13 @@ contract Vault is IVault, Initializable {
   function closeVault(uint256 amount_) external override onlyVaultOwner {
     // calculate debt with interest
     uint256 fee = _calculateFee();
+    // send MTR to the vault
+    TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
+    // Check the amount if it satisfies to close the vault, otherwise revert
     require(
       fee + borrow <= amount_ + IERC20Minimal(debt).balanceOf(address(this)),
       "Vault: not enough balance to payback"
     );
-    // send MTR to the vault
-    TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // send fee to the pool
     uint256 left = FeeHelper._sendFee(manager, debt, amount_, fee);
     // burn mtr debt with interest

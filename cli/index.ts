@@ -4,7 +4,7 @@ import "./vault"
 import "./synth"
 import "./pool"
 import "./token"
-
+import "./verify"
 
 
 

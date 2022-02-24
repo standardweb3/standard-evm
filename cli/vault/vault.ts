@@ -5,6 +5,7 @@ import {
   FACTORY_ROLE,
   getAddress,
   ZERO,
+  verify
 } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
@@ -51,7 +52,7 @@ task("vault-deploy", "Deploy Standard Vault Components")
     console.log(`Deploying meterUSD with the account: ${deployer.address}`);
     const MeterToken = await ethers.getContractFactory("MeterToken");
     const mtr = await MeterToken.deploy(
-      "meterUSD",
+      "MeterUSD",
       "USM",
       vaultManager.address
     );
@@ -296,11 +297,7 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     });
 
     // Verify MeterUSD
-    await hre.run("verify:verify", {
-      contract: "contracts/tokens/meter.sol:MeterToken",
-      address: mtr.address,
-      cosntructorArguments: [vaultManager.address],
-    });
+    verify(hre, "contracts/tokens/meter.sol:MeterToken", mtr.address, [vaultManager.address])
 
     // Verify FeePool
     await hre.run("verify:verify", {
@@ -337,40 +334,78 @@ task("vault-create-cdp", "createCDP in vaultmanager")
 
 task("vault-rebase-set", "Configure rebase of the stablecoin supply")
   .addOptionalParam("vaultmanager", "Contract address of vaultmanager")
-  .addOptionalParam("desiredsupply", "desired supply of stablecoin in 18 decimal", "0")
+  .addOptionalParam(
+    "desiredsupply",
+    "desired supply of stablecoin in 18 decimal",
+    "0"
+  )
   .addOptionalParam("active", "whether rebase is active", "null")
-  .setAction(
-    async ({ vaultmanager, desiredsupply, active }, { ethers }) => {
-      const chainId = (await ethers.provider.getNetwork()).chainId;
-      // Get network from chain ID
-      let chain = ChainId[chainId];
-      const vaultManager =
-        (await getAddress("VaultManager", chain)) ?? vaultmanager;
+  .setAction(async ({ vaultmanager, desiredsupply, active }, { ethers }) => {
+    const chainId = (await ethers.provider.getNetwork()).chainId;
+    // Get network from chain ID
+    let chain = ChainId[chainId];
+    const vaultManager =
+      (await getAddress("VaultManager", chain)) ?? vaultmanager;
 
-      const mtr =
-        (await getAddress("MeterToken", chain)) ?? vaultmanager;
-      
-      console.log(vaultManager);
-      const VaultManager = await ethers.getContractFactory("VaultManager");
+    const mtr = (await getAddress("MeterToken", chain)) ?? vaultmanager;
 
-      const Stablecoin = await ethers.getContractFactory("MeterToken");
-      const totalSupply = await Stablecoin.attach(mtr).totalSupply();
-      console.log(totalSupply.toString())
+    console.log(vaultManager);
+    const VaultManager = await ethers.getContractFactory("VaultManager");
 
-      if (desiredsupply !== "0") {
-        const supply = ethers.utils.parseUnits(desiredsupply, 18)
-        const setDesiredSupply = await VaultManager.attach(vaultManager).setDesiredSupply(supply);
-        await executeTx(setDesiredSupply, "Execute setDesiredSupply at")
-      }
-      if (active !== "null") {
-        const activeV = active === "true" ? true : false
-        const setRebaseActive = await VaultManager.attach(vaultManager).setRebaseActive(activeV);
-        await executeTx(setRebaseActive, "Execute setDesiredSupply at")
-      }
-      /// print result
-      const rebase = await VaultManager.attach(vaultManager).rebaseActive()
-      const currDesiredSupply = await VaultManager.attach(vaultManager).desiredSupply()
-      console.log(`Rebase active: ${rebase}`)
-      console.log(`Current desired supply: ${currDesiredSupply}`)
+    const Stablecoin = await ethers.getContractFactory("MeterToken");
+    const totalSupply = await Stablecoin.attach(mtr).totalSupply();
+    console.log(totalSupply.toString());
+
+    if (desiredsupply !== "0") {
+      const supply = ethers.utils.parseUnits(desiredsupply, 18);
+      const setDesiredSupply = await VaultManager.attach(
+        vaultManager
+      ).setDesiredSupply(supply);
+      await executeTx(setDesiredSupply, "Execute setDesiredSupply at");
     }
-  );
+    if (active !== "null") {
+      const activeV = active === "true" ? true : false;
+      const setRebaseActive = await VaultManager.attach(
+        vaultManager
+      ).setRebaseActive(activeV);
+      await executeTx(setRebaseActive, "Execute setDesiredSupply at");
+    }
+    /// print result
+    const rebase = await VaultManager.attach(vaultManager).rebaseActive();
+    const currDesiredSupply = await VaultManager.attach(
+      vaultManager
+    ).desiredSupply();
+    console.log(`Rebase active: ${rebase}`);
+    console.log(`Current desired supply: ${currDesiredSupply}`);
+  });
+
+task("v1-set-svg", "Configure rebase of the stablecoin supply")
+  .addOptionalParam("v1", "Contract address of v1")
+  .addParam("networkname", "network name to display on nft")
+  .addOptionalParam("active", "whether rebase is active", "null")
+  .setAction(async ({ v1, networkname }, { ethers }) => {
+    const chainId = (await ethers.provider.getNetwork()).chainId;
+    // Get network from chain ID
+    let chain = ChainId[chainId];
+    const vaultFactory =await getAddress("VaultFactory", chain)
+    const vaultManager =await getAddress("VaultFactory", chain)
+
+    const Constructor = await ethers.getContractFactory("NFTConstructor");
+    const constructor = await Constructor.deploy(
+      vaultFactory,
+      vaultManager,
+      networkname
+    );
+    await deployContract(constructor, "NFTConstructor");
+
+    const Descriptor = await ethers.getContractFactory("NFTDescriptor");
+    const descriptor = await Descriptor.deploy(constructor.address);
+    await deployContract(descriptor, "NFTDescriptor");
+
+    const v1addr =
+      (await getAddress("V1", chain)) ?? v1;
+    const V1 = await ethers.getContractFactory("V1")
+    const setSVG = await V1.attach(v1).setSVG(descriptor.address);
+    await executeTx(setSVG, "set SVG");
+
+  });

@@ -5,10 +5,10 @@ import {
   FACTORY_ROLE,
   getAddress,
   ZERO,
-  verify
 } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
+import { serializeTransaction } from "ethers/lib/utils";
 
 const assert = (condition, message) => {
   if (condition) return;
@@ -296,9 +296,6 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
       cosntructorArguments: [vaultFactory.address],
     });
 
-    // Verify MeterUSD
-    verify(hre, "contracts/tokens/meter.sol:MeterToken", mtr.address, [vaultManager.address])
-
     // Verify FeePool
     await hre.run("verify:verify", {
       contract: "contracts/vaults/pool/BondedStrategy.sol:BondedStrategy",
@@ -382,13 +379,12 @@ task("vault-rebase-set", "Configure rebase of the stablecoin supply")
 task("v1-set-svg", "Configure rebase of the stablecoin supply")
   .addOptionalParam("v1", "Contract address of v1")
   .addParam("networkname", "network name to display on nft")
-  .addOptionalParam("active", "whether rebase is active", "null")
   .setAction(async ({ v1, networkname }, { ethers }) => {
     const chainId = (await ethers.provider.getNetwork()).chainId;
     // Get network from chain ID
     let chain = ChainId[chainId];
-    const vaultFactory =await getAddress("VaultFactory", chain)
-    const vaultManager =await getAddress("VaultFactory", chain)
+    const vaultFactory = await getAddress("VaultFactory", chain);
+    const vaultManager = await getAddress("VaultManager", chain);
 
     const Constructor = await ethers.getContractFactory("NFTConstructor");
     const constructor = await Constructor.deploy(
@@ -402,10 +398,20 @@ task("v1-set-svg", "Configure rebase of the stablecoin supply")
     const descriptor = await Descriptor.deploy(constructor.address);
     await deployContract(descriptor, "NFTDescriptor");
 
-    const v1addr =
-      (await getAddress("V1", chain)) ?? v1;
-    const V1 = await ethers.getContractFactory("V1")
-    const setSVG = await V1.attach(v1).setSVG(descriptor.address);
+    const v1addr = (await getAddress("V1", chain)) ?? v1;
+    const V1 = await ethers.getContractFactory("V1");
+    const setSVG = await V1.attach(v1addr).setSVG(descriptor.address);
     await executeTx(setSVG, "set SVG");
+  });
 
+task("nft-get-metadata", "get nft metadata")
+  .addParam("nft", "NFT smart contract address")
+  .addParam("id", "identifier of NFT")
+  .setAction(async ({ nft, id }, { ethers }) => {
+    const V1 = await ethers.getContractFactory("V1");
+    const SVG = await V1.attach(nft).SVG();
+    console.log(SVG);
+    const tokenURI = await V1.attach(nft).tokenURI(id);
+    console.log("Encoded tokenURI");
+    console.log(tokenURI);
   });

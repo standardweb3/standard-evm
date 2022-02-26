@@ -9,8 +9,9 @@ import "../interfaces/IERC20Minimal.sol";
 import "./libraries/NFTSVG.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-interface IERC20Symbol {
+interface IERC20Metadata {
   function symbol() external view returns (string memory);
+  function name() external view returns (string memory);
 }
 
 contract NFTConstructor {
@@ -41,16 +42,18 @@ contract NFTConstructor {
     )
   {
     address vault = IVaultFactory(factory).getVault(tokenId_);
+    uint256 lastUpdated = IVault(vault).lastUpdated();
     address debt = IVault(vault).debt();
     address collateral = IVault(vault).collateral();
     uint256 cDecimal = IVaultManager(manager).getCDecimal(collateral);
     uint256 cBalance = IERC20Minimal(collateral).balanceOf(vault);
     uint256 dBalance = IVault(vault).borrow();
-    string memory symbol = IERC20Symbol(collateral).symbol();
-    uint256 HP = _getHP(collateral, debt, cBalance, dBalance);
+    string memory symbol = IERC20Metadata(collateral).symbol();
+    string memory name = IERC20Metadata(collateral).symbol();
+    uint256 HP = _getHP(collateral, cDecimal, debt, cBalance, dBalance);
     return (
       _generateChainParams(collateral, debt),
-      _generateBlParams(vault, cDecimal, cBalance, dBalance, symbol),
+      _generateBlParams(vault, lastUpdated, cDecimal, cBalance, dBalance, symbol, name),
       _generateHealthParams(HP),
       _generateCltParams(collateral)
     );
@@ -75,16 +78,20 @@ contract NFTConstructor {
 
   function _generateBlParams(
     address vault,
+    uint256 lastUpdated,
     uint256 cDecimal,
     uint256 cBalance,
     uint256 dBalance,
-    string memory symbol
+    string memory symbol,
+    string memory name
   ) internal pure returns (NFTSVG.BlParams memory blParam) {
     blParam = NFTSVG.BlParams({
       vault: addressToString(vault),
       cBlStr: _generateDecimalString(cDecimal, cBalance),
       dBlStr: _generateDecimalString(18, dBalance),
-      symbol: symbol
+      symbol: symbol,
+      lastUpdated: lastUpdated.toString(),
+      name: name
     });
   }
 
@@ -94,6 +101,7 @@ contract NFTConstructor {
     returns (NFTSVG.HealthParams memory hParam)
   {
     hParam = NFTSVG.HealthParams({
+      rawHP: HP,
       HP: _formatHP(HP),
       HPBarColor1: _getHPBarColor1(HP),
       HPBarColor2: _getHPBarColor2(HP),
@@ -147,25 +155,18 @@ contract NFTConstructor {
 
   function _getHP(
     address collateral,
+    uint256 cDecimal,
     address debt,
     uint256 cBalance,
     uint256 dBalance
   ) internal view returns (uint256 HP) {
     uint256 cValue = IVaultManager(manager).getAssetPrice(collateral) *
       cBalance;
-    uint256 dPrice = IVaultManager(manager).getAssetPrice(debt);
+    uint256 dValue = IVaultManager(manager).getAssetPrice(debt) * dBalance;
     uint256 mcr = IVaultManager(manager).getMCR(collateral);
-    HP = _calculateHP(cValue, dPrice, dBalance, mcr);
-  }
-
-  function _calculateHP(
-    uint256 cValue,
-    uint256 dPrice,
-    uint256 dBalance,
-    uint256 mcr
-  ) internal pure returns (uint256 HP) {
-    uint256 cdpRatioPercent = (cValue / dPrice) * dBalance * 100;
-    HP = (100 * (cdpRatioPercent - mcr / 100000)) / 50;
+    uint256 cdpRatioPercentPoint00000 = cValue * 10000000 * 10**(18-cDecimal) / dValue;
+    HP = (cdpRatioPercentPoint00000 - mcr) / 100000;
+    return HP;
   }
 
   function _formatHP(

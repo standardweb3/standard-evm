@@ -588,6 +588,9 @@ describe("Vault", function () {
 
     const setSVG = await this.v1.setSVG(descriptor.address);
     await executeTx(setSVG, "set SVG");
-
+    
+    const tokenURI2 = await this.v1.tokenURI(1);
+    console.log("Encoded tokenURI")
+    console.log(tokenURI2)
   });
 });

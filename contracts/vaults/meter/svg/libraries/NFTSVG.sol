@@ -15,6 +15,8 @@ library NFTSVG {
     string cBlStr;
     string dBlStr;
     string symbol;
+    string lastUpdated;
+    string name;
   }
 
   struct CltParams {
@@ -24,6 +26,7 @@ library NFTSVG {
   }
 
   struct HealthParams {
+    uint256 rawHP;
     string HP;
     string HPBarColor1;
     string HPBarColor2;
@@ -41,23 +44,12 @@ library NFTSVG {
         '<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg"',
         ' xmlns:xlink="http://www.w3.org/1999/xlink">',
         '<rect width="400" height="250" fill="url(#pattern0)" />',
-        "<defs>",
-        '<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">',
-        '<use xlink:href="#image0_18_24" transform="scale(0.0025 0.004)" />',
-        "</pattern>",
-        '<image id="image0_18_24" width="400" height="250" xlink:href="',
-        "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/backgrounds/",
-        params.chainId,
-        ".png",
-        '"',
-        " />",
-        "</defs>",
         '<rect x="10" y="12" width="380" height="226" rx="20" ry="20" fill="rgba(0,0,0,0)" stroke="rgba(255,255,255,0.8)" />'
       )
     );
   }
 
-  function generateBalances(BlParams memory params)
+  function generateBalances(BlParams memory params, string memory id)
     internal
     pure
     returns (string memory svg)
@@ -65,7 +57,9 @@ library NFTSVG {
     svg = string(
       abi.encodePacked(
         '<text y="60" x="32" fill="white"',
-        ' font-family="Poppins" font-weight="400" font-size="24px">WETH Vault #2</text>',
+        ' font-family="Poppins" font-weight="400" font-size="24px">WETH Vault #',
+        id,
+        '</text>',
         '<text y="85px" x="32px" fill="white" font-family="Poppins" font-weight="350" font-size="14px">Collateral: ',
         params.cBlStr,
         " ",
@@ -256,11 +250,6 @@ library NFTSVG {
   {
     svg = string(
       abi.encodePacked(
-        '<image  x="285" y="50" width="60" height="60" xlink:href="'
-        "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/networks/",
-        cParams.chainId,
-        ".png",
-        '" />',
         generateTokenLogos(cParams)
       )
     );
@@ -284,29 +273,16 @@ library NFTSVG {
       abi.encodePacked(
         '<g style="transform:translate(265px, 180px)">'
         '<rect width="48px" height="48px" rx="10px" ry="10px" fill="none" stroke="rgba(255,255,255,0.6)" />'
-        '<image x="4" y="4" width="40" height="40" xlink:href="',
-        "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/tokens/",
-        cParam.chainId,
-        "/",
-        cParam.collateral,
-        ".png",
-        '" />'
         "</g>"
         '<g style="transform:translate(325px, 180px)">'
         '<rect width="48px" height="48px" rx="10px" ry="10px" fill="none" stroke="rgba(255,255,255,0.6)" />'
-        '<image x="4" y="4" width="40" height="40" xlink:href="',
-        "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/tokens/",
-        cParam.chainId,
-        "/",
-        cParam.debt,
-        ".png",
-        '" />'
         "</g>"
       )
     );
   }
 
-  function generateSVG(
+  function generateSVGWithoutImages(
+    string memory tokenId,
     ChainParams memory cParams,
     BlParams memory blParams,
     HealthParams memory hParams,
@@ -321,7 +297,7 @@ library NFTSVG {
     string memory first = string(
       abi.encodePacked(
         generateSVGDefs(cParams),
-        generateBalances(blParams),
+        generateBalances(blParams, tokenId),
         generateHealth(hParams),
         generateBitmap(),
         generateHealthBar(hParams)
@@ -349,8 +325,7 @@ library NFTSVG {
         generateNetwork(cParams),
         generateNetTextPath(),
         generateText1(b, "b"),
-        generateText2(b, "b"),
-        "</svg>"
+        generateText2(b, "b")
       )
     );
   }

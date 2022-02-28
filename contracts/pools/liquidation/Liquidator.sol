@@ -3,12 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./interfaces/IUniswapV2FactoryMinimal.sol";
+import "./interfaces/IUniswapV2Minimal.sol";
 import "./interfaces/IERC20Minimal.sol";
 import "./TransferHelper.sol";
 
 contract Liquidator is AccessControl {
-
   address v2Factory;
   address debt;
 
@@ -25,12 +24,15 @@ contract Liquidator is AccessControl {
   function distribute(address collateral) public {
     require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
     // check the pair if it exists
-    address pair = IUniswapV2FactoryMinimal(v2Factory).getPair(
-      collateral,
-      debt
-    );
+    address pair = IUniswapV2Minimal(v2Factory).getPair(collateral, debt);
     require(pair != address(0), "Vault: Liquidating pair not supported");
     // Distribute collaterals
-    TransferHelper.safeTransfer(collateral, pair, IERC20Minimal(collateral).balanceOf(address(this)));
+    TransferHelper.safeTransfer(
+      collateral,
+      pair,
+      IERC20Minimal(collateral).balanceOf(address(this))
+    );
+    // sync the pair to guard liquidations
+    IUniswapV2Minimal(pair).sync();
   }
 }

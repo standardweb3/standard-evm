@@ -170,7 +170,7 @@ contract NFTConstructor {
   function _calculateHP(
     uint256 cValue, uint256 dValue, uint256 mcr, uint256 cDecimal
   ) internal pure returns (uint256 HP) {
-    uint256 cdpRatioPercentPoint00000 = cValue * 10000000 * 10**(18-cDecimal) / dValue;
+    uint256 cdpRatioPercentPoint00000 = dValue == 0 ? cValue * 10000000 * 10**(18-cDecimal) : cValue * 10000000 * 10**(18-cDecimal) / dValue;
     HP = (cdpRatioPercentPoint00000 - mcr) / 100000;
   }
 

@@ -2,6 +2,7 @@
 
 pragma solidity >=0.5.0;
 
-interface IUniswapV2FactoryMinimal {
+interface IUniswapV2Minimal {
     function getPair(address tokenA, address tokenB) external view returns (address pair);
+    function sync() external;
 }

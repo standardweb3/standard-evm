@@ -9,7 +9,7 @@ import "./interfaces/IVault.sol";
 import "./interfaces/IERC721Minimal.sol";
 import "./interfaces/IV1.sol";
 import "./interfaces/IWETH.sol";
-import "./interfaces/IUniswapV2FactoryMinimal.sol";
+import "./interfaces/IUniswapV2Minimal.sol";
 import "./interfaces/IStablecoin.sol";
 import "./libraries/Initializable.sol";
 
@@ -82,14 +82,16 @@ contract Vault is IVault, Initializable {
     uint256 balance = IERC20Minimal(collateral).balanceOf(address(this));
     uint256 lfr = IVaultManager(manager).getLFR(collateral);
     uint256 liquidationFee = (lfr * balance) / 10000000; // 100 in 5 decimal
-    uint256 left = FeeHelper._sendFee(manager, collateral, balance, liquidationFee);
+    uint256 left = FeeHelper._sendFee(
+      manager,
+      collateral,
+      balance,
+      liquidationFee
+    );
     // Distribute collaterals
     address liquidator = IVaultManager(manager).liquidator();
+    address pair = IUniswapV2Minimal(v2Factory).getPair(collateral, debt);
     if (liquidator == address(0)) {
-      address pair = IUniswapV2FactoryMinimal(v2Factory).getPair(
-        collateral,
-        debt
-      );
       require(pair != address(0), "Vault: Liquidating pair not supported");
       // Distribute collaterals
       TransferHelper.safeTransfer(
@@ -97,8 +99,12 @@ contract Vault is IVault, Initializable {
         pair,
         IERC20Minimal(collateral).balanceOf(address(this))
       );
+      // sync the pair to guard liquidations
+      IUniswapV2Minimal(pair).sync();
     } else {
       TransferHelper.safeTransfer(collateral, liquidator, left);
+      // sync the pair to guard liquidations
+      IUniswapV2Minimal(pair).sync();
     }
     // burn vault nft
     _burnV1FromVault();
@@ -125,7 +131,12 @@ contract Vault is IVault, Initializable {
   }
 
   /// Withdraw collateral as native currency
-  function withdrawCollateralNative(uint256 amount_) external virtual override onlyVaultOwner {
+  function withdrawCollateralNative(uint256 amount_)
+    external
+    virtual
+    override
+    onlyVaultOwner
+  {
     require(collateral == WETH, "Vault: collateral is not a native asset");
     if (borrow != 0) {
       uint256 result = IERC20Minimal(collateral).balanceOf(address(this)) -
@@ -229,7 +240,9 @@ contract Vault is IVault, Initializable {
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // blockchain eventually calculates more interest than input as finalization is asynchronous
     // adjust precision on zeroing borrow balance
-    uint256 left = (borrow+fee) - amount_ <= amount_/1e6 ? FeeHelper._sendFee(manager, debt, amount_, amount_-borrow) : FeeHelper._sendFee(manager, debt, amount_, fee);
+    uint256 left = (borrow + fee) - amount_ <= amount_ / 1e6
+      ? FeeHelper._sendFee(manager, debt, amount_, amount_ - borrow)
+      : FeeHelper._sendFee(manager, debt, amount_, fee);
     _burnMTRFromVault(left);
     // set new borrow amount
     borrow -= left;
@@ -243,7 +256,7 @@ contract Vault is IVault, Initializable {
     uint256 fee = _calculateFee();
     // blockchain eventually calculates more interest than input as finalization is asynchronous
     // adjust precision
-    
+
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // Check the amount if it satisfies to close the vault, otherwise revert
@@ -275,18 +288,22 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).burn(amount_);
   }
 
-  function _calculateFee() internal view returns (uint256) {  
+  function _calculateFee() internal view returns (uint256) {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
-    uint256 expiary =  IVaultManager(manager).getExpiary(collateral);
+    uint256 expiary = IVaultManager(manager).getExpiary(collateral);
     // Check if interest is retroactive or not
-    uint256 sfr = block.timestamp > expiary ? IVaultManager(manager).getSFR(collateral) : ex_sfr;
-    /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals)) 
+    uint256 sfr = block.timestamp > expiary
+      ? IVaultManager(manager).getSFR(collateral)
+      : ex_sfr;
+    /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals))
     // get duration in months with decimal in height for predictive measures with asynchronous finalization
-    uint256 duration = (block.timestamp - lastUpdated) * 1e18 / 2592000 + 3600;
+    uint256 duration = ((block.timestamp - lastUpdated) * 1e18) /
+      2592000 +
+      3600;
     // remove precision then apply sfr with decimals
-    uint256 durationV = duration*assetValue / 1e18;
+    uint256 durationV = (duration * assetValue) / 1e18;
     // divide with decimals in price
-    return durationV * sfr / 10000000;
+    return (durationV * sfr) / 10000000;
   }
 
   function feeTest() public view returns (uint256) {

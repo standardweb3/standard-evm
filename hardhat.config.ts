@@ -40,8 +40,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
     currency: "USD",
-    token: "GLMR",
-    //gasPriceApi: "https://api-moonriver.moonscan.io/api?module=proxy&action=eth_gasPrice",
+    token: "ETH",
     enabled: process.env.REPORT_GAS === "true",
     excludeContracts: ["ERC20Mock", "ERC20", "WETH9"],
   },

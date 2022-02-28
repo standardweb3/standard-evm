@@ -33,7 +33,7 @@ contract V1 is ERC721A, AccessControl, IV1  {
     }
 
     constructor(address factory_)
-    ERC721A("VaultOne", "V1", 1) {
+    ERC721A("VaultOne", "V1") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         _setupRole(MINTER_ROLE, _msgSender());
@@ -54,12 +54,12 @@ contract V1 is ERC721A, AccessControl, IV1  {
 
     function burn(uint256 tokenId_) external override {
         require(hasRole(BURNER_ROLE, _msgSender()), "V1: must have burner role to burn");
-        _safeBurn(tokenId_);
+        _burn(tokenId_);
     }
 
     function burnFromVault(uint vaultId_) external override {
         require(IVaultFactory(factory).getVault(vaultId_)  == _msgSender(), "V1: Caller is not vault");
-        _safeBurn(vaultId_);
+        _burn(vaultId_);
     }
 
     function exists(uint256 tokenId_) external view override returns (bool) {

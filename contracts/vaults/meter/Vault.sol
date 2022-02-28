@@ -227,7 +227,9 @@ contract Vault is IVault, Initializable {
     require(amount_ != 0, "Vault: amount is zero");
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
-    uint256 left = FeeHelper._sendFee(manager, debt, amount_, fee);
+    // blockchain eventually calculates more interest than input as finalization is asynchronous
+    // adjust precision on zeroing borrow balance
+    uint256 left = (borrow+fee) - amount_ <= amount_/1e6 ? FeeHelper._sendFee(manager, debt, amount_, amount_-borrow) : FeeHelper._sendFee(manager, debt, amount_, fee);
     _burnMTRFromVault(left);
     // set new borrow amount
     borrow -= left;
@@ -239,6 +241,9 @@ contract Vault is IVault, Initializable {
   function closeVault(uint256 amount_) external override onlyVaultOwner {
     // calculate debt with interest
     uint256 fee = _calculateFee();
+    // blockchain eventually calculates more interest than input as finalization is asynchronous
+    // adjust precision
+    
     // send MTR to the vault
     TransferHelper.safeTransferFrom(debt, msg.sender, address(this), amount_);
     // Check the amount if it satisfies to close the vault, otherwise revert
@@ -270,18 +275,22 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).burn(amount_);
   }
 
-  function _calculateFee() internal view returns (uint256) {
+  function _calculateFee() internal view returns (uint256) {  
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
     uint256 expiary =  IVaultManager(manager).getExpiary(collateral);
     // Check if interest is retroactive or not
     uint256 sfr = block.timestamp > expiary ? IVaultManager(manager).getSFR(collateral) : ex_sfr;
     /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals)) 
-    // get duration in months with decimal 
-    uint256 duration = (block.timestamp - lastUpdated) * 1e18 / 2592000;
+    // get duration in months with decimal in height for predictive measures with asynchronous finalization
+    uint256 duration = (block.timestamp - lastUpdated) * 1e18 / 2592000 + 3600;
     // remove precision then apply sfr with decimals
     uint256 durationV = duration*assetValue / 1e18;
     // divide with decimals in price
     return durationV * sfr / 10000000;
+  }
+
+  function feeTest() public view returns (uint256) {
+    return _calculateFee();
   }
 
   function outstandingPayment() external view override returns (uint256) {

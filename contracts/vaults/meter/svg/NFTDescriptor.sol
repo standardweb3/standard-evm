@@ -70,7 +70,7 @@ contract NFTDescriptor is INFTSVG {
             '"trait_type": "',
             traitType,
             '",' 
-            '"value":',
+            '"value": ',
             value,
           '}'
         )
@@ -174,11 +174,13 @@ contract NFTDescriptor is INFTSVG {
       " one's financial rights written in an immutable smart contract. ",
       "Only the holder can manage and interact with the funds connected to its immutable smart contract",
       '",',
-      '"image":"https://artsandscience.standard.tech/nft/V1/',
+      //https://artsandscience.standard.tech/nft/V1/4/0
+      '"image": "https://raw.githubusercontent.com/digitalnativeinc/nft-arts/main/V1/backgrounds/1088.png",',
+      '"image_url": "https://artsandscience.standard.tech/nft/V1/',
       cParam.chainId,
       '/',
       tokenId.toString(),
-      '",',
+      '.svg",',
       formatTokenAttributes(blParam, hParam, cltParam),
       ','          
     );

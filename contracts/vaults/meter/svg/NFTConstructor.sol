@@ -164,9 +164,14 @@ contract NFTConstructor {
       cBalance;
     uint256 dValue = IVaultManager(manager).getAssetPrice(debt) * dBalance;
     uint256 mcr = IVaultManager(manager).getMCR(collateral);
+    HP = _calculateHP(cValue, dValue, mcr, cDecimal);
+  }
+
+  function _calculateHP(
+    uint256 cValue, uint256 dValue, uint256 mcr, uint256 cDecimal
+  ) internal pure returns (uint256 HP) {
     uint256 cdpRatioPercentPoint00000 = cValue * 10000000 * 10**(18-cDecimal) / dValue;
     HP = (cdpRatioPercentPoint00000 - mcr) / 100000;
-    return HP;
   }
 
   function _formatHP(
@@ -197,13 +202,13 @@ contract NFTConstructor {
     if (HP <= 30) {
       color = "#F5B1A6";
     }
-    if (HP <= 50) {
+    else if (HP > 30 && HP <= 50) {
       color = "#E8ECCA";
     }
-    if (HP < 100) {
+    else if (HP > 50 && HP < 100) {
       color = "#C9FBAD";
     }
-    if (HP >= 100) {
+    else if (HP >= 100) {
       color = "#C4F2FE";
     }
   }
@@ -216,13 +221,13 @@ contract NFTConstructor {
     if (HP <= 30) {
       color = "#EC290A";
     }
-    if (HP <= 50) {
+    else if (HP > 30 && HP <= 50) {
       color = "#D6ED20";
     }
-    if (HP < 100) {
+    else if (HP > 50 && HP < 100) {
       color = "#57E705";
     }
-    if (HP >= 100) {
+    else if (HP >= 100) {
       color = "#6FA4FB";
     }
   }
@@ -235,16 +240,16 @@ contract NFTConstructor {
     if (HP <= 10) {
       status = unicode"💀";
     }
-    if (HP <= 30) {
+    if (HP > 10 && HP <= 30) {
       status = unicode"🚑";
     }
-    if (HP < 50) {
+    if (HP > 30 && HP < 50) {
       status = unicode"💛";
     }
-    if (HP <= 80) {
+    if (HP >= 50 && HP <= 80) {
       status = unicode"❤️";
     }
-    if (HP <= 100) {
+    if (HP > 80 && HP <= 100) {
       status = unicode"💖";
     }
     if (HP > 100) {

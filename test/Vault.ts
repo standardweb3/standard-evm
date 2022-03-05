@@ -468,29 +468,7 @@ describe("Vault", function () {
     await executeTx(borrowMore, "Execute borrowMore at");
   });
 
-  it("vault pays back normally", async function () {
-    const Vault = await ethers.getContractFactory("Vault");
-    let borrow = await Vault.attach(this.vault).borrow();
-    let outPayment = await Vault.attach(this.vault).outstandingPayment();
-    const ERC20 = await ethers.getContractFactory("WETH9_");
-    
-    const approve = await ERC20.attach(this.stablecoin).approve(
-      this.vault,
-      ethers.utils.parseUnits("1000000", 18)
-    );
-    await executeTx(approve, "Execute Approve at");
-    console.log(borrow.toString())
-    console.log(outPayment.toString())
-    const payBack = await Vault.attach(this.vault).payDebt(outPayment);
-    await executeTx(payBack, "Execute payBack at ")
-    let borrow2 = await Vault.attach(this.vault).borrow();
-    let outPayment2 = await Vault.attach(this.vault).outstandingPayment();
-    let fee  = await Vault.attach(this.vault).feeTest();
-    console.log(borrow2.toString())
-    console.log(outPayment2.toString())
-    console.log(fee.toString())
-    
-  })
+
 
   it("vault liquidates once oracle changes price", async function () {
     const MockOracle = await ethers.getContractFactory("MockOracle");

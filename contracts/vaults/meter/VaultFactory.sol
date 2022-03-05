@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Vault.sol";
-import "./libraries/MinimalProxy.sol";
+import "./libraries/CloneFactory.sol";
 import "./interfaces/IVaultFactory.sol";
 
 contract VaultFactory is AccessControl, IVaultFactory {
@@ -38,7 +38,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
     require(msg.sender == manager, "VaultFactory: IA");
     uint256 gIndex = allVaultsLength();
     IV1(v1).mint(recipient);
-    address proxy = MinimalProxy._createClone(impl);
+    address proxy = CloneFactory._createClone(impl);
     IVault(proxy).initialize(
       manager,
       gIndex,
@@ -65,6 +65,10 @@ contract VaultFactory is AccessControl, IVaultFactory {
       }
     }
     impl = addr;
+  }
+
+  function isClone(address vault) external view returns (bool cloned) {
+    cloned = CloneFactory._isClone(impl, vault);
   }
 
   function initialize(

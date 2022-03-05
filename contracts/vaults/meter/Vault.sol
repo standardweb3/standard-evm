@@ -110,7 +110,7 @@ contract Vault is IVault, Initializable {
     _burnV1FromVault();
     emit Liquidated(vaultId, collateral, balance, left);
     // send remaining balance if collateral is native currency
-    payable(msg.sender).transfer(address(this).balance);
+    TransferHelper.safeTransferETH(msg.sender, address(this).balance);
   }
 
   function depositCollateralNative() external payable override onlyVaultOwner {
@@ -277,7 +277,7 @@ contract Vault is IVault, Initializable {
     TransferHelper.safeTransfer(collateral, msg.sender, remainderC);
     emit CloseVault(vaultId, amount_, remainderC, remainderD, fee);
     // send remaining balance if collateral is native currency
-    payable(msg.sender).transfer(address(this).balance);
+    TransferHelper.safeTransferETH(msg.sender, address(this).balance);
   }
 
   function _burnV1FromVault() internal {

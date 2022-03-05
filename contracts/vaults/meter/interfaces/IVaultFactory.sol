@@ -19,7 +19,7 @@ interface IVaultFactory {
     function vaultCodeHash() external pure returns (bytes32);
     function createVault(address collateral_, address debt_, uint256 amount_, address recipient) external returns (address vault, uint256 id);
     function getVault(uint vaultId_) external view returns (address);
-
+    
     /// Event
     event VaultCreated(uint256 vaultId, address collateral, address debt, address creator, address vault, uint256 cAmount, uint256 dAmount);
     event CDPInitialized(address collateral, uint mcr, uint lfr, uint sfr, uint8 cDecimals);

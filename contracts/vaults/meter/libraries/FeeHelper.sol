@@ -18,15 +18,15 @@ library FeeHelper {
     bool dividendOn = dividend != address(0);
     // send fee to the pool
     if (feeOn) {
-      if (dividendOn) {
-        uint256 half = fee_ / 2;
-        TransferHelper.safeTransfer(asset_, dividend, half);
-        TransferHelper.safeTransfer(asset_, feeTo, half);
-      } else if (dividendOn && treasuryOn) {
+      if (dividendOn && treasuryOn) {
         uint256 third = fee_ / 3;
         TransferHelper.safeTransfer(asset_, dividend, third);
         TransferHelper.safeTransfer(asset_, feeTo, third);
         TransferHelper.safeTransfer(asset_, treasury, third);
+      } else if (dividendOn) {
+        uint256 half = fee_ / 2;
+        TransferHelper.safeTransfer(asset_, dividend, half);
+        TransferHelper.safeTransfer(asset_, feeTo, half);
       } else {
         TransferHelper.safeTransfer(asset_, feeTo, fee_);
       }

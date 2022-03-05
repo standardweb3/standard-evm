@@ -109,8 +109,8 @@ contract Vault is IVault, Initializable {
     // burn vault nft
     _burnV1FromVault();
     emit Liquidated(vaultId, collateral, balance, left);
-    // self destruct the contract, send remaining balance if collateral is native currency
-    selfdestruct(payable(msg.sender));
+    // send remaining balance if collateral is native currency
+    payable(msg.sender).transfer(address(this).balance);
   }
 
   function depositCollateralNative() external payable override onlyVaultOwner {
@@ -276,8 +276,8 @@ contract Vault is IVault, Initializable {
     TransferHelper.safeTransfer(debt, msg.sender, remainderD);
     TransferHelper.safeTransfer(collateral, msg.sender, remainderC);
     emit CloseVault(vaultId, amount_, remainderC, remainderD, fee);
-    // self destruct the contract, send remaining balance if collateral is native currency
-    selfdestruct(payable(msg.sender));
+    // send remaining balance if collateral is native currency
+    payable(msg.sender).transfer(address(this).balance);
   }
 
   function _burnV1FromVault() internal {

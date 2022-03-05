@@ -332,7 +332,7 @@ describe("Vault", function () {
     // Withdraw Collateral Native
     const withdrawCollateralNative = await Vault.attach(
       vaultAddr
-    ).withdrawCollateralNative(100000000);
+    ).withdrawCollateralNative(100);
     await executeTx(
       withdrawCollateralNative,
       "Execute withdrawCollateralNative at"

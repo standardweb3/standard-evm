@@ -750,9 +750,13 @@ contract FeeRoll {
     address dstnd;
     address stablecoin;
 
-    constructor(IUniswapV2Router01 _router, address _setter, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
+    constructor () {
+        setter = msg.sender;
+    }
+
+    function initialize(IUniswapV2Router01 _router, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         router = _router;
-        setter = _setter;
         stnd = _stnd;
         dstnd = _dstnd;
         initCode = _initCode;

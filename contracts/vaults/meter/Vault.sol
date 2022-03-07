@@ -194,7 +194,9 @@ contract Vault is IVault, Initializable {
     ); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
-    // set new borrow amount
+    /// mint mtr to the sender, prevent bypass by confirming minting right after rebase limit check
+    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
+    // set new borrow amount before transfer; prevention for reentrant pattern
     borrow += dAmount_;
     // transfer collateral to the vault, manage collateral from there
     TransferHelper.safeTransferFrom(
@@ -203,8 +205,6 @@ contract Vault is IVault, Initializable {
       address(this),
       cAmount_
     );
-    // mint mtr to the sender
-    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     emit BorrowMore(vaultId, cAmount_, dAmount_, borrow);
   }
 
@@ -223,12 +223,12 @@ contract Vault is IVault, Initializable {
     ); // Invalid Position
     // check rebased supply of stablecoin
     require(IVaultManager(manager).isValidSupply(dAmount_), "RB"); // Rebase limited mtr borrow
-    // set new borrow amount
+    // mint mtr to the sender, prevent bypass by confirming minting right after rebase limit check
+    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
+    // set new borrow amount before balance update; prevention for reentrant pattern
     borrow += dAmount_;
     // wrap native currency
     IWETH(WETH).deposit{ value: address(this).balance }();
-    // mint mtr to the sender
-    IStablecoin(debt).mintFromVault(factory, vaultId, msg.sender, dAmount_);
     emit BorrowMore(vaultId, msg.value, dAmount_, borrow);
   }
 

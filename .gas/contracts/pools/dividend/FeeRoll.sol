@@ -794,10 +794,10 @@ contract FeeRoll {
 
     function tradeLP(
         address lp
-        uint256 amountAmin,
-        uint256 amountBmin,
-        uint256 amountAOutmin,
-        uint256 amountBOutmin
+        uint256 amountAmin, // (1-slippageTolerance(%)) * amountA
+        uint256 amountBmin, // (1-slippageTolerance(%)) * amountB
+        uint256 amountAOutmin, // 1 * amountOut/(1 + slippageTolerance(%)) 
+        uint256 amountBOutmin // 1 * amountOut/(1 + slippageTolerance(%)) 
     ) public {
         require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         // Get each lp token specified in the LP array

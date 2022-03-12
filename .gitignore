@@ -18,3 +18,4 @@ scripts
 address-book.json
 types
 types/*
+.gas

@@ -842,7 +842,7 @@ contract FeeRoll {
         uint256 deadline
     ) internal returns (uint256 amountA, uint256 amountB) {
         IUniswapV2Pair pair = IUniswapV2Pair(pairForRouter(tokenA, tokenB));
-        pair.transferFrom(msg.sender, address(pair), liquidity);
+        pair.transfer(address(this), address(pair), liquidity);
         (uint256 amount0, uint256 amount1) = pair.burn(address(this));
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);

@@ -750,7 +750,7 @@ contract FeeRoll {
     address dstnd;
     address stablecoin;
 
-    constructor () {
+    constructor () public {
         setter = msg.sender;
     }
 
@@ -789,6 +789,17 @@ contract FeeRoll {
         require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         allLPs.push(lp);
     }
+
+    function setCollateral(uint256 id, address clt) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        allLPs[id] = clt;
+    }
+
+    function addCollateral(address clt) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        allLPs.push(clt);
+    }
+
 
     // msg.sender should have approved "liquidity" amount of LP token of "tokenA" and "tokenB"
     function tradeLPs() public {

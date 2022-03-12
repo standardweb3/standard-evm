@@ -744,15 +744,21 @@ contract FeeRoll {
     IUniswapV2Router01 public router;
     bytes32 initCode;
     address setter;
+    address factory;
     address[] allLPs;
     address[] allCollaterals;
     address stnd;
     address dstnd;
     address stablecoin;
 
-    constructor(IUniswapV2Router01 _router, address _setter, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
+    constructor() {
+        setter = msg.sender;
+    }
+
+    funtion initialize(address _factory, IUniswapV2Router01 _router, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        factory = _factory;
         router = _router;
-        setter = _setter;
         stnd = _stnd;
         dstnd = _dstnd;
         initCode = _initCode;
@@ -786,18 +792,14 @@ contract FeeRoll {
         allLPs.push(lp);
     }
 
-    // msg.sender should have approved "liquidity" amount of LP token of "tokenA" and "tokenB"
-    function tradeLPs() public {
-        // for all lp tokens in the LP array
-        uint256 len = allLPs.length;
-        for (uint256 i = 0; i < len; ++i) {
-            tradeLP(allLPs[i]);
-        }
-    }
-
     function tradeLP(
         address lp
-    ) internal {
+        uint256 amountAmin,
+        uint256 amountBmin,
+        uint256 amountAOutmin,
+        uint256 amountBOutmin
+    ) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         // Get each lp token specified in the LP array
         address tokenA = IUniswapV2Pair(lp).token0();
         address tokenB = IUniswapV2Pair(lp).token1();
@@ -806,20 +808,12 @@ contract FeeRoll {
             tokenA,
             tokenB,
             IERC20(lp).balanceOf(address(this)),
-            0,
-            0,
-            block.timestamp + 20000000
+            amountAmin,
+            amountBmin,
+            block.timestamp + 1200
         );
-        IUniswapV2Router01(router).swapExactTokensForTokens(amountA, 0, getPathToStnd(tokenA), dstnd, block.timestamp + 20000000);
-        IUniswapV2Router01(router).swapExactTokensForTokens(amountB, 0, getPathToStnd(tokenB), dstnd, block.timestamp + 20000000);
-    }
-
-    function tradeCollaterals() public {
-        // for all lp tokens in the collateral array
-        uint256 len = allCollaterals.length;
-        for (uint256 i = 0; i < len; ++i) {
-            tradeCollateral(allCollaterals[i]);
-        }
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountA, amountAOutmin, getPathToStnd(tokenA), dstnd, block.timestamp + 1200);
+        IUniswapV2Router01(router).swapExactTokensForTokens(amountB, amountBOutmin, getPathToStnd(tokenB), dstnd, block.timestamp + 1200);
     }
 
     function getPathToStnd(address input) private view returns (address[] memory) {
@@ -832,9 +826,11 @@ contract FeeRoll {
     }
 
     function tradeCollateral (
-        address collateral
-    ) internal {
-        IUniswapV2Router01(router).swapExactTokensForTokens(IERC20(collateral).balanceOf(address(this)), 0, getPathToStnd(collateral), dstnd, block.timestamp + 20000000);
+        address collateral,
+        uint256 amountOutmin
+    ) public {
+        require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
+        IUniswapV2Router01(router).swapExactTokensForTokens(IERC20(collateral).balanceOf(address(this)), amountOutmin, getPathToStnd(collateral), dstnd, block.timestamp + 1200);
     }
 
     function removeLiquidity(

@@ -65,4 +65,11 @@ contract V1 is ERC721A, AccessControl, IV1  {
     function exists(uint256 tokenId_) external view override returns (bool) {
         return _exists(tokenId_);
     }
+
+    function transfer(
+        address to,
+        uint256 tokenId
+    ) public virtual {
+        transferFrom(msg.sender, to, tokenId);
+    }
 }

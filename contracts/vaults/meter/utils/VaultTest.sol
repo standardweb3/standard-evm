@@ -11,7 +11,7 @@ interface INFTTest {
     function ownerOf(uint256 id) external returns (address);
 }
 
-contract MockOracle  {
+contract MockOracle2  {
     int256 price;
     string public name;
     address operator;
@@ -50,7 +50,7 @@ contract VaultTest {
     }
 
     function setOracle(uint256 value) public {
-        MockOracle(oracle).setPrice(int256(value));
+        MockOracle2(oracle).setPrice(int256(value));
     }
     function liquidate(uint256[] memory ids) public {
         for(uint i=0; i<ids.length; i++) {  

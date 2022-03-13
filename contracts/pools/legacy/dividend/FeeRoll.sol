@@ -751,11 +751,11 @@ contract FeeRoll {
     address dstnd;
     address stablecoin;
 
-    constructor() {
+    constructor() public {
         setter = msg.sender;
     }
 
-    funtion initialize(address _factory, IUniswapV2Router01 _router, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
+    function initialize(address _factory, IUniswapV2Router01 _router, address _stnd, address _dstnd, address _stablecoin, bytes32 _initCode) public {
         require(msg.sender == setter, "FeeRoll: ACCESS_INVALID");
         factory = _factory;
         router = _router;
@@ -793,7 +793,7 @@ contract FeeRoll {
     }
 
     function tradeLP(
-        address lp
+        address lp,
         uint256 amountAmin, // (1-slippageTolerance(%)) * amountA
         uint256 amountBmin, // (1-slippageTolerance(%)) * amountB
         uint256 amountAOutmin, // 1 * amountOut/(1 + slippageTolerance(%)) 

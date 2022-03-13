@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../../../security/DurationGuard.sol";
+import "../../../../security/DurationGuard.sol";
 import "../interfaces/IBondedStrategy.sol";
 
 contract BondedStrategy is DurationGuard, IBondedStrategy {

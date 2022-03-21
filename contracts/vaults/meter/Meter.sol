@@ -88,14 +88,10 @@ contract MeterToken is AccessControl, IStablecoin, Ownable, ERC20 {
     }
 
     // Celer function https://github.com/celer-network/sgn-v2-contracts/blob/main/contracts/interfaces/IPeggedToken.sol
-    function burn(address account, uint256 amount) external {
-        uint256 currentAllowance = allowance(account, _msgSender());
-        require(
-            currentAllowance >= amount,
-            "ERC20: burn amount exceeds allowance"
-        );
-        _approve(account, _msgSender(), currentAllowance - amount);
-        _burn(account, amount);
+    function burn(address _from, uint256 _amount) external returns(bool) {
+        require(hasRole(BURNER_ROLE, msg.sender), "IA");
+        _burn(_from, _amount);
+        return true;
     }
 
     function permit(

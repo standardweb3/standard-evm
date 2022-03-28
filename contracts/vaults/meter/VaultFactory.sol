@@ -37,7 +37,6 @@ contract VaultFactory is AccessControl, IVaultFactory {
   ) external override returns (address vault, uint256 id) {
     require(msg.sender == manager, "VaultFactory: IA");
     uint256 gIndex = allVaultsLength();
-    IV1(v1).mint(recipient);
     address proxy = CloneFactory._createClone(impl);
     IVault(proxy).initialize(
       manager,
@@ -50,6 +49,7 @@ contract VaultFactory is AccessControl, IVaultFactory {
       WETH
     );
     allVaults.push(proxy);
+    IV1(v1).mint(recipient);
     return (proxy, gIndex);
   }
 

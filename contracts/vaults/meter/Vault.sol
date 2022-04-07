@@ -36,6 +36,8 @@ contract Vault is IVault, Initializable {
   address public override WETH;
   /// Interest rate until expiary
   uint256 ex_sfr;
+  /// Vault Creation Date
+  uint256 public override createdAt;
 
   modifier onlyVaultOwner() {
     require(
@@ -66,6 +68,7 @@ contract Vault is IVault, Initializable {
     manager = manager_;
     factory = msg.sender;
     lastUpdated = block.timestamp;
+    createdAt = block.timestamp;
     ex_sfr = IVaultManager(manager).getSFR(collateral_);
   }
 
@@ -292,7 +295,7 @@ contract Vault is IVault, Initializable {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
     uint256 expiary = IVaultManager(manager).getExpiary(collateral);
     // Check if interest is retroactive or not
-    uint256 sfr = block.timestamp > expiary
+    uint256 sfr = block.timestamp - createdAt > expiary
       ? IVaultManager(manager).getSFR(collateral)
       : ex_sfr;
     /// (duration in months with 18 precision) * (sfr * assetValue/100(with 5decimals))

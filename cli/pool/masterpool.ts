@@ -183,19 +183,22 @@ task("masterpool-massupdate", "Add LP Pool to Standard MasterPool")
 
 
   task("masterpool-setreward", "Set STND reward per block in Standard MasterPool")
-  .addParam("masterpool", "Address of masterpool contract")
   .addParam("stndperblock", "STND per Block in decimal of 16")
-  .setAction(async ({ masterpool, stndperblock }, { ethers }) => {
+  .setAction(async ({ stndperblock }, { ethers }) => {
     const [deployer] = await ethers.getSigners();
     await executeFrom(ethers, deployer, async () => {
       const MasterPool = await ethers.getContractFactory("MasterPool")
       // Get current STND per block
-      const currentReward = await MasterPool.attach(masterpool).sushiPerBlock()
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      // Get network from chain ID
+      const chain = ChainId[chainId]
+      const masterPool = await getAddress("MasterPool", chain)
+      const currentReward = await MasterPool.attach(masterPool).sushiPerBlock()
       console.log(currentReward.toString())
       // Set STND per block
-      const tx = await MasterPool.attach(masterpool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 16))
+      const tx = await MasterPool.attach(masterPool).setRewardPerBlock(ethers.utils.parseUnits(stndperblock, 16))
       await executeTx(tx, "Execute setRewardPerBlock at")
-      const stndPerBlock = await MasterPool.attach(masterpool).sushiPerBlock();
+      const stndPerBlock = await MasterPool.attach(masterPool).sushiPerBlock();
       console.log("Current STNDPerBlock: ", stndPerBlock.toString())
     })
   });

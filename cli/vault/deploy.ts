@@ -1,14 +1,14 @@
 import {
-    executeTx,
-    deployContract,
-    ChainId,
-    FACTORY_ROLE,
-    getAddress,
-    ZERO,
-  } from "../helper";
-  import { task, types } from "hardhat/config";
+  executeTx,
+  deployContract,
+  ChainId,
+  FACTORY_ROLE,
+  getAddress,
+  ZERO,
+} from "../helper";
+import { task, types } from "hardhat/config";
 import { getEmitHelpers } from "typescript";
-  
+
 
 
 
@@ -17,9 +17,8 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
   .addParam("weth", "Address of wrapped ether")
   .addParam("diaassetprices", "DIA asset prices address")
   .addParam("wethoraclekey", "Oracle key from DIA")
-  .addParam("stnd", "Address of Standard")
   .addParam("factory", "UniswapV2Factory contract address")
-  .setAction(async ({ weth, wethoraclekey, stnd, factory }, { ethers }) => {
+  .setAction(async ({ weth, wethoraclekey, factory }, { ethers }) => {
     const [deployer] = await ethers.getSigners();
 
     // Get before state
@@ -78,7 +77,7 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
       .initialize(v1.address, factory, weth, vaultManager.address);
     await executeTx(tx, "Execute initialize at");
 
-    // print vault code hash for UniswapV2Library to use
+    // print vault code hash 
     console.log(
       `VaultCodeHash(For VaultLibrary vaultfor() function): ${await vaultFactory.vaultCodeHash()}`
     );
@@ -140,22 +139,20 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
     // initialize CDP
     const initializeCDP = await vaultManager.initializeCDP(
       weth,
-      30000000,
+      15000000,
       2000000,
-      42000,
+      4000,
       8035200,
       true
     );
     await executeTx(initializeCDP, "Execute initializeCDP at");
-    
+
   });
 
-  task("vault-mainnet-redeploy", "Deploy Standard Vault Components")
-  .addParam("weth", "Address of wrapped ether")
-  .addParam("wethoracle", "weth oracle address")
-  .addParam("stnd", "Address of Standard")
-  .addParam("factory", "UniswapV2Factory contract address")
-  .setAction(async ({ weth, wethoracle, stnd, factory }, { ethers }) => {
+task("vault-mainnet-upgrade", "Deploy Standard Vault Components")
+  .addOptionalParam("manager", "old manager contract address")
+  .addOptionalParam("factory", "old factory contract address")
+  .setAction(async ({ manager, factory }, { ethers }) => {
     const [deployer] = await ethers.getSigners();
 
     // Get before state
@@ -172,22 +169,7 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
     const VaultFactory = await ethers.getContractFactory("VaultFactory");
     const vaultFactory = await VaultFactory.deploy();
     await deployContract(vaultFactory, "VaultFactory");
-    // Record address with chainid
-    //await recordAddress(ethers, "VaultManager", vaultManager.address);
-
-    // Deploy V1
-    console.log(`Deploying Standard V1 with the account: ${deployer.address}`);
-    const V1 = await ethers.getContractFactory("V1");
-    const v1 = await V1.deploy(vaultFactory.address);
-    await deployContract(v1, "V1");
-
-    /*
-    // Deploy liquidator
-    const Liquidator = await ethers.getContractFactory("Liquidator");
-    const liquidator = await Liquidator.deploy();
-    await deployContract(liquidator, "Liquidator");
-    */
-
+  
     // Deploy Vault manager
     console.log(
       `Deploying Standard VaultManager with the account: ${deployer.address}`
@@ -196,37 +178,42 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
     const vaultManager = await VaultManager.deploy();
     await deployContract(vaultManager, "VaultManager");
 
-    // Deploy Stablecoin
-    console.log(`Deploying MeterUSD with the account: ${deployer.address}`);
-    const MeterToken = await ethers.getContractFactory("MeterToken");
-    const mtr = await MeterToken.deploy(
-      "MeterUSD",
-      "USM",
-      vaultManager.address
-    );
-    await deployContract(mtr, "MeterToken");
+    // Get previous vault factory
+    const prevVF = await VaultFactory.attach("")
+    const v1Addr = await prevVF.v1()
+    const weth = await prevVF.weth()
+    const v2factory = await prevVF.v2Factory()
 
-    // Grant factory a factory role for vault to mint stablecoin
-    const grantRole = await mtr.grantRole(FACTORY_ROLE, vaultFactory.address);
+    // Get previous vaultManager
+    const prevVM = await VaultManager.attach("")
+    const mtrAddress = await prevVM.stablecoin()
+
+    // Revoke previous factory role in USM
+    const MTR = await ethers.getContractFactory("MeterToken")
+    const mtr = MTR.attach(mtrAddress)
+    const revokeRole = await mtr.revokeRole(FACTORY_ROLE, factory);
+    await executeTx(revokeRole, "Executing grantRole for new vault factory at");
+
+    // Revoke previous factory role in V1
+    const V1 = await ethers.getContractFactory("V1")
+    const v1 = V1.attach(v1Addr)
+    const setFactory = await v1.setFactory(vaultFactory.address)
+    await executeTx(setFactory, "Executing setFactory for V1")
+
+    // Grant factory role to the new factory
+    const grantRole = await mtr.grantRole(FACTORY_ROLE, factory);
     await executeTx(grantRole, "Executing grantRole for vault factory at");
 
-    // Initiailize VaultFactory
+    // Initiailize new VaultFactory
     const tx = await vaultFactory
       .attach(vaultFactory.address)
-      .initialize(v1.address, factory, weth, vaultManager.address);
+      .initialize(v1, v2factory, weth, vaultManager.address);
     await executeTx(tx, "Execute initialize at");
 
-    // print vault code hash for UniswapV2Library to use
-    console.log(
-      `VaultCodeHash(For VaultLibrary vaultfor() function): ${await vaultFactory.vaultCodeHash()}`
-    );
-    console.log(
-      `Change VaultLibrary vaultFor() with the creation hash above then recompile after verification`
-    );
+
 
     // Initialize Vault manager
     const tx2 = await vaultManager
-      .attach(vaultManager.address)
       .initialize(mtr.address, vaultFactory.address, ZERO);
     await executeTx(tx2, "Execute initialize at");
 
@@ -282,6 +269,6 @@ task("vault-mainnet-deploy", "Deploy Standard Vault Components")
       true
     );
     await executeTx(initializeCDP, "Execute initializeCDP at");
-    
+
   });
 

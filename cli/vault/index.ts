@@ -1,7 +1,11 @@
 import "./vault"
 import "./vaultmanager"
 import "./deploy"
+import { ChainId } from "../helper/constants";
+import { executeTx, getAddress } from "../helper";
+import { task } from "hardhat/config";
 
+/*
 task("vltmgr-init-cdp-test", "initialize CDP as a collateral with test oracle")
 .addOptionalParam("vaultmanager", "VaultManager contract address", "")
 .addParam("collateral", "address of token contract")
@@ -45,4 +49,4 @@ task("vltmgr-init-cdp-test", "initialize CDP as a collateral with test oracle")
     await executeTx(initializeCDP, "Execute initializeCDP at");
   }
 );
-
+*/

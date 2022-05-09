@@ -291,7 +291,7 @@ contract Vault is IVault, Initializable {
     IStablecoin(debt).burn(amount_);
   }
 
-  function _calculateFee() internal view returns (uint256) {
+  function _calculateFee() public view returns (uint256) {
     uint256 assetValue = IVaultManager(manager).getAssetValue(debt, borrow);
     uint256 expiary = IVaultManager(manager).getExpiary(collateral);
     // Check if interest is retroactive or not

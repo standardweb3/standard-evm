@@ -55,7 +55,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         Expiaries[collateral_] = expiary_;
         IsOpen[collateral_] = on;
         cDecimals[collateral_] = IERC20Minimal(collateral_).decimals();
-        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, on);  
+        emit CDPInitialized(collateral_, MCR_, LFR_, SFR_, expiary_, on);  
     }
 
     function setRebaseActive(bool set_) public {

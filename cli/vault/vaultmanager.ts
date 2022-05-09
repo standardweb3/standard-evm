@@ -4,7 +4,7 @@ import {
   recordAddress,
   ChainId,
   getAddress,
-  FACTORY_ROLE
+  FACTORY_ROLE,
 } from "../helper";
 import { task, types } from "hardhat/config";
 import { factory } from "typescript";
@@ -14,57 +14,48 @@ const assert = (condition, message) => {
   throw new Error(message);
 };
 
-task("vaultmanager-verify", "Verify Standard Vault Manager")
-  .addParam("vaultmanager", "VaultManager contract address")
-  .setAction(async ({ vaultmanager }, { ethers }) => {
-    // INFO: hre can only be imported inside task
-    const hre = require("hardhat");
-    // Verify VaultManager
-    await hre.run("verify:verify", {
-      contract: "contracts/vaults/meter/VaultManager.sol:VaultManager",
-      address: vaultmanager,
-      constructorArguments: [],
-    });
-  });
+task("diakeyvalueoracle-deploy2", "initialize CDP as a collateral with test oracle")
+  .addParam("collateral", "address of token contract")
+  .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+  .addParam("on", "whether collateral should be accepted or not")
+  .addParam(
+    "expiary",
+    "number of seconds when CDP gets expired from initial config"
+  )
+  .setAction(
+    async (
+      { vaultmanager, collateral, on, expiary },
+      { ethers }
+    ) => {
+      const [deployer] = await ethers.getSigners();
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      // Get network from chain ID
+      let chain = ChainId[chainId];
+      const vaultManager =
+        (await getAddress("VaultManager", chain)) ?? vaultmanager;
+      console.log(vaultManager);
 
-task("diacoininfooracle-deploy", "Deploy DIA Oracle Contract")
-  .addParam("aggregator", "aggregator contract address")
-  .addParam("name", "asset name")
-  .setAction(async ({ name, aggregator }, { ethers }) => {
-    const [deployer] = await ethers.getSigners();
-    // Get before state
-    console.log(
-      `Deployer balance: ${ethers.utils.formatEther(
-        await deployer.getBalance()
-      )} ETH`
-    );
+      // deploy collateral oracle
+      console.log(`Deploying MockOracle with the account: ${deployer.address}`);
+      const MockOracle = await ethers.getContractFactory("MockOracle");
+      const mockoracle = await MockOracle.deploy(100000000, "Price TEST");
 
-    // Deploy Vault Manager
-    console.log(
-      `Deploying DIA CoinInfo Oracle with the account: ${deployer.address}`
-    );
-    const DiaOracle = await ethers.getContractFactory("DiaCoinInfo");
-    const diaoracle = await DiaOracle.deploy(aggregator, name);
-    const chainId = (await diaoracle.provider.getNetwork()).chainId;
-    // Get network from chain ID
-    let chain = ChainId[chainId];
-    await deployContract(
-      diaoracle,
-      `DIA CoinInfo Oracle(Tracking ${name} on ${chain})`
-    );
+      // Add oracle to vaultmanager
 
-    // Test price
-    const assetPrice = await diaoracle.getThePrice();
-    console.log(`Price of ${name}: ${assetPrice}`);
-    // INFO: hre can only be imported inside task
-    const hre = require("hardhat");
-    // Verify coininfo oracle
-    await hre.run("verify:verify", {
-      contract: "contracts/oracle/DiaCoinInfo.sol:DiaCoinInfo",
-      address: diaoracle,
-      constructorArguments: [aggregator, name],
-    });
-  });
+      const addOracle = await vaultManager.addOracle(
+        collateral,
+        mockoracle.address
+      );
+      await executeTx(addOracle, "Execute addOracle of usm test at")
+
+      const result = on === "true";
+      const VaultManager = await ethers.getContractFactory("VaultManager");
+      const initializeCDP = await VaultManager.attach(
+        vaultManager
+      ).initializeCDP(collateral, 0, 0, 0, expiary, result);
+      await executeTx(initializeCDP, "Execute initializeCDP at")
+    }
+  );
 
 task("diakeyvalueoracle-deploy", "Deploy DIA Oracle Contract")
   .addParam("aggregator", "aggregator contract address")
@@ -214,9 +205,15 @@ task("vaultmanager-initializecdp", "initialize CDP as a collateral")
   .addParam("lfr", "Liquidation Fee Ratio in percent")
   .addParam("sfr", "Stability Fee Ratio in percent")
   .addParam("on", "whether collateral should be accepted or not")
-  .addParam("expiary", "number of seconds when CDP gets expired from initial config")
+  .addParam(
+    "expiary",
+    "number of seconds when CDP gets expired from initial config"
+  )
   .setAction(
-    async ({ vaultmanager, collateral, mcr, lfr, sfr, expiary, on }, { ethers }) => {
+    async (
+      { vaultmanager, collateral, mcr, lfr, sfr, expiary, on },
+      { ethers }
+    ) => {
       const chainId = (await ethers.provider.getNetwork()).chainId;
       // Get network from chain ID
       let chain = ChainId[chainId];
@@ -317,6 +314,9 @@ task("mtr-grant-factory", "Grant factory role to vault factory")
     console.log(mtr);
 
     // Grant factory a factory role for vault to mint stablecoin
-    const grantRole = await MeterToken.attach(mtr).grantRole(FACTORY_ROLE, factory);
+    const grantRole = await MeterToken.attach(mtr).grantRole(
+      FACTORY_ROLE,
+      factory
+    );
     await executeTx(grantRole, "Executing grantRole for vault factory at");
   });

@@ -132,10 +132,10 @@ describe("Vault", function () {
     await deployContract(vaultManager, "VaultManager");
 
     // Deploy Stablecoin
-    console.log(`Deploying meterUSD with the account: ${deployer.address}`);
+    console.log(`Deploying MeterUSD with the account: ${deployer.address}`);
     const MeterToken = await ethers.getContractFactory("MeterToken");
     const mtr = await MeterToken.deploy(
-      "meterUSD",
+      "MeterUSD",
       "USM",
       vaultManager.address
     );

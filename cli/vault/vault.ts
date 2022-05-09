@@ -7,8 +7,6 @@ import {
   ZERO,
 } from "../helper";
 import { task, types } from "hardhat/config";
-import { factory } from "typescript";
-import { serializeTransaction } from "ethers/lib/utils";
 
 const assert = (condition, message) => {
   if (condition) return;
@@ -49,7 +47,7 @@ task("vault-deploy", "Deploy Standard Vault Components")
     //await recordAddress(ethers, "V1", v1.address);
 
     // Deploy Stablecoin
-    console.log(`Deploying meterUSD with the account: ${deployer.address}`);
+    console.log(`Deploying MeterUSD with the account: ${deployer.address}`);
     const MeterToken = await ethers.getContractFactory("MeterToken");
     const mtr = await MeterToken.deploy(
       "MeterUSD",
@@ -156,10 +154,10 @@ task("vault-test-deploy", "Deploy Standard Vault Components")
     await deployContract(vaultManager, "VaultManager");
 
     // Deploy Stablecoin
-    console.log(`Deploying meterUSD with the account: ${deployer.address}`);
+    console.log(`Deploying MeterUSD with the account: ${deployer.address}`);
     const MeterToken = await ethers.getContractFactory("MeterToken");
     const mtr = await MeterToken.deploy(
-      "meterUSD",
+      "MeterUSD",
       "USM",
       vaultManager.address
     );
@@ -415,3 +413,48 @@ task("nft-get-metadata", "get nft metadata")
     console.log("Encoded tokenURI");
     console.log(tokenURI);
   });
+
+  task("vltmgr-init-cdp-test", "initialize CDP as a collateral with test oracle")
+  .addOptionalParam("vaultmanager", "VaultManager contract address", "")
+  .addParam("collateral", "address of token contract")
+  .addParam(
+    "mcr",
+    "Minimal Collaterization Ratio of the collateral in percent  e.g. 100.00000% == 10000000"
+  )
+  .addParam("lfr", "Liquidation Fee Ratio in percent")
+  .addParam("sfr", "Stability Fee Ratio in percent")
+  .addParam("on", "whether collateral should be accepted or not")
+  .addParam("expiary", "number of seconds when CDP gets expired from initial config")
+  .setAction(
+    async ({ vaultmanager, collateral, mcr, lfr, sfr, expiary, on }, { ethers }) => {
+      const [deployer] = await ethers.getSigners();
+      const chainId = (await ethers.provider.getNetwork()).chainId;
+      // Get network from chain ID
+      let chain = ChainId[chainId];
+      const vaultManager =
+        (await getAddress("VaultManager", chain)) ?? vaultmanager;
+      console.log(vaultManager);
+
+      // deploy collateral oracle
+    console.log(`Deploying MockOracle with the account: ${deployer.address}`);
+    const MockOracle = await ethers.getContractFactory("MockOracle");
+    const mockoracle = await MockOracle.deploy(100000000, "Price TEST");
+
+      // Add oracle to vaultmanager
+
+      const addOracle = await vaultManager.addOracle(
+        collateral,
+        mockoracle.address
+      );
+      await executeTx(addOracle, "Execute addOracle of usm test at");
+
+
+      const result = on === "true";
+      const VaultManager = await ethers.getContractFactory("VaultManager");
+      const initializeCDP = await VaultManager.attach(
+        vaultManager
+      ).initializeCDP(collateral, mcr, lfr, sfr, expiary, result);
+      await executeTx(initializeCDP, "Execute initializeCDP at");
+    }
+  );
+

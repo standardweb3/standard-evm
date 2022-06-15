@@ -55,19 +55,13 @@ contract USMDexOracle is IPrice {
   /**
    * Returns the latest price
    */
-  function getUSMPairPrice(address pair_) public view returns (int256) {
+  function getUSMPairPrice(address pair_) public view returns (int256 price) {
     address token0 = IUniswapV2PairMinimal(pair_).token0();
     address token1 = IUniswapV2PairMinimal(pair_).token1();
     address from = token0 == usm ? token0 : token1;
     address to = token1 == usm ? token0 : token1;
-    int256 fromP = int256(
-      IERC20Minimal(from).balanceOf(pair_) / 10**IERC20Minimal(from).decimals()
-    );
-    int256 toP = int256(
-      IERC20Minimal(to).balanceOf(pair_) / 10**IERC20Minimal(to).decimals()
-    );
-    int256 price = fromP == 0 ? int256(0) : (10**8 * toP) / fromP; // try to save 8 decimals
-    // recover padding zeros as 8 decimal string 
+    price = int256((IERC20Minimal(from).balanceOf(pair_)*10**IERC20Minimal(from).decimals()) / (IERC20Minimal(to).balanceOf(pair_)*10**IERC20Minimal(to).decimals()) * 10**8);
+
 
     // Flashswap guard: if current block equals last asked block, return previous price, otherwise set prevPrice as the current price, set lastAskedBlock in current block
     require(lastAskedBlock < block.number, "DexOracle: FlashSwap detected");

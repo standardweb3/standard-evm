@@ -23,6 +23,8 @@ interface IVaultManager {
     function desiredSupply() external view returns (uint256);
     /// Switch to on/off rebase
     function rebaseActive() external view returns (bool);
+    /// check strategy
+    function strategies(bytes32 collatStrtgyConcat) external view returns (bool);
 
     /// Getters
     /// Get Config of CDP

@@ -10,7 +10,7 @@ contract DiaCoinInfo is IPrice {
 
     string public name;
 
-    constructor(address _aggregator, string memory _name) public {
+    constructor(address _aggregator, string memory _name) {
         priceFeed = DiaCoinInfoInterface(_aggregator);
         name = _name;
     }
@@ -21,9 +21,9 @@ contract DiaCoinInfo is IPrice {
     function getThePrice() external view override returns (int256) {
         (
             uint256 price,
-            uint256 supply,
-            uint256 lastUpdateTimeStamp,
-            string memory symbol
+            ,
+            ,
+            
         ) = priceFeed.getCoinInfo(name);
         return int256(price);
     }

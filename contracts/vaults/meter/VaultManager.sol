@@ -28,6 +28,9 @@ contract VaultManager is OracleRegistry, IVaultManager {
     mapping (address => bool) internal IsOpen;
     /// key: Collateral address, value: whether collateral is allowed to borrow
     mapping (address => uint8) internal cDecimals;
+
+    // strategy configs
+    mapping (bytes32 => bool) public strategies;
     
     /// Address of stablecoin oracle  standard dex
     address public override stablecoin;
@@ -70,6 +73,11 @@ contract VaultManager is OracleRegistry, IVaultManager {
         dividend = dividend_;
         treasury = treasury_;
         emit SetFees(feeTo_, dividend_, treasury_);
+    }
+
+    function setStrategies(address collateral_, address strategy_, bool value_) external {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "IA"); // Invalid Access
+        strategies[keccak256(abi.encodePacked(collateral_, strategy_))] = value_;
     }
     
     function initialize(address stablecoin_, address factory_, address liquidator_) public {
@@ -121,7 +129,6 @@ contract VaultManager is OracleRegistry, IVaultManager {
         return true;
     }
     
-
     function getCDPConfig(address collateral_) external view override returns (uint MCR, uint LFR, uint SFR, uint cDecimals, bool isOpen) {
         uint8 cDecimals = IERC20Minimal(collateral_).decimals();
         return (MCRConfig[collateral_], LFRConfig[collateral_], SFRConfig[collateral_], cDecimals, IsOpen[collateral_]);
@@ -195,7 +202,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
         uint256 collateralValue = getAssetValue(collateral_, cAmount_);
         uint256 debtValue = getAssetValue(debt_, dAmount_);
         uint256 collateralValueTimes100Point00000 = collateralValue * 10000000;
-        require(collateralValueTimes100Point00000 >= collateralValue); // overflow check
+        require(collateralValueTimes100Point00000 >= collateralValue, "VM: overflow"); // overflow check
         return (collateralValueTimes100Point00000, debtValue);        
     }
 
@@ -212,7 +219,7 @@ contract VaultManager is OracleRegistry, IVaultManager {
     function getAssetValue(address asset_, uint256 amount_) public view override returns (uint256) {
         uint price = getAssetPrice(asset_);
         uint256 value = price * amount_;
-        require(value >= amount_); // overflow
+        require(value >= amount_, "VM: overflow"); // overflow
         return value / 1e8;
     }
 

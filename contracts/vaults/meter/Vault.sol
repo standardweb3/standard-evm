@@ -12,6 +12,7 @@ import "./interfaces/IWETH.sol";
 import "./interfaces/IUniswapV2Minimal.sol";
 import "./interfaces/IStablecoin.sol";
 import "./libraries/Initializable.sol";
+import "../strategies/interfaces/IStrategy.sol";
 
 contract Vault is IVault, Initializable {
   /// Uniswap v2 factory interface
@@ -309,8 +310,25 @@ contract Vault is IVault, Initializable {
     return (durationV * sfr) / 10000000;
   }
 
-  function feeTest() public view returns (uint256) {
-    return _calculateFee();
+  function activate(address strategy) external {
+    // check if strategy is registered in vault manager
+    require(IVaultManager(manager).strategies(keccak256(abi.encodePacked(collateral, strategy))), "Vault: not a strategy");
+    address feeToken = IStrategy(strategy).feeToken();
+    uint256 fee = IStrategy(strategy).fee();
+    // take fees
+    TransferHelper.safeTransferFrom(feeToken, msg.sender, address(this), fee);
+    TransferHelper.safeTransfer(feeToken, strategy, fee);
+    // send collateral to strategy
+    TransferHelper.safeApprove(collateral, strategy, IERC20Minimal(collateral).balanceOf(address(this)));
+    address conversion = IStrategy(strategy).activate(vaultId, IERC20Minimal(collateral).balanceOf(address(this)));
+    collateral = conversion;
+  }
+
+  function deActivate(address strategy) external {
+    // check if strategy is registered in vault manager
+    require(IVaultManager(manager).strategies(keccak256(abi.encodePacked(collateral, strategy))), "Vault: not a strategy");
+    address reversion = IStrategy(strategy).deactivate(vaultId, IERC20Minimal(collateral).balanceOf(address(this)));
+    collateral = reversion;
   }
 
   function outstandingPayment() external view override returns (uint256) {

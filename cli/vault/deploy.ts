@@ -217,7 +217,7 @@ task("vault-mainnet-upgrade", "Deploy Standard Vault Components")
       .initialize(mtr.address, vaultFactory.address, ZERO);
     await executeTx(tx2, "Execute initialize at");
 
-    /*
+    
     // Deploy Constant Price Oracle
     console.log(`Deploying MockOracle with the account: ${deployer.address}`);
     const MockOracle = await ethers.getContractFactory("MockOracle");
@@ -238,7 +238,7 @@ task("vault-mainnet-upgrade", "Deploy Standard Vault Components")
       wethOracle,
       `Some WETH Oracle(provided by DIA on ${chain})`
     );
-    */
+    
 
     // Deploy USM DEX Average Oracle
     console.log(`Deploying USM DEX Average Oracle with the account: ${deployer.address}`);
@@ -253,7 +253,7 @@ task("vault-mainnet-upgrade", "Deploy Standard Vault Components")
     );
 
 
-    const addOracle2 = await vaultManager.addOracle(weth, wethoracle);
+    const addOracle2 = await vaultManager.addOracle(weth, wethOracle);
     await executeTx(addOracle2, "Execute addOracle of weth test at");
     await executeTx(addOracle2, "Execute addOracle of weth test at");
     const addOracle3 = await vaultManager.addOracle(ZERO, usmDexOracle.address);
@@ -271,4 +271,8 @@ task("vault-mainnet-upgrade", "Deploy Standard Vault Components")
     await executeTx(initializeCDP, "Execute initializeCDP at");
 
   });
+
+function wethoraclekey(arg0: string, wethoraclekey: any) {
+  throw new Error("Function not implemented.");
+}
 
